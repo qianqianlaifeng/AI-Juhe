@@ -329,6 +329,18 @@
       indexLabel: 'Tool 11',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9000
+    },
+    {
+      id: 'tool_neko',
+      title: 'AI伙伴N.E.K.O',
+      url: 'https://project-neko.cn',
+      description: 'AI 编程助手与智能伙伴，支持代码生成、项目协作、知识问答等，助你高效编程与学习。',
+      tags: ['AI编程', '智能助手', '在线'],
+      color: 'blue',
+      image: '',
+      indexLabel: 'Tool 12',
+      actionLabel: '打开工具',
+      createdAt: Date.now() - 9500
     }
   ];
 
@@ -1159,7 +1171,7 @@
         name: '凛冬督学局',
         url: 'https://redwatch.top',
         description: 'AI 督学番茄钟专注工具。设置专注时长并选择摄像头或屏幕巡查后，督学官会不定时「查岗」，按你授权的画面实时判定专注状态。完成任务生成劳动档案，累计有效专注时长、晋升劳动荣誉。',
-        image_url: 'https://i2.hdslb.com/bfs/archive/6c1d5e8f917ef7ccffcc05b36fd02b57016ca1ea.jpg'
+        image_url: 'https://redwatch.top/assets/home/supervisor-nestor-v4.webp'
       }
     ];
 
