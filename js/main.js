@@ -334,7 +334,7 @@
       id: 'tool_neko',
       title: 'AI伙伴N.E.K.O',
       url: 'https://project-neko.cn',
-      description: 'AI 编程助手与智能伙伴，支持代码生成、项目协作、知识问答等，助你高效编程与学习。',
+      description: 'N.E.K.O 不只是聊天工具，而是拥有多重感知的数字伙伴。你可以打字、说话、拖入图片或文件、分享屏幕画面；她会从文字、声音、图像与实时画面中理解你的当下，并用最自然的方式回应、陪伴与主动开启话题。',
       tags: ['AI编程', '智能助手', '在线'],
       color: 'blue',
       image: '',
@@ -778,7 +778,7 @@
     // 函数若未部署成功，前端自动回退直连一个已验证可跨域的国内源（同样只取 AI 相关）。
     // AI / 大模型 / 深度研究 关键词：用于把相关话题优先置顶
     const AI_KW_WORD = ['AI','LLM','GPT','AGI','MCP','RAG','Sora','AIGC','Copilot','Gemini','Claude','Llama'];
-    const AI_KW_PHRASE = ['大模型','智能体','算力','芯片','OpenAI','ChatGPT','豆包','通义','文心','Kimi','智谱','机器人','神经网络','深度学习','机器学习','Midjourney','Diffusion','深度研究','深度思考','推理模型','多模态','具身智能','强化学习','开源大模型','模型训练','向量数据库','知识库','提示词','Prompt','AI智能','大模型训练','AI Agent'];
+    const AI_KW_PHRASE = ['大模型','智能体','DeepSeek','OpenAI','ChatGPT','豆包','通义','文心','Kimi','智谱','文心一言','讯飞星火','混元','百川','MiniMax','Midjourney','Diffusion','Sora','深度研究','推理模型','多模态','具身智能','强化学习','开源大模型','模型训练','向量数据库','知识库','提示词','Prompt','AI智能','大模型训练','AI Agent','AIGC','AI编程','AI搜索','AI视频','AI绘画','AI音乐','AI芯片'];
     const isAI = t => {
       const s = ' ' + (t || '').toUpperCase() + ' ';
       return AI_KW_WORD.some(k => s.includes(' ' + k.toUpperCase() + ' '))
