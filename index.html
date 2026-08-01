@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 聚合平台 | 智能创作生态</title>
+  <meta name="description" content="高端 AI 聚合平台，汇聚 AI 写小说、AI 多账号管理器、游麟 AI-Agent 等创新项目。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2300d4ff'/%3E%3Cstop offset='1' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23bg)'/%3E%3Cg fill='%23fff' stroke='%23fff'%3E%3Cpolygon points='50,14 80,32 80,68 50,86 20,68 20,32' fill='none' stroke-width='6' stroke-linejoin='round'/%3E%3Cpolygon points='50,38 62,46 62,62 50,70 38,62 38,46' fill='%23fff' stroke='none'/%3E%3Ccircle cx='50' cy='14' r='5'/%3E%3Ccircle cx='80' cy='32' r='5'/%3E%3Ccircle cx='80' cy='68' r='5'/%3E%3Ccircle cx='50' cy='86' r='5'/%3E%3Ccircle cx='20' cy='68' r='5'/%3E%3Ccircle cx='20' cy='32' r='5'/%3E%3Ccircle cx='50' cy='50' r='4'/%3E%3C/g%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css?v=53">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <!-- 预加载 -->
+  <div id="preloader">
+    <div class="preloader-line"></div>
+  </div>
+  <script>
+    // 终极兜底：预加载层 3.5 秒后必定消失，避免任何脚本错误导致白屏
+    setTimeout(function() {
+      var p = document.getElementById('preloader');
+      if (p) p.classList.add('hidden');
+    }, 3500);
+  </script>
+
+  <!-- 大屏动态背景：AI 视频 + Canvas 粒子叠加 -->
+  <div class="bg-layer">
+    <video id="bg-video" autoplay muted loop playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5" x5-video-player-fullscreen="true" preload="auto" poster="assets/bg-poster.jpg">
+      <source src="https://ark-common-storage-prod-cn-beijing.tos-cn-beijing.volces.com/presets/experience/gen_video/model-promotion/seedance-2-5/ugc/16-9/169-3.mp4" type="video/mp4">
+    </video>
+    <canvas id="video-canvas"></canvas>
+    <div class="video-overlay"></div>
+    <div class="ambient-glow"></div>
+    <div class="grain"></div>
+  </div>
+
+  <!-- 滚动进度条 -->
+  <div id="scroll-progress" class="scroll-progress"></div>
+
+  <!-- 导航 -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <span class="brand-mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><filter id="hlg" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="0.6" flood-color="#fff" flood-opacity="0.9"/></filter></defs><g filter="url(#hlg)"><polygon points="12,3 19.8,7.5 19.8,16.5 12,21 4.2,16.5 4.2,7.5" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><polygon points="12,8.4 15.1,10.2 15.1,13.8 12,15.6 8.9,13.8 8.9,10.2" fill="#fff"/><circle cx="12" cy="3" r="1.4" fill="#fff"/><circle cx="19.8" cy="7.5" r="1.4" fill="#fff"/><circle cx="19.8" cy="16.5" r="1.4" fill="#fff"/><circle cx="12" cy="21" r="1.4" fill="#fff"/><circle cx="4.2" cy="16.5" r="1.4" fill="#fff"/><circle cx="4.2" cy="7.5" r="1.4" fill="#fff"/><circle cx="12" cy="12" r="1.1" fill="#fff"/></g></svg></span>
+      <span class="brand-text">AI 聚合平台</span>
+    </a>
+    <div class="nav-links">
+      <a href="#home" class="nav-link active">首页</a>
+      <a href="#projects" class="nav-link">项目</a>
+      <a href="#toolbox" class="nav-link">工具箱</a>
+      <a href="#token" class="nav-link">无限 Token</a>
+      <a href="#music" class="nav-link">AI 音乐</a>
+      <a href="#voice" class="nav-link">语音合成</a>
+      <a href="#capabilities" class="nav-link">能力</a>
+      <a href="#treasure" class="nav-link">宝藏趣站</a>
+      <a href="#comments" class="nav-link">反馈</a>
+    </div>
+    <button class="menu-toggle" aria-label="菜单">
+      <span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- 站点公告条（后台发布后显示） -->
+  <div id="announcement-bar" class="announcement-bar"></div>
+
+  <!-- 移动端菜单 -->
+  <div class="mobile-menu">
+    <a href="#home">首页</a>
+    <a href="#projects">项目</a>
+    <a href="#toolbox">工具箱</a>
+    <a href="#token">无限 Token</a>
+    <a href="#music">AI 音乐</a>
+    <a href="#voice">语音合成</a>
+    <a href="#capabilities">能力</a>
+    <a href="#treasure">宝藏趣站</a>
+    <a href="#comments">反馈</a>
+  </div>
+
+  <main>
+    <!-- Hero -->
+    <section id="home" class="hero">
+      <div class="hero-content">
+        <div class="hero-eyebrow">INTELLIGENT CREATION ECOSYSTEM</div>
+        <h1 class="hero-title">
+          构建下一代<br>
+          <span class="gradient-text">AI 创作生态</span>
+        </h1>
+        <p class="hero-subtitle">
+          聚合小说创作、账号管理、智能 Agent 等前沿 AI 项目，以统一的高端体验呈现每一个创新成果。
+        </p>
+        <div class="hero-actions">
+          <a href="#projects" class="btn btn-primary">
+            <span>浏览项目</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="scroll-indicator">
+        <span></span>
+      </div>
+    </section>
+
+    <!-- AI 实时热榜（多源聚合 · 仅 AI 相关内容 · 无平台标识） -->
+    <section id="ai-hot" class="aihot-section">
+      <div class="aihot-aura"></div>
+      <div class="section-header reveal">
+        <span class="section-eyebrow">AI · Real-time</span>
+        <h2 class="section-title">AI 实时热榜</h2>
+        <p class="section-desc">聚合全网正在热议的 AI / 大模型 / 深度研究话题，实时更新，只看 AI 相关。</p>
+      </div>
+      <div class="aihot-wrap reveal">
+        <div class="aihot-bar">
+          <span class="aihot-live"><i></i>实时更新</span>
+          <button class="aihot-refresh" id="aihot-refresh" type="button">立即刷新 ↻</button>
+        </div>
+        <ul class="aihot-list" id="aihot-list"></ul>
+        <p class="aihot-note" id="aihot-note">正在拉取实时数据…</p>
+      </div>
+    </section>
+
+    <!-- 项目展示 -->
+    <section id="projects" class="projects-section">
+      <div class="section-header">
+        <span class="section-eyebrow">Selected Works</span>
+        <h2 class="section-title">精选项目</h2>
+        <p class="section-desc">每一个项目都代表着 AI 能力在创作与管理场景中的深度探索。</p>
+      </div>
+      <div id="projects-grid" class="projects-grid">
+        <!-- 动态渲染 -->
+      </div>
+    </section>
+
+    <!-- 工具箱 -->
+    <section id="toolbox" class="projects-section toolbox-section">
+      <div class="section-header">
+        <span class="section-eyebrow">Toolbox</span><br>
+        <div class="toolbox-title-row">
+          <h2 class="section-title">实用工具箱</h2>
+                    <P type="" class="" aria-label="联动" title="">X</p>
+          <a href="https://ai-bot.cn/" target="_blank" rel="noopener noreferrer" class="toolbox-logo-link">
+            <img src="https://ai-bot.cn/wp-content/uploads/2023/03/ai-bot-logo-black.png" alt="" class="toolbox-logo-img" />
+          </a>
+        </div>
+        <p class="section-desc">精选实用 AI 工具，涵盖在线服务与需本地安装的应用，点开即用。</p>
+      </div>
+      <div id="toolbox-grid" class="projects-grid">
+        <!-- 动态渲染 -->
+      </div>
+    </section>
+
+    <!-- 无限 Token 模块 -->
+    <section id="token" class="token-section">
+      <div class="token-aura"></div>
+      <div class="section-header reveal">
+        <span class="section-eyebrow">UNLIMITED AI ACCESS</span>
+        <h2 class="section-title">无限 Token</h2>
+        <p class="section-desc">打破调用上限，一处接入、无限调用。让 AI 创作与自动化任务永不掉线、不被额度打断。</p>
+      </div>
+
+      <!-- 核心展示：介绍 + 交互式计数视觉 -->
+      <div class="token-hero">
+        <div class="token-intro reveal">
+          <h3 class="token-lead">把「上限」变成「无限」</h3>
+          <p class="token-desc">
+            模块在后台建立稳定的额度调度通道，将单次受限的调用聚合为持续可用的资源池。
+            你只管创作，额度的事交给它。支持主流 AI 服务平台，本地轻量运行，安全隐私优先。
+          </p>
+          <ul class="token-points">
+            <li><span class="dot"></span>智能复用空闲额度，自动续接会话</li>
+            <li><span class="dot"></span>失败请求自动重试，不丢上下文</li>
+            <li><span class="dot"></span>可视化用量面板，消耗一目了然</li>
+          </ul>
+          <div class="token-actions">
+            <a class="btn btn-download" id="tokenDownload" href="https://1837523618.share.123pan.cn/123pan/Ue3MTd-ff9K3" target="_blank" rel="noopener noreferrer">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" />
+              </svg>
+              <span>免费下载</span>
+            </a>
+            <button class="btn btn-secondary" id="tokenCopy" type="button">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="11" height="11" rx="2" />
+                <path d="M5 15V5a2 2 0 012-2h10" />
+              </svg>
+              <span>复制分享链接</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="token-visual reveal" id="tokenVisual" aria-hidden="true">
+          <div class="tv-stage" id="tvStage">
+            <div class="tv-halo"></div>
+            <div class="tv-grid"></div>
+            <div class="tv-orbit tv-orbit-outer"><span class="tv-node"></span></div>
+            <div class="tv-orbit tv-orbit-mid">
+              <span class="tv-node tv-node-a"></span>
+              <span class="tv-node tv-node-b"></span>
+            </div>
+            <div class="tv-orbit tv-orbit-inner"><span class="tv-node tv-node-c"></span></div>
+            <div class="tv-core">
+              <div class="tv-core-ring"></div>
+              <div class="tv-glyph">∞</div>
+              <div class="tv-count" id="tokenCount">0</div>
+              <div class="tv-unit">TOKENS · 实时累计</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 功能卡片 -->
+      <div class="token-features">
+        <article class="token-card reveal" style="--i:0">
+          <div class="token-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" /></svg>
+          </div>
+          <h3>无限额度调用</h3>
+          <p>突破单账号调用上限，长文、批量任务与连续对话不再因额度耗尽而中断。</p>
+        </article>
+        <article class="token-card reveal" style="--i:1">
+          <div class="token-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18" /></svg>
+          </div>
+          <h3>多平台兼容</h3>
+          <p>适配主流 AI 服务平台，统一入口管理，无需为每个产品单独配置与切换。</p>
+        </article>
+        <article class="token-card reveal" style="--i:2">
+          <div class="token-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2" /><path d="M8 21h8M12 18v3" /></svg>
+          </div>
+          <h3>本地轻量运行</h3>
+          <p>无需复杂部署，下载即用。资源占用低，老旧设备也能流畅运行。</p>
+        </article>
+        <article class="token-card reveal" style="--i:3">
+          <div class="token-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" /><path d="M9.5 12l2 2 3.5-4" /></svg>
+          </div>
+          <h3>安全隐私优先</h3>
+          <p>核心调度在本地完成，敏感配置不外泄，使用过程清晰可控、可追溯。</p>
+        </article>
+      </div>
+
+      <!-- 优势数据 -->
+      <div class="token-stats">
+        <div class="token-stat reveal"><div class="token-stat-value" data-target="∞">∞</div><div class="token-stat-label">每日可用额度</div></div>
+        <div class="token-stat reveal"><div class="token-stat-value" data-target="99" data-suffix="%">0</div><div class="token-stat-label">调度稳定性</div></div>
+        <div class="token-stat reveal"><div class="token-stat-value" data-target="∞">∞</div><div class="token-stat-label">支持平台数</div></div>
+        <div class="token-stat reveal"><div class="token-stat-value" data-target="0" data-suffix="ms">0</div><div class="token-stat-label">额外部署成本</div></div>
+      </div>
+    </section>
+
+    <!-- AI 音乐 · 妙响创作平台（抖音旗下 AI 音乐，内嵌页面） -->
+    <section id="music" class="music-section">
+      <div class="music-aura"></div>
+      <div class="section-header reveal">
+        <span class="section-eyebrow">AI Music</span>
+        <h2 class="section-title">AI 音乐 · 妙响创作</h2>
+        <p class="section-desc">抖音旗下 AI 创作平台「妙响」，输入一句灵感即可生成专属 AI 歌曲与伴奏，边听边创作。</p>
+      </div>
+      <div class="music-wrap reveal">
+        <div class="music-frame">
+          <iframe class="music-iframe" src="https://music.douyin.com/studio?utm_source=web-note.cn"
+            title="妙响 AI 创作平台" loading="eager"
+            allow="autoplay; encrypted-media; clipboard-write; fullscreen"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="music-actions">
+          <a href="https://music.douyin.com/studio?utm_source=web-note.cn" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-large">前往妙响官网创作 ↗</a>
+          <p class="music-note">若页面未能加载，可点击上方按钮在新标签页打开。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 语音合成工作台 · VoxCPM-2（内嵌网页） -->
+    <section id="voice" class="tts-section">
+      <div class="tts-aura"></div>
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Voice Synthesis</span>
+        <h2 class="section-title">语音合成工作台 · VoxCPM-2</h2>
+        <p class="section-desc">基于开源大模型 VoxCPM-2 的在线语音合成工作台，支持多语种、多说话人，输入文本即可生成自然流畅的语音。无需本地部署，调用云端算力，直接在线试用</p>
+      </div>
+      <div class="tts-wrap reveal">
+        <div class="tts-frame">
+          <iframe class="tts-iframe" src="https://lxl8800.com/tool/html/VoxCPM-TTS.html"
+            title="VoxCPM-2 语音合成工作台" loading="eager"
+            allow="autoplay; clipboard-write; fullscreen; microphone"
+            referrerpolicy="no-referrer"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads allow-presentation allow-modals"></iframe>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 能力 -->
+    <section id="capabilities" class="capabilities-section">
+      <div class="section-header">
+        <span class="section-eyebrow">Capabilities</span>
+        <h2 class="section-title">平台能力</h2>
+        <p class="section-desc">从内容生成到智能管理，打造完整的 AI 工具链。</p>
+      </div>
+      <div class="capabilities-grid">
+        <div class="capability-card">
+          <div class="capability-num">01</div>
+          <h3>智能创作</h3>
+          <p>基于大语言模型的小说、文案与剧本生成，释放创作者想象力。</p>
+        </div>
+        <div class="capability-card">
+          <div class="capability-num">02</div>
+          <h3>账号治理</h3>
+          <p>多账号集中调度、会话隔离与批量操作，提升团队协作效率。</p>
+        </div>
+        <div class="capability-card">
+          <div class="capability-num">03</div>
+          <h3>Agent 协同</h3>
+          <p>具备长期记忆与自主决策能力的 AI Agent，持续进化完成复杂任务。</p>
+        </div>
+        <div class="capability-card">
+          <div class="capability-num">04</div>
+          <h3>视觉呈现</h3>
+          <p>高端沉浸式项目展示，让客户第一眼就能感受到产品的专业与创新。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 宝藏趣站：汇集博主分享的实用工具网站，支持自行收藏 -->
+    <section id="treasure" class="treasure-section">
+      <div class="treasure-aura"></div>
+      <div class="section-header reveal">
+        <span class="section-eyebrow">TREASURE · CURATED TOOLS</span>
+        <h2 class="section-title">宝藏趣站</h2>
+        <p>🔔紧急通知：目前暂时不支持自行上传云端服务器</p>
+        <p class="section-desc">汇集各路博主分享的实用工具网站，可浏览全网博主发掘的优质在线工具，随用随打开！</p>
+        
+      </div>
+
+      <div class="treasure-toolbar reveal">
+        <span class="treasure-count" id="treasure-count"></span>
+      </div>
+
+      <!-- 添加表单（默认隐藏） -->
+      <form class="treasure-form hidden" id="treasure-form">
+        <div class="treasure-form-inner">
+          <h3 class="treasure-form-header">📥 添加新站点</h3>
+          <div class="treasure-form-grid">
+            <div class="form-group">
+              <label for="ts-name">网站名称 *</label>
+              <input type="text" id="ts-name" maxlength="60" placeholder="例如：凛冬督学局" required>
+            </div>
+            <div class="form-group">
+              <label for="ts-url">网站网址 *</label>
+              <input type="url" id="ts-url" maxlength="500" placeholder="https://example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="ts-image">图片 URL *</label>
+              <input type="url" id="ts-image" maxlength="500" placeholder="https://.../cover.png" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="ts-desc">网站介绍 *</label>
+            <textarea id="ts-desc" maxlength="300" placeholder="一句话说明这个网站是做什么的" required></textarea>
+          </div>
+          <div class="treasure-form-actions">
+            <button type="submit" class="btn btn-primary">提交收藏</button>
+            <button type="button" class="btn btn-secondary" id="treasure-cancel">取消</button>
+            <span class="treasure-form-msg" id="treasure-form-msg"></span>
+          </div>
+        </div>
+      </form>
+
+      <div class="treasure-grid reveal" id="treasure-grid"></div>
+      <p class="treasure-empty hidden" id="treasure-empty">还没有收录站点，点击「添加收藏」成为第一个分享者吧。</p>
+      <p class="treasure-note" id="treasure-note">正在加载宝藏站点…</p>
+    </section>
+
+    <!-- 联合小绿书 模块 -->
+    <section id="xiaolvshu" class="xlshu-section">
+      <div class="xlshu-aura"></div>
+      <div class="section-header reveal">
+        <span class="section-eyebrow">CO-CREATION COMMUNITY</span>
+        <h2 class="section-title xlshu-title">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyNTYgMjU2Jz48cGF0aCBmaWxsPScjM0Q3QTJFJyBkPSdNMTI4IDE4Ny44NWE3MiA3MiAwIDAgMCA4IDQuNjJWMjMyYTggOCAwIDAgMS0xNiAwdi0zOS41M2E3MiA3MiAwIDAgMCA4LTQuNjJtNzAuMS0xMjUuMjZhNzYgNzYgMCAwIDAtMTQwLjIgMEE3MS43MSA3MS43MSAwIDAgMCAxNiAxMjcuOEMxNS45IDE2NiA0OCAxOTkgODYuMTQgMjAwYTcyLjIgNzIuMiAwIDAgMCAzMy44Ni03LjUzdi0zNS41M2wtNDMuNTgtMjEuNzhhOCA4IDAgMSAxIDcuMTYtMTQuMzJMMTIwIDEzOS4wNlY4OGE4IDggMCAwIDEgMTYgMHYyNy4wNmwzNi40Mi0xOC4yMmE4IDggMCAxIDEgNy4xNiAxNC4zMkwxMzYgMTMyLjk0djU5LjUzYTcyLjIgNzIuMiAwIDAgMCAzMiA3LjUzaDEuODJjMzguMTgtMSA3MC4yOS0zNCA3MC4xOC03Mi4yYTcxLjcxIDcxLjcxIDAgMCAwLTQxLjktNjUuMjEnLz48L3N2Zz4=" alt="小绿书" class="xlshu-icon" />
+          联合小绿书-与AI共创社区
+        </h2>
+        <p class="section-desc xlshu-subtitle"><span id="xlshu-typing"></span><span class="type-cursor">|</span></p>
+      </div>
+      <div class="xlshu-body">
+        <div class="xlshu-video-wrap">
+          <video class="xlshu-video" src="xiaolvshu/小绿书介绍.mp4" controls autoplay muted loop playsinline webkit-playsinline preload="metadata"></video>
+        </div>
+        <div class="xlshu-cta">
+          <a href="https://xiaolvshu.app" class="btn btn-primary xlshu-btn">
+            <span>前往游玩</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+
+        <div class="xlshu-opinion">
+          <div class="xlshu-opinion-badge">随机观点 · 实时推荐</div>
+          <div class="xlshu-opinion-card" id="xlshu-opinion-card">
+            <img class="xlshu-opinion-avatar" id="xlshu-avatar" src="xiaolvshu/avatars/0.svg" alt="">
+            <div class="xlshu-opinion-main">
+              <div class="xlshu-opinion-user">
+                <span id="xlshu-user"></span>
+                <span class="xlshu-opinion-tag" id="xlshu-tag"></span>
+              </div>
+              <p class="xlshu-opinion-text" id="xlshu-opinion-text"></p>
+            </div>
+          </div>
+          <button class="xlshu-opinion-next" id="xlshu-opinion-next" type="button">换一条 ›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 反馈（飞书表单嵌入） -->
+    <section id="comments" class="comments-section">
+      <div class="comments-aura"></div>
+      <div class="section-header reveal">
+        <span class="section-eyebrow">Feedback</span>
+        <h2 class="section-title">反馈</h2>
+        <p class="section-desc">欢迎留下你的想法、建议或问题，我们会认真对待每一条反馈。</p>
+      </div>
+
+      <div class="comments-wrap reveal">
+        <div class="feedback-frame">
+          <iframe
+            src="https://ii7krvbgsry.feishu.cn/share/base/form/shrcnHAF32QUfh0ACHHJlVBhg0X"
+            title="反馈表单"
+            loading="lazy"
+            class="feedback-iframe"
+            allow="fullscreen">
+          </iframe>
+        </div>
+        <p class="feedback-note">表单由飞书多维表格托管 · 提交即送达，无需登录</p>
+      </div>
+    </section>
+
+    <!-- 联系方式 / CTA -->
+    <section class="cta-section">
+      <div class="cta-content">
+        <h2>探索更多 AI 可能性</h2>
+        <p>持续迭代的前沿 AI 项目，为创作者与团队提供无限助力。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <span class="brand-mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><filter id="hlg" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="0.6" flood-color="#fff" flood-opacity="0.9"/></filter></defs><g filter="url(#hlg)"><polygon points="12,3 19.8,7.5 19.8,16.5 12,21 4.2,16.5 4.2,7.5" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><polygon points="12,8.4 15.1,10.2 15.1,13.8 12,15.6 8.9,13.8 8.9,10.2" fill="#fff"/><circle cx="12" cy="3" r="1.4" fill="#fff"/><circle cx="19.8" cy="7.5" r="1.4" fill="#fff"/><circle cx="19.8" cy="16.5" r="1.4" fill="#fff"/><circle cx="12" cy="21" r="1.4" fill="#fff"/><circle cx="4.2" cy="16.5" r="1.4" fill="#fff"/><circle cx="4.2" cy="7.5" r="1.4" fill="#fff"/><circle cx="12" cy="12" r="1.1" fill="#fff"/></g></svg></span>
+        <span>AI 聚合平台</span>
+      </div>
+
+      <!-- 友情链接 -->
+      <div class="friend-links">
+        <span class="friend-label">友情链接：</span>
+        <a href="https://modelscope.cn" target="_blank" rel="noopener noreferrer" title="ModelScope">
+          <img src="data:image/png;base64,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" alt="ModelScope" class="friend-logo">
+        </a>
+        <a href="https://www.runninghub.cn" target="_blank" rel="noopener noreferrer" title="RunningHub">
+          <img src="data:image/png;base64,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" alt="RunningHub" class="friend-logo">
+        </a>
+        <a href="https://build.nvidia.com" target="_blank" rel="noopener noreferrer" title="NVIDIA">
+          <img src="data:image/png;base64,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" alt="NVIDIA" class="friend-logo">
+        </a>
+      </div>
+
+      <p class="footer-copy">© 2026 AI 聚合平台. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js?v=55"></script>
+
+  
+  <!-- 反馈模块：飞书表单 iframe 嵌入，无需额外前端脚本 -->
+</body>
+</html>

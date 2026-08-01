@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>人脸处理工具箱</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- face-api.js (UMD, sets global `faceapi`) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-mark">◑</span>
+        <div class="brand-text">
+          <h1>人脸处理工具箱</h1>
+          <p>上传图片 · 自动识别人脸 · 随机遮挡 · 自动抠图 · 证件照底色 · 多比例裁剪 · 一键下载（无水印）</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <!-- 上传区 -->
+      <section id="dropZone" class="drop-zone" tabindex="0" aria-label="上传图片">
+        <div class="drop-inner">
+          <div class="drop-icon">⤴</div>
+          <p class="drop-title">点击或拖拽图片到此处</p>
+          <p class="drop-sub">支持 JPG / PNG / WEBP，自动检测并遮挡人脸</p>
+          <button id="pickBtn" class="btn btn-primary" type="button">选择图片</button>
+          <input id="fileInput" type="file" accept="image/*" hidden />
+        </div>
+      </section>
+
+      <!-- 预览 + 操作 -->
+      <section id="workspace" class="workspace hidden">
+        <div class="stage">
+          <div class="canvas-wrap" id="canvasWrap">
+            <div class="canvas-box" id="canvasBox">
+              <canvas id="canvas"></canvas>
+              <div class="layer-stack" id="layerStack"></div>
+              <canvas id="maskCanvas" class="mask-canvas hidden"></canvas>
+            </div>
+            <div id="manualHint" class="manual-hint hidden">手动模式：在画面上拖拽框选要遮挡的区域</div>
+          </div>
+        </div>
+
+        <aside class="panel">
+          <div class="status" id="status">未检测到人脸</div>
+
+          <div class="pick-row">
+            <label for="effectType">生成样式</label>
+            <select id="effectType" class="pick-select">
+              <option value="">随机样式</option>
+              <option value="grid">基础网格</option>
+              <option value="stocking">面部丝袜</option>
+              <option value="doodle">涂鸦风格</option>
+              <option value="puzzle">拼图碎片</option>
+              <option value="bokeh">光点散射</option>
+              <option value="metal">金属网格</option>
+              <option value="doodleGrid">透明涂鸦</option>
+              <option value="fragment">面部残缺</option>
+              <option value="cyber">赛博金属</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <button id="rerollBtn" class="btn btn-primary" type="button">🎲 重新随机</button>
+            <button id="addBtn" class="btn btn-ghost" type="button">➕ 添加遮挡</button>
+            <button id="manualBtn" class="btn btn-ghost" type="button">✏️ 手动框选</button>
+            <button id="dupBtn" class="btn btn-ghost" type="button">📋 复制同款</button>
+            <button id="unifyBtn" class="btn btn-ghost" type="button">🎯 统一同款</button>
+            <button id="resetBtn" class="btn btn-ghost" type="button">↺ 重新上传</button>
+            <button id="undoBtn" class="btn btn-ghost" type="button">↶ 撤销</button>
+            <button id="redoBtn" class="btn btn-ghost" type="button">↷ 重做</button>
+            <button id="downloadBtn" class="btn btn-accent" type="button">⬇ 下载图片</button>
+          </div>
+
+          <div class="tool-row">
+            <button id="matteBtn" class="btn btn-ghost" type="button" disabled>🪄 自动抠图</button>
+            <button id="cropBtn" class="btn btn-ghost" type="button">✂️ 裁剪</button>
+            <button id="ratioBtn" class="btn btn-ghost" type="button" disabled>📐 比例裁剪</button>
+            <button id="inpaintBtn" class="btn btn-ghost" type="button">🧽 去水印</button>
+          </div>
+
+          <div class="sub-panel hidden" id="bgPanel">
+            <div class="editor-title">抠图后底色</div>
+            <div class="bg-options">
+              <button class="bg-swatch" data-bg="#FFFFFF" style="background:#fff" title="白底">白</button>
+              <button class="bg-swatch" data-bg="#438EDB" style="background:#438EDB" title="蓝底">蓝</button>
+              <button class="bg-swatch" data-bg="#FF0000" style="background:#FF0000" title="红底">红</button>
+              <button class="bg-swatch" data-bg="transparent" title="透明（导出 PNG 带透明背景）">透明</button>
+            </div>
+            <button id="matteReset" class="btn btn-ghost" type="button">↺ 恢复原始图</button>
+          </div>
+
+          <div class="sub-panel hidden" id="ratioPanel">
+            <div class="editor-title">比例裁剪</div>
+            <div class="ratio-options" id="ratioOptions"></div>
+            <p class="editor-hint">先选一个比例，在图上拖动框选区域；确认后按该比例输出（标注「证件照」的为标准尺寸）。</p>
+          </div>
+
+          <div class="sub-panel hidden" id="inpaintPanel">
+            <div class="editor-title">涂抹去水印</div>
+            <label class="slider-row">
+              <span>笔刷大小 <b id="brushVal">40</b></span>
+              <input id="brushSize" type="range" min="8" max="160" step="2" value="40" />
+            </label>
+            <div class="editor-actions sub-actions">
+              <button id="inpaintApply" class="btn btn-primary" type="button">🪄 去除水印</button>
+              <button id="inpaintClear" class="btn btn-ghost" type="button">清空涂抹</button>
+              <button id="inpaintExit" class="btn btn-ghost" type="button">退出</button>
+            </div>
+            <p class="editor-hint">在图片上按住拖动，把水印区域涂抹覆盖，再点「去除水印」即可智能填补。</p>
+          </div>
+
+          <div class="adjust-block">
+            <div class="editor-title">基本图片处理</div>
+            <label class="slider-row"><span>亮度 <b id="brightVal">0</b></span><input id="brightness" type="range" min="-100" max="100" value="0" /></label>
+            <label class="slider-row"><span>对比度 <b id="contrastVal">0</b></span><input id="contrast" type="range" min="-100" max="100" value="0" /></label>
+            <label class="slider-row"><span>饱和度 <b id="satVal">0</b></span><input id="saturation" type="range" min="-100" max="100" value="0" /></label>
+            <label class="slider-row"><span>模糊 <b id="blurVal">0</b> px</span><input id="blur" type="range" min="0" max="12" value="0" /></label>
+            <label class="toggle-row"><input id="grayToggle" type="checkbox" /> 灰度（黑白）</label>
+            <button id="resetAdj" class="btn btn-ghost" type="button">重置调整</button>
+          </div>
+
+          <div class="editor hidden" id="editor">
+            <div class="editor-title">选中效果 · <span id="editorName">—</span></div>
+            <label class="slider-row">
+              <span>网格密度 <b id="densityVal">5</b></span>
+              <input id="density" type="range" min="1" max="10" step="1" value="5" />
+            </label>
+            <label class="slider-row">
+              <span>不透明度 <b id="opacityVal">100%</b></span>
+              <input id="opacity" type="range" min="20" max="100" step="1" value="100" />
+            </label>
+            <div class="editor-actions">
+              <button id="delBtn" class="btn btn-danger" type="button">🗑 删除该效果</button>
+            </div>
+            <p class="editor-hint">提示：直接拖动画面上的遮挡块可移动位置，拖动右下角圆点可缩放大小。</p>
+          </div>
+
+          <div class="effect-list" id="effectList"></div>
+
+          <p class="note">本工具生成的图像本身<strong>不含任何水印</strong>，下载即可直接使用。<br />快捷键：Delete 删除选中 · Ctrl/⌘+Z 撤销 · Ctrl/⌘+Shift+Z 重做</p>
+        </aside>
+      </section>
+
+      <!-- 加载遮罩 -->
+      <div id="loader" class="loader hidden">
+        <div class="spinner"></div>
+        <span id="loaderText">正在初始化模型…</span>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <span>本地处理 · 图片不会上传到任何服务器</span>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

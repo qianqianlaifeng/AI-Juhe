@@ -1,0 +1,21 @@
+﻿# 依赖
+node_modules/
+
+# Netlify（已移除，使用 GitHub Pages）
+netlify/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# 临时文件
+*.tmp
+*.cjs
+
+# 大文件（超过100MB）
+xiaolvshu/*.mp4
+_patch_main.js
