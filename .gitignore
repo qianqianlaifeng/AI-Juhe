@@ -19,3 +19,10 @@ Thumbs.db
 # 大文件（超过100MB）
 xiaolvshu/*.mp4
 _patch_main.js
+
+# 临时文件
+_c.js
+_check.js
+.cloudstudio/
+.workbuddy/
+frontend/node_modules/
