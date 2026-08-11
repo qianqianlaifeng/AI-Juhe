@@ -353,6 +353,30 @@
       indexLabel: 'Tool 13',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9500
+    },
+    {
+      id: 'tool_vocalremover',
+      title: 'vocalremover在线音频分离',
+      url: 'https://vocalremover.org/zh',
+      description: '在线人声与伴奏分离工具，上传歌曲即可一键提取人声、去除人声或拆分音轨，基于 AI 处理，免安装、即开即用。',
+      tags: ['音频分离', '人声提取', '在线'],
+      color: 'cyan',
+      image: '',
+      indexLabel: 'Tool 14',
+      actionLabel: '打开工具',
+      createdAt: Date.now() - 9600
+    },
+    {
+      id: 'tool_vogen',
+      title: 'vogen在线声音克隆',
+      url: 'https://vogen.app/zh',
+      description: '在线 AI 声音克隆工具，上传少量语音样本即可生成专属音色，支持文本转语音与语音合成，轻松复刻你的声音。',
+      tags: ['声音克隆', '语音合成', '在线'],
+      color: 'purple',
+      image: '',
+      indexLabel: 'Tool 15',
+      actionLabel: '打开工具',
+      createdAt: Date.now() - 9700
     }
   ];
 
