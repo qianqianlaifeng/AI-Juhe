@@ -377,6 +377,30 @@
       indexLabel: 'Tool 15',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9700
+    },
+    {
+      id: 'tool_toolpile',
+      title: '工具堆',
+      url: 'https://toolpile.app',
+      description: '在线工具聚合站，汇集视频去水印、视频处理、图片编辑、格式转换、AI 辅助等一揽子实用小工具，免安装、打开即用，日常剪辑与素材处理一站搞定。',
+      tags: ['视频去水印', '多媒体', '在线工具'],
+      color: 'cyan',
+      image: '',
+      indexLabel: 'Tool 16',
+      actionLabel: '打开工具',
+      createdAt: Date.now() - 9800
+    },
+    {
+      id: 'tool_tempmail',
+      title: '临时邮箱',
+      url: 'https://tempmail.edu.kg',
+      description: '在线临时邮箱，一键生成一次性邮箱地址，用于注册验证、接收验证码，避免暴露真实邮箱、拦截垃圾邮件，用完即弃保护隐私。',
+      tags: ['临时邮箱', '隐私保护', '在线'],
+      color: 'blue',
+      image: '',
+      indexLabel: 'Tool 17',
+      actionLabel: '打开工具',
+      createdAt: Date.now() - 9900
     }
   ];
 
