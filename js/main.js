@@ -838,7 +838,7 @@
     // 函数若未部署成功，前端自动回退直连一个已验证可跨域的国内源（同样只取 AI 相关）。
     // AI / 大模型 / 深度研究 关键词：用于把相关话题优先置顶
     const AI_KW_WORD = ['AI','LLM','GPT','AGI','MCP','RAG','Sora','AIGC','Copilot','Gemini','Claude','Llama'];
-    const AI_KW_PHRASE = ['大模型','智能体','DeepSeek','OpenAI','ChatGPT','豆包','通义','文心','Kimi','智谱','文心一言','讯飞星火','混元','百川','MiniMax','Midjourney','Diffusion','Sora','深度研究','推理模型','多模态','具身智能','强化学习','开源大模型','模型训练','向量数据库','知识库','提示词','Prompt','AI智能','大模型训练','AI Agent','AIGC','AI编程','AI搜索','AI视频','AI绘画','AI音乐','AI芯片'];
+    const AI_KW_PHRASE = ['大模型','智能体','人工智能','机器学习','神经网络','生成式','算力','Transformer','DeepSeek','OpenAI','ChatGPT','豆包','通义','文心','Kimi','智谱','文心一言','讯飞星火','混元','百川','MiniMax','Midjourney','Diffusion','Sora','深度研究','推理模型','多模态','具身智能','强化学习','开源大模型','模型训练','向量数据库','知识库','提示词','Prompt','AI智能','大模型训练','AI Agent','AIGC','AI编程','AI搜索','AI视频','AI绘画','AI音乐','AI芯片'];
     const isAI = t => {
       const s = ' ' + (t || '').toUpperCase() + ' ';
       return AI_KW_WORD.some(k => s.includes(' ' + k.toUpperCase() + ' '))
@@ -859,10 +859,16 @@
     function renderTop(arr) {
       if (!arr.length) throw new Error('空数据');
       if (!arr.some(x => x.title)) throw new Error('字段解析失败');
-      // 仅展示 AI 相关内容（服务端已过滤，这里再保险一次）
+      // 仅展示 AI 相关内容；不为空时才渲染，绝不回退到非 AI 条目
       const ai = arr.filter(x => isAI(x.title));
-      const shown = (ai.length ? ai : arr).slice(0, 20);
-      list.innerHTML = shown.map((x, i) => rowHTML(x, i, isAI(x.title))).join('');
+      if (!ai.length) {
+        list.innerHTML = '<li class="aihot-row aihot-empty">当前暂无 AI 相关热点，点「立即刷新」重试。</li>';
+        note.textContent = '实时更新 · 最近 ' + new Date().toLocaleTimeString('zh-CN');
+        note.classList.remove('is-error');
+        return;
+      }
+      const shown = ai.slice(0, 20);
+      list.innerHTML = shown.map((x, i) => rowHTML(x, i, true)).join('');
       note.textContent = '实时更新 · 最近 ' + new Date().toLocaleTimeString('zh-CN');
       note.classList.remove('is-error');
     }
@@ -932,7 +938,7 @@
       const j = await r.json();
       const arr = (j.data || []).map(x => ({ title: x.title, url: x.link || x.url || '#', hot: x.hotValue || x.hot || '' }));
       const aiOnly = arr.filter(x => isAI(x.title));
-      renderTop(aiOnly.length ? aiOnly : arr);
+      renderTop(aiOnly);
     }
     async function load() {
       btn.classList.add('is-loading');
