@@ -1,8 +1,8 @@
 ﻿# 依赖
 node_modules/
 
-# Netlify（已移除，使用 GitHub Pages）
-netlify/
+# Netlify（保留：双平台部署 GitHub Pages + Netlify，函数随仓库同步）
+# netlify/
 
 # 系统文件
 .DS_Store

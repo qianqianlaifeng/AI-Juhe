@@ -837,8 +837,8 @@
     // 按 AI 关键词严格过滤、去重、排序后返回（已剥离来源字段），前端只展示 AI 相关内容、不出现任何平台名。
     // 函数若未部署成功，前端自动回退直连一个已验证可跨域的国内源（同样只取 AI 相关）。
     // AI / 大模型 / 深度研究 关键词：用于把相关话题优先置顶
-    const AI_KW_WORD = ['AI','LLM','GPT','AGI','MCP','RAG','Sora','AIGC','Copilot','Gemini','Claude','Llama'];
-    const AI_KW_PHRASE = ['大模型','智能体','人工智能','机器学习','神经网络','生成式','算力','Transformer','DeepSeek','OpenAI','ChatGPT','豆包','通义','文心','Kimi','智谱','文心一言','讯飞星火','混元','百川','MiniMax','Midjourney','Diffusion','Sora','深度研究','推理模型','多模态','具身智能','强化学习','开源大模型','模型训练','向量数据库','知识库','提示词','Prompt','AI智能','大模型训练','AI Agent','AIGC','AI编程','AI搜索','AI视频','AI绘画','AI音乐','AI芯片'];
+    const AI_KW_WORD = ['AI','LLM','GPT','AGI','MCP','RAG','Sora','AIGC','Copilot','Gemini','Claude','Llama','NLP','TTS','ASR','CV','Mistral','Qwen','GLM','Perplexity','Stable','Diffusion','Nvidia','GPU','Chatbot','Neural','Transformer'];
+    const AI_KW_PHRASE = ['大模型','智能体','人工智能','机器学习','深度学习','神经网络','生成式','算力','智能算力','DeepSeek','OpenAI','ChatGPT','豆包','通义','文心','文心一言','Kimi','智谱','讯飞星火','星火','混元','百川','零一万物','面壁','月之暗面','阶跃','MiniMax','Midjourney','Diffusion','Sora','深度研究','深度思考','推理模型','多模态','具身智能','强化学习','开源大模型','模型训练','向量数据库','知识库','提示词','Prompt','AI智能','AI大模型','大模型训练','AI Agent','AI应用','生成式AI','AIGC','AI编程','AI搜索','AI视频','AI绘画','AI音乐','AI芯片','AI PPT','数字人','智能助手','英伟达','国产大模型','数据要素','算法','语料','智能'];
     const isAI = t => {
       const s = ' ' + (t || '').toUpperCase() + ' ';
       return AI_KW_WORD.some(k => s.includes(' ' + k.toUpperCase() + ' '))
@@ -899,6 +899,13 @@
     async function loadFromSources() {
       const sources = [
         { name:'36kr', url:'https://api.vvhan.com/api/hotlist?type=36k', map: d => pickArray(d).map(x => ({ title: x.title, url: x.url || x.link || '', hot: String(x.hot || x.hotValue || '') })) },
+        { name:'ithome', url:'https://api.vvhan.com/api/hotlist?type=ithome', map: d => pickArray(d).map(x => ({ title: x.title, url: x.url || x.link || '', hot: String(x.hot || x.hotValue || '') })) },
+        { name:'csdn', url:'https://api.vvhan.com/api/hotlist?type=csdn', map: d => pickArray(d).map(x => ({ title: x.title, url: x.url || x.link || '', hot: String(x.hot || x.hotValue || '') })) },
+        { name:'juejin', url:'https://api.vvhan.com/api/hotlist?type=juejin', map: d => pickArray(d).map(x => ({ title: x.title, url: x.url || x.link || '', hot: String(x.hot || x.hotValue || '') })) },
+        { name:'sspai', url:'https://api.vvhan.com/api/hotlist?type=sspai', map: d => pickArray(d).map(x => ({ title: x.title, url: x.url || x.link || '', hot: String(x.hot || x.hotValue || '') })) },
+        { name:'51cto', url:'https://api.vvhan.com/api/hotlist?type=51cto', map: d => pickArray(d).map(x => ({ title: x.title, url: x.url || x.link || '', hot: String(x.hot || x.hotValue || '') })) },
+        { name:'coolapk', url:'https://api.vvhan.com/api/hotlist?type=coolapk', map: d => pickArray(d).map(x => ({ title: x.title, url: x.url || x.link || '', hot: String(x.hot || x.hotValue || '') })) },
+        { name:'freebuf', url:'https://api.vvhan.com/api/hotlist?type=freebuf', map: d => pickArray(d).map(x => ({ title: x.title, url: x.url || x.link || '', hot: String(x.hot || x.hotValue || '') })) },
         { name:'zhihu', url:'https://api.codelife.cc/api/top/list?lang=cn&id=mproPpoq6O&size=50', map: d => {
           const arr = d.data != null ? (Array.isArray(d.data) ? d.data : d.data.list || []) : pickArray(d);
           return arr.map(x => ({ title: x.title, url: x.link || x.url || '', hot: String(x.hotValue || x.hot || '') }));
@@ -940,17 +947,32 @@
       const aiOnly = arr.filter(x => isAI(x.title));
       renderTop(aiOnly);
     }
+    // 优先走 Netlify 服务端聚合函数（同源 /.netlify/functions/aihot）：
+    // 服务器侧抓取，绕开浏览器 CORS、能连到 vvhan 等被浏览器限制的源，最稳定。
+    // 在非 Netlify 托管（如 GitHub Pages）上该路径 404/网络错误，会自动回退到下方客户端直连。
+    async function loadFromNetlify() {
+      const r = await fetch('/.netlify/functions/aihot', { cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const j = await r.json();
+      if (!j || j.ok !== true || !Array.isArray(j.items) || !j.items.length) {
+        throw new Error(j && j.error ? j.error : '空数据');
+      }
+      renderTop(j.items);
+    }
     async function load() {
       btn.classList.add('is-loading');
       note.classList.remove('is-error');
       note.textContent = '正在拉取实时数据…';
       try {
-        await loadFromSources();
+        await loadFromNetlify();
       } catch (e) {
-        try { await loadCodelife(); }
+        try { await loadFromSources(); }
         catch (e2) {
-          note.classList.add('is-error');
-          note.textContent = '实时数据加载失败（' + e2.message + '），点「立即刷新」重试。';
+          try { await loadCodelife(); }
+          catch (e3) {
+            note.classList.add('is-error');
+            note.textContent = '实时数据加载失败（' + e3.message + '），点「立即刷新」重试。';
+          }
         }
       } finally {
         btn.classList.remove('is-loading');
