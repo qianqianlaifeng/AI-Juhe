@@ -74,13 +74,24 @@
       color: 'blue',
       image: 'assets/images/ai-agent.jpg',
       createdAt: Date.now() - 2000
+    },
+    {
+      id: 'proj_4',
+      title: 'AI 数字人',
+      url: 'https://pan.quark.cn/s/57ec947d3be1',
+      description: 'AI 数字人生成与驱动工具，支持形象克隆、语音合成与视频生成，轻松打造专属虚拟主播与数字分身。',
+      tags: ['数字人', '虚拟形象', '视频生成'],
+      color: 'pink',
+      image: '',
+      prompt: '提取码可联系QQ：2337835909',
+      createdAt: Date.now() - 3000
     }
   ];
 
   const STORAGE_KEY = 'ai_platform_projects';
   const INITIALIZED_KEY = 'ai_platform_initialized';
   const VERSION_KEY = 'ai_platform_version';
-  const CURRENT_VERSION = '3';
+  const CURRENT_VERSION = '4';
 
   const COLOR_MAP = {
     cyan: 'rgba(0, 212, 255, 0.15)',
@@ -107,6 +118,27 @@
     }
   }
 
+  function showTip(text) {
+    if (!text) return;
+    let tip = document.getElementById('ai-tip-toast');
+    if (!tip) {
+      tip = document.createElement('div');
+      tip.id = 'ai-tip-toast';
+      tip.style.cssText = 'position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(8px);max-width:90vw;z-index:99999;background:rgba(15,20,30,0.95);color:#fff;padding:14px 20px;border-radius:12px;font-size:14px;line-height:1.5;box-shadow:0 10px 40px rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.12);backdrop-filter:blur(8px);opacity:0;transition:opacity .25s ease,transform .25s ease;pointer-events:none;text-align:center;';
+      document.body.appendChild(tip);
+    }
+    tip.textContent = text;
+    requestAnimationFrame(() => {
+      tip.style.opacity = '1';
+      tip.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    clearTimeout(tip._t);
+    tip._t = setTimeout(() => {
+      tip.style.opacity = '0';
+      tip.style.transform = 'translateX(-50%) translateY(8px)';
+    }, 6000);
+  }
+
   function renderCardGrid(grid, data) {
     if (!grid) return;
 
@@ -127,6 +159,7 @@
       card.style.transitionDelay = `${index * 0.1}s`;
       card.addEventListener('click', () => {
         window.open(proj.url, '_blank', 'noopener,noreferrer');
+        if (proj.prompt) showTip(proj.prompt);
       });
 
       const tagsHtml = (proj.tags || []).map(tag =>
