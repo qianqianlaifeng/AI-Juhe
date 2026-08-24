@@ -2101,7 +2101,7 @@ section {
   }
 }
 
-/* ===== 联合小绿书 模块 ===== */
+/* ===== 白日梦社区 模块 ===== */
 .xlshu-section {
   position: relative;
   padding: 140px 5%;
@@ -2114,7 +2114,7 @@ section {
   width: 720px; height: 720px;
   max-width: 90vw;
   transform: translateX(-50%);
-  background: radial-gradient(circle, rgba(61,122,46,0.14), transparent 62%);
+  background: radial-gradient(circle, rgba(124,58,237,0.16), transparent 62%);
   filter: blur(40px);
   pointer-events: none;
   z-index: 0;
@@ -2131,7 +2131,7 @@ section {
   width: 46px;
   height: 46px;
   flex: 0 0 auto;
-  filter: drop-shadow(0 4px 14px rgba(61,122,46,0.45));
+  filter: drop-shadow(0 4px 14px rgba(124,58,237,0.5));
 }
 .xlshu-subtitle {
   min-height: 1.8em;
@@ -2142,7 +2142,7 @@ section {
 .type-cursor {
   display: inline-block;
   margin-left: 2px;
-  color: #3D7A2E;
+  color: #7c3aed;
   font-weight: 700;
   animation: xlshu-blink 1s steps(1) infinite;
 }
@@ -2169,6 +2169,39 @@ section {
   height: auto;
   max-height: 70vh;
 }
+.daydream-poster {
+  min-height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  background:
+    radial-gradient(120% 120% at 18% 12%, rgba(124,58,237,0.40), transparent 55%),
+    radial-gradient(120% 120% at 86% 88%, rgba(59,130,246,0.32), transparent 55%),
+    linear-gradient(135deg, #0f1226, #1a1033 58%, #0c1430);
+  color: #fff;
+}
+.daydream-poster-inner { text-align: center; max-width: 560px; }
+.daydream-poster-kicker {
+  display: inline-block;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.72);
+  padding: 6px 14px;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 999px;
+}
+.daydream-poster-title {
+  font-size: 2.4rem;
+  margin: 18px 0 10px;
+  background: linear-gradient(90deg, #c4b5fd, #93c5fd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.daydream-poster-text { font-size: 1.05rem; color: rgba(255,255,255,0.85); margin: 0 0 14px; }
+.daydream-poster-url { font-size: 0.9rem; color: rgba(255,255,255,0.6); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 .xlshu-cta {
   margin-top: 28px;
 }
@@ -2194,8 +2227,8 @@ section {
   width: 8px; height: 8px;
   margin-top: -4px;
   border-radius: 50%;
-  background: #3D7A2E;
-  box-shadow: 0 0 10px #3D7A2E;
+  background: #7c3aed;
+  box-shadow: 0 0 10px #7c3aed;
   animation: xlshu-pulse 1.4s ease-in-out infinite;
 }
 @keyframes xlshu-pulse {
@@ -2222,7 +2255,7 @@ section {
   width: 52px; height: 52px;
   border-radius: 50%;
   background: #fff;
-  border: 2px solid rgba(61,122,46,0.6);
+  border: 2px solid rgba(124,58,237,0.6);
   box-shadow: 0 4px 14px rgba(0,0,0,0.3);
 }
 .xlshu-opinion-main { flex: 1 1 auto; min-width: 0; }
@@ -2241,9 +2274,9 @@ section {
   font-size: 0.7rem;
   padding: 2px 8px;
   border-radius: 999px;
-  color: #8fd6a0;
-  background: rgba(61,122,46,0.18);
-  border: 1px solid rgba(61,122,46,0.4);
+  color: #c4b5fd;
+  background: rgba(124,58,237,0.18);
+  border: 1px solid rgba(124,58,237,0.4);
   white-space: nowrap;
 }
 .xlshu-opinion-text {
@@ -2255,16 +2288,16 @@ section {
 .xlshu-opinion-next {
   font: inherit;
   cursor: pointer;
-  color: #8fd6a0;
+  color: #c4b5fd;
   background: transparent;
-  border: 1px solid rgba(61,122,46,0.5);
+  border: 1px solid rgba(124,58,237,0.5);
   border-radius: 999px;
   padding: 8px 18px;
   font-size: 0.85rem;
   transition: background 0.25s, color 0.25s, transform 0.15s;
 }
 .xlshu-opinion-next:hover {
-  background: rgba(61,122,46,0.18);
+  background: rgba(124,58,237,0.18);
   transform: translateY(-1px);
 }
 .xlshu-opinion-next:active { transform: translateY(0); }
