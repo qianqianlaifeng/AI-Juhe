@@ -206,6 +206,19 @@
   // 工具箱：本地即开即用的小工具
   const DEFAULT_TOOLS = [
     {
+      id: 'tool_gptimage',
+      title: '免费GPT-image生图',
+      url: 'https://share.s17t9.my/p/261aa1ae',
+      description: '免费在线使用 GPT-image 生图，输入文字描述即可生成高质量 AI 图片，无需登录、打开即用，适合快速出图与设计灵感。',
+      tags: ['AI生图', 'GPT', '免费'],
+      color: 'purple',
+      image: '',
+      hideIndex: true,
+      badge: '🔥 火爆',
+      actionLabel: '前往访问',
+      createdAt: Date.now() + 12000
+    },
+    {
       id: 'tool_aibot',
       title: 'AI 工具集',
       url: 'https://ai-bot.cn/',
