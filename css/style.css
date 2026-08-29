@@ -615,6 +615,12 @@ section {
   animation: badgePulse 2.5s ease-in-out infinite;
 }
 
+/* 自研徽章：青蓝渐变，与火爆（橙红）区分 */
+.project-card-badge.badge-self {
+  background: linear-gradient(135deg, #00c2ff, #0072ff, #7c4dff);
+  box-shadow: 0 2px 12px rgba(0, 114, 255, 0.35);
+}
+
 @keyframes badgePulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.8; }
