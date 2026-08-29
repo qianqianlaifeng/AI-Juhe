@@ -255,6 +255,8 @@
       image: '',
       badge: '🛠️ 自研',
       badgeClass: 'badge-self',
+      badge: '🛠️ 自研',
+      badgeClass: 'badge-self',
       indexLabel: 'Tool 01',
       actionLabel: '打开工具',
       createdAt: Date.now()
@@ -269,21 +271,11 @@
       image: '',
       badge: '🛠️ 自研',
       badgeClass: 'badge-self',
+      badge: '🛠️ 自研',
+      badgeClass: 'badge-self',
       indexLabel: 'Tool 02',
       actionLabel: '打开工具',
       createdAt: Date.now() + 50
-    },
-    {
-      id: 'tool_modelcost',
-      title: '看懂 AI 平台价格',
-      url: 'http://creaibo.com/modelcost',
-      description: '一站查询并对比主流 AI 平台各模型的单价、Token 计费与套餐差异，输入模型即可看懂成本结构，选模型不再被价格绕晕。',
-      tags: ['AI 价格', '成本对比', '在线'],
-      color: 'cyan',
-      image: '',
-      indexLabel: 'Tool 03',
-      actionLabel: '打开工具',
-      createdAt: Date.now() + 20000
     },
     {
       id: 'tool_aihuamian',
@@ -293,9 +285,23 @@
       tags: ['AI绘画', '提示词', '教程'],
       color: 'pink',
       image: '',
-      indexLabel: 'Tool 04',
+      badge: '🛠️ 自研',
+      badgeClass: 'badge-self',
+      indexLabel: 'Tool 03',
       actionLabel: '打开工具',
       createdAt: Date.now() + 500
+    },
+    {
+      id: 'tool_modelcost',
+      title: '看懂 AI 平台价格',
+      url: 'http://creaibo.com/modelcost',
+      description: '一站查询并对比主流 AI 平台各模型的单价、Token 计费与套餐差异，输入模型即可看懂成本结构，选模型不再被价格绕晕。',
+      tags: ['AI 价格', '成本对比', '在线'],
+      color: 'cyan',
+      image: '',
+      indexLabel: 'Tool 04',
+      actionLabel: '打开工具',
+      createdAt: Date.now() + 20000
     },
     {
       id: 'tool_chatgpt',
