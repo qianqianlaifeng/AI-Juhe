@@ -174,8 +174,9 @@
       const indexLabel = proj.indexLabel || `Project 0${index + 1}`;
       const showIndex = !proj.hideIndex;
       const showTags = !proj.hideTags;
+      const badgeClass = proj.badgeClass ? ' ' + proj.badgeClass : '';
       const badgeHtml = proj.badge
-        ? `<div class="project-card-badge">${escapeHtml(proj.badge)}</div>`
+        ? `<div class="project-card-badge${badgeClass}">${escapeHtml(proj.badge)}</div>`
         : '';
 
       card.innerHTML = `
@@ -245,18 +246,6 @@
       createdAt: Date.now() + 12000
     },
     {
-      id: 'tool_modelcost',
-      title: '看懂 AI 平台价格',
-      url: 'http://creaibo.com/modelcost',
-      description: '一站查询并对比主流 AI 平台各模型的单价、Token 计费与套餐差异，输入模型即可看懂成本结构，选模型不再被价格绕晕。',
-      tags: ['AI 价格', '成本对比', '在线'],
-      color: 'cyan',
-      image: '',
-      indexLabel: 'Tool 01',
-      actionLabel: '打开工具',
-      createdAt: Date.now() + 20000
-    },
-    {
       id: 'tool_face',
       title: '人脸处理工具箱',
       url: '人脸处理工具箱/index.html',
@@ -264,9 +253,37 @@
       tags: ['图像处理', '人脸检测', '隐私保护'],
       color: 'pink',
       image: '',
-      indexLabel: 'Tool 02',
+      badge: '🛠️ 自研',
+      badgeClass: 'badge-self',
+      indexLabel: 'Tool 01',
       actionLabel: '打开工具',
       createdAt: Date.now()
+    },
+    {
+      id: 'tool_delogo',
+      title: 'AI 图片去水印',
+      url: '图片去水印/index.html',
+      description: '本地 AI 模型自动检测并消除图片水印（豆包 / 即梦 / 可灵 / Gemini 等平台水印），上传即处理、一键下载，全程浏览器本地推理，图片不上传服务器。',
+      tags: ['图像处理', '去水印', 'AI修复', '本地'],
+      color: 'purple',
+      image: '',
+      badge: '🛠️ 自研',
+      badgeClass: 'badge-self',
+      indexLabel: 'Tool 02',
+      actionLabel: '打开工具',
+      createdAt: Date.now() + 50
+    },
+    {
+      id: 'tool_modelcost',
+      title: '看懂 AI 平台价格',
+      url: 'http://creaibo.com/modelcost',
+      description: '一站查询并对比主流 AI 平台各模型的单价、Token 计费与套餐差异，输入模型即可看懂成本结构，选模型不再被价格绕晕。',
+      tags: ['AI 价格', '成本对比', '在线'],
+      color: 'cyan',
+      image: '',
+      indexLabel: 'Tool 03',
+      actionLabel: '打开工具',
+      createdAt: Date.now() + 20000
     },
     {
       id: 'tool_aihuamian',
@@ -276,7 +293,7 @@
       tags: ['AI绘画', '提示词', '教程'],
       color: 'pink',
       image: '',
-      indexLabel: 'Tool 03',
+      indexLabel: 'Tool 04',
       actionLabel: '打开工具',
       createdAt: Date.now() + 500
     },
@@ -288,7 +305,7 @@
       tags: ['AI 对话', 'ChatGPT', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 04',
+      indexLabel: 'Tool 05',
       actionLabel: '打开工具',
       createdAt: Date.now() - 1000
     },
@@ -300,7 +317,7 @@
       tags: ['图像处理', 'AI 编辑', '在线'],
       color: 'blue',
       image: '',
-      indexLabel: 'Tool 05',
+      indexLabel: 'Tool 06',
       actionLabel: '打开工具',
       createdAt: Date.now() - 2000
     },
@@ -312,7 +329,7 @@
       tags: ['无损音乐', 'FLAC', '在线'],
       color: 'purple',
       image: '',
-      indexLabel: 'Tool 06',
+      indexLabel: 'Tool 07',
       actionLabel: '打开工具',
       createdAt: Date.now() - 3000
     },
@@ -324,7 +341,7 @@
       tags: ['水印去除', '视频处理', '在线'],
       color: 'pink',
       image: '',
-      indexLabel: 'Tool 07',
+      indexLabel: 'Tool 08',
       actionLabel: '打开工具',
       createdAt: Date.now() - 4000
     },
@@ -336,7 +353,7 @@
       tags: ['提示词', 'AI 反推', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 08',
+      indexLabel: 'Tool 09',
       actionLabel: '打开工具',
       createdAt: Date.now() - 5000
     },
@@ -348,7 +365,7 @@
       tags: ['视频翻译', '语音转录', 'AI配音'],
       color: 'blue',
       image: '',
-      indexLabel: 'Tool 09',
+      indexLabel: 'Tool 10',
       actionLabel: '前往下载',
       createdAt: Date.now() - 6000
     },
@@ -360,7 +377,7 @@
       tags: ['提示词', 'Prompt', '高效'],
       color: 'purple',
       image: '',
-      indexLabel: 'Tool 10',
+      indexLabel: 'Tool 11',
       actionLabel: '打开工具',
       createdAt: Date.now() - 7000
     },
@@ -372,7 +389,7 @@
       tags: ['在线工具', '多媒体', '免费'],
       color: 'purple',
       image: '',
-      indexLabel: 'Tool 11',
+      indexLabel: 'Tool 12',
       actionLabel: '打开工具',
       createdAt: Date.now() - 8000
     },
@@ -384,7 +401,7 @@
       tags: ['付费墙', '阅读', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 12',
+      indexLabel: 'Tool 13',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9000
     },
@@ -396,7 +413,7 @@
       tags: ['AI编程', '智能助手', '在线'],
       color: 'blue',
       image: '',
-      indexLabel: 'Tool 13',
+      indexLabel: 'Tool 14',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9500
     },
@@ -408,7 +425,7 @@
       tags: ['音频分离', '人声提取', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 14',
+      indexLabel: 'Tool 15',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9600
     },
@@ -420,7 +437,7 @@
       tags: ['声音克隆', '语音合成', '在线'],
       color: 'purple',
       image: '',
-      indexLabel: 'Tool 15',
+      indexLabel: 'Tool 16',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9700
     },
@@ -432,7 +449,7 @@
       tags: ['视频去水印', '多媒体', '在线工具'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 16',
+      indexLabel: 'Tool 17',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9800
     },
@@ -444,21 +461,9 @@
       tags: ['临时邮箱', '隐私保护', '在线'],
       color: 'blue',
       image: '',
-      indexLabel: 'Tool 17',
-      actionLabel: '打开工具',
-      createdAt: Date.now() - 9900
-    },
-    {
-      id: 'tool_delogo',
-      title: 'AI 图片去水印',
-      url: '图片去水印/index.html',
-      description: '本地 AI 模型自动检测并消除图片水印（豆包 / 即梦 / 可灵 / Gemini 等平台水印），上传即处理、一键下载，全程浏览器本地推理，图片不上传服务器。',
-      tags: ['图像处理', '去水印', 'AI修复', '本地'],
-      color: 'purple',
-      image: '',
       indexLabel: 'Tool 18',
       actionLabel: '打开工具',
-      createdAt: Date.now() + 50
+      createdAt: Date.now() - 9900
     }
   ];
 
