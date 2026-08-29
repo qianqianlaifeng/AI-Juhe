@@ -3252,106 +3252,91 @@ section[id] { scroll-margin-top: 86px; }
   @keyframes pulse{0%{transform:scale(1);opacity:.7}70%{transform:scale(1.7);opacity:0}100%{opacity:0}}
   @keyframes fabFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 
-  /* 弹窗 */
-  .reward-mask{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(28,22,46,.42);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:maskIn .3s ease both}
+  /* 弹窗：深色科技蓝紫主题，与站点统一 */
+  .reward-mask{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(2,2,5,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:maskIn .3s ease both}
   @keyframes maskIn{from{opacity:0}to{opacity:1}}
-  .reward-card{position:relative;width:min(396px,92vw);border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 30px 80px rgba(28,22,46,.35);animation:cardIn .42s cubic-bezier(.18,.89,.32,1.28) both}
-  @keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.94)}to{opacity:1;transform:none}}
+  .reward-card{position:relative;width:min(396px,92vw);border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#151528 0%,#0c0c18 100%);border:1px solid rgba(0,212,255,.18);box-shadow:0 30px 90px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04),0 0 60px rgba(0,212,255,.08);animation:cardIn .42s cubic-bezier(.18,.89,.32,1.28) both}
+  @keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
 
   /* 顶部彩带 */
-  .reward-ribbon{position:relative;background:linear-gradient(120deg,var(--reward-warm-1),var(--reward-warm-2) 55%,var(--reward-warm-3));display:flex;flex-direction:column;align-items:center;gap:5px;padding:20px 0 14px}
-  .reward-ribbon::after{content:"";position:absolute;inset:0;background:radial-gradient(120px 60px at 30% -20%,rgba(255,255,255,.5),transparent)}
-  .ribbon-heart{width:24px;height:24px;opacity:.92;position:relative;z-index:1}
-  .ribbon-title{position:relative;z-index:1;color:#fff;font-size:19px;font-weight:700;letter-spacing:.5px;text-shadow:0 1px 6px rgba(0,0,0,.12)}
-  .reward-close{position:absolute;top:12px;right:14px;width:30px;height:30px;border:none;border-radius:50%;background:rgba(255,255,255,.9);color:#6b6480;font-size:17px;cursor:pointer;line-height:1;z-index:3}
-  .reward-close:hover{background:#fff;transform:rotate(90deg);transition:transform .3s}
+  .reward-ribbon{position:relative;background:linear-gradient(135deg,#00c2ff 0%,#0072ff 45%,#7c4dff 100%);display:flex;flex-direction:column;align-items:center;gap:6px;padding:24px 0 18px}
+  .reward-ribbon::after{content:"";position:absolute;inset:0;background:radial-gradient(140px 70px at 25% -10%,rgba(255,255,255,.45),transparent);pointer-events:none}
+  .reward-ribbon::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);transform:skewX(-20deg) translateX(-120%);animation:ribbonShine 4s ease-in-out infinite}
+  @keyframes ribbonShine{0%,100%{transform:skewX(-20deg) translateX(-120%)}50%{transform:skewX(-20deg) translateX(120%)}}
+  .ribbon-heart{width:26px;height:26px;opacity:.95;position:relative;z-index:1}
+  .ribbon-title{position:relative;z-index:1;color:#fff;font-size:20px;font-weight:800;letter-spacing:.5px;text-shadow:0 2px 8px rgba(0,0,0,.2)}
+  .reward-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border:none;border-radius:50%;background:rgba(0,0,0,.25);color:#fff;font-size:20px;cursor:pointer;line-height:1;z-index:3;transition:.2s;display:flex;align-items:center;justify-content:center}
+  .reward-close:hover{background:rgba(0,0,0,.45);transform:rotate(90deg)}
 
-  .reward-body{padding:20px 22px 22px}
-  .reward-sub{text-align:center;font-size:13px;color:var(--reward-muted);margin-bottom:14px}
-  .reward-copy{font-size:13.5px;line-height:1.75;color:#4b4566;background:linear-gradient(180deg,#fff6f0,#fff);border:1px solid #ffe6d6;border-radius:14px;padding:12px 14px;margin-bottom:16px}
-  .reward-copy b{color:var(--reward-warm-1)}
+  .reward-body{padding:22px 24px 24px}
+  .reward-sub{text-align:center;font-size:13px;color:rgba(248,250,252,.55);margin-bottom:14px}
+  .reward-copy{font-size:13.5px;line-height:1.75;color:rgba(248,250,252,.82);background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.12);border-radius:16px;padding:12px 14px;margin-bottom:16px}
+  .reward-copy b{color:var(--primary)}
 
   /* 二维码 + 扫描线 */
-  .qr-wrap{position:relative;width:184px;margin:0 auto;border-radius:16px;overflow:hidden;border:1px solid var(--reward-line);background:#fff;padding:0}
-  .qr-wrap img{display:block;width:100%;height:auto}
-  .qr-scan{position:absolute;left:0;right:0;top:0;height:46px;background:linear-gradient(180deg,rgba(255,122,138,0),rgba(255,122,138,.55),rgba(255,122,138,0));animation:scan 2.4s linear infinite}
-  @keyframes scan{0%{transform:translateY(-46px)}100%{transform:translateY(184px)}}
-  .qr-tip{text-align:center;font-size:12.5px;color:var(--reward-warm-1);font-weight:600;margin-top:10px}
-  .qr-tip small{display:block;color:var(--reward-muted);font-weight:400;margin-top:3px}
+  .qr-wrap{position:relative;width:180px;margin:0 auto;border-radius:18px;overflow:hidden;border:1px solid rgba(0,212,255,.22);background:#fff;padding:6px;box-shadow:0 8px 30px rgba(0,212,255,.12)}
+  .qr-wrap img{display:block;width:100%;height:auto;border-radius:12px}
+  .qr-scan{position:absolute;left:6px;right:6px;top:6px;height:44px;background:linear-gradient(180deg,rgba(0,194,255,0),rgba(0,194,255,.55),rgba(0,194,255,0));animation:scan 2.4s linear infinite;border-radius:12px}
+  @keyframes scan{0%{transform:translateY(-44px)}100%{transform:translateY(180px)}}
+  .qr-tip{text-align:center;font-size:12.5px;color:var(--primary);font-weight:700;margin-top:12px;text-shadow:0 0 12px rgba(0,212,255,.25)}
+  .qr-tip small{display:block;color:rgba(248,250,252,.5);font-weight:400;margin-top:4px}
 
   /* 扫码后填金额 */
   .input-zone{margin-top:18px;text-align:center}
-  .input-zone .lead{font-size:13px;color:#4b4566;margin-bottom:10px}
-  .amt-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px}
-  .amt-row span{font-size:15px;font-weight:600;color:var(--reward-ink)}
-  #amt{width:88px;font-size:17px;font-weight:700;text-align:center;color:var(--reward-warm-1);border:1.5px solid var(--reward-line);border-radius:11px;padding:9px 6px;outline:none;transition:.2s}
-  #amt:focus{border-color:var(--reward-warm-2);box-shadow:0 0 0 3px rgba(255,157,92,.18)}
-  #confirm{width:100%;border:none;border-radius:13px;padding:13px;font-size:15px;font-weight:700;color:#fff;cursor:pointer;background:linear-gradient(135deg,#7f77dd,#534ab7);box-shadow:0 8px 20px rgba(255,122,138,.35);transition:.2s}
-  #confirm:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(255,122,138,.45)}
+  .input-zone .lead{font-size:13px;color:rgba(248,250,252,.65);margin-bottom:12px}
+  .amt-row{display:none}
+  .amt-box{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;max-width:260px;margin:0 auto 16px;padding:14px 22px;background:rgba(255,255,255,.04);border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.06);transition:.2s;overflow:hidden}
+  .amt-box::before{content:"";position:absolute;inset:0;border-radius:18px;padding:1.5px;background:linear-gradient(135deg,rgba(0,194,255,.55),rgba(124,58,237,.55));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:.7;transition:.2s}
+  .amt-box:focus-within{background:rgba(255,255,255,.08);box-shadow:0 0 0 4px rgba(0,212,255,.12),0 8px 30px rgba(0,212,255,.1)}
+  .amt-box:focus-within::before{opacity:1}
+  .amt-symbol{font-size:22px;font-weight:800;color:var(--primary)}
+  .amt-input{flex:1;min-width:70px;border:none;background:transparent;text-align:center;font-size:22px;font-weight:800;color:#f8fafc;outline:none}
+  .amt-input::placeholder{color:rgba(248,250,252,.25)}
+  .amt-unit{font-size:14px;color:rgba(248,250,252,.5);font-weight:500}
+  #confirm{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;max-width:260px;border:none;border-radius:16px;padding:14px 26px;font-size:15px;font-weight:800;color:#020205;cursor:pointer;background:linear-gradient(135deg,var(--primary),#0072ff,var(--secondary));box-shadow:0 8px 26px rgba(0,212,255,.28),0 8px 26px rgba(124,58,237,.28);transition:.2s;overflow:hidden}
+  #confirm::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transform:translateX(-100%)}
+  #confirm:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(0,212,255,.35),0 12px 34px rgba(124,58,237,.35)}
+  #confirm:hover::before{transform:translateX(100%);transition:transform .6s}
   #confirm:active{transform:translateY(0)}
-  .soft-exit{display:block;width:100%;margin-top:10px;background:none;border:none;color:var(--reward-muted);font-size:12.5px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
-  .soft-exit:hover{color:var(--reward-warm-1)}
+  #confirm .btn-icon{width:18px;height:18px;fill:currentColor}
+  .soft-exit{display:block;width:100%;margin-top:12px;background:none;border:none;color:rgba(248,250,252,.45);font-size:12.5px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;transition:.2s}
+  .soft-exit:hover{color:var(--primary)}
 
-  /* 庆祝页（不再简陋） */
-  .celebrate{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#2b2440,#1c162e);border-radius:inherit;z-index:5;padding:24px;text-align:center;color:#fff;overflow:hidden}
+  /* 庆祝页 */
+  .celebrate{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#1e1e3a,#121226);border-radius:inherit;z-index:5;padding:24px;text-align:center;color:#fff;overflow:hidden}
+  .celebrate::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:140%;height:70%;background:radial-gradient(ellipse at top,rgba(0,212,255,.18),transparent 60%);z-index:0;pointer-events:none}
   .celebrate canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
   .cele-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;animation:celePop .5s cubic-bezier(.18,.89,.32,1.28) both}
   @keyframes celePop{from{opacity:0;transform:translateY(18px) scale(.94)}to{opacity:1;transform:none}}
-  .cele-icon{width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,#7f77dd,#534ab7);display:flex;align-items:center;justify-content:center;box-shadow:0 14px 34px rgba(255,122,138,.45);animation:iconPulse 2.2s ease-in-out infinite;margin-bottom:18px}
-  .cele-icon svg{width:36px;height:36px;fill:#fff}
+  .cele-icon{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;box-shadow:0 16px 40px rgba(0,212,255,.25),0 0 0 6px rgba(0,212,255,.1);animation:iconPulse 2.2s ease-in-out infinite;margin-bottom:18px}
+  .cele-icon svg{width:38px;height:38px;fill:#fff}
   @keyframes iconPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-  .cele-title{font-size:22px;font-weight:700;letter-spacing:.8px;margin-bottom:6px}
-  .cele-badge{font-size:12px;color:rgba(255,255,255,.75);background:rgba(255,255,255,.12);padding:4px 10px;border-radius:20px;margin-bottom:16px}
-  .cele-amount{font-size:44px;font-weight:800;line-height:1;background:linear-gradient(135deg,#fff,var(--reward-warm-3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+  .cele-title{font-size:24px;font-weight:800;letter-spacing:.8px;margin-bottom:6px;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+  .cele-badge{font-size:12px;color:rgba(255,255,255,.75);background:rgba(255,255,255,.12);padding:4px 12px;border-radius:20px;margin-bottom:16px}
+  .cele-amount{font-size:48px;font-weight:800;line-height:1;background:linear-gradient(135deg,var(--primary),#a78bfa,var(--secondary));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;filter:drop-shadow(0 2px 8px rgba(0,212,255,.2))}
   .cele-amount small{font-size:15px;font-weight:500;opacity:.8}
   .cele-msg{font-size:14px;color:rgba(255,255,255,.86);line-height:1.7;max-width:260px;margin-bottom:16px}
   .cele-rank{font-size:12px;color:rgba(255,255,255,.65);background:rgba(255,255,255,.08);padding:6px 14px;border-radius:20px}
-  .cele-close{position:relative;z-index:2;margin-top:22px;border:none;border-radius:24px;padding:10px 28px;font-size:14px;font-weight:700;color:var(--reward-ink);background:#fff;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.22);transition:.2s}
-  .cele-close:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.28)}
+  .cele-close{position:relative;z-index:2;margin-top:22px;border:none;border-radius:24px;padding:12px 30px;font-size:14px;font-weight:800;color:#020205;cursor:pointer;background:linear-gradient(135deg,var(--primary),#0072ff,var(--secondary));box-shadow:0 8px 26px rgba(0,212,255,.28),0 8px 26px rgba(124,58,237,.28);transition:.2s}
+  .cele-close:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(0,212,255,.35),0 12px 34px rgba(124,58,237,.35)}
 
   /* 社会证明 */
-  .social{margin-top:16px;height:24px;overflow:hidden;position:relative;border-top:1px dashed var(--reward-line);padding-top:10px}
-  .social-track{display:flex;gap:26px;white-space:nowrap;animation:scrollX 12s linear infinite;font-size:12.5px;color:var(--reward-muted)}
-  .social-track b{color:var(--reward-warm-1)}
+  .social{margin-top:18px;height:36px;overflow:hidden;position:relative;border-top:1px dashed rgba(0,212,255,.18);padding-top:10px}
+  .social-track{display:flex;gap:26px;white-space:nowrap;animation:scrollX 12s linear infinite;font-size:12.5px;color:rgba(248,250,252,.45)}
+  .social-track b{color:var(--primary)}
   @keyframes scrollX{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-  .reward-foot{text-align:center;font-size:12px;color:var(--reward-muted);margin-top:14px}
+  .reward-foot{text-align:center;font-size:12px;color:rgba(248,250,252,.4);margin-top:14px}
 
   /* 软退出 toast */
   .reward-toast{
     position:fixed;right:28px;bottom:108px;z-index:80;
-    display:flex;align-items:center;gap:8px;
-    background:#fff;border-radius:14px;padding:12px 16px;
-    box-shadow:0 8px 26px rgba(28,22,46,.2);
-    font-size:13px;color:#4b4566;
+    display:flex;align-items:center;gap:10px;
+    background:linear-gradient(180deg,#1a1a32,#111124);border:1px solid rgba(0,212,255,.18);border-radius:16px;padding:12px 18px;
+    box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.03);
+    font-size:13px;color:rgba(248,250,252,.85);
     opacity:0;transform:translateY(16px);pointer-events:none;
     transition:opacity .4s,transform .4s;
   }
   .reward-toast.show{opacity:1;transform:translateY(0)}
-  .reward-toast svg{width:18px;height:18px;fill:var(--reward-warm-1);flex-shrink:0}
-
-
-/* ================= 打赏组件视觉优化（v3）================ */
-
-/* 金额输入框：一体式圆角 */
-.amt-box{display:flex;align-items:center;justify-content:center;gap:8px;max-width:220px;margin:0 auto 14px;padding:10px 20px;background:#f6f5ff;border:1.5px solid #e6e3ff;border-radius:16px;transition:.2s}
-.amt-box:focus-within{border-color:#7f77dd;background:#fff;box-shadow:0 0 0 4px rgba(127,119,221,.12)}
-.amt-symbol{font-size:20px;font-weight:800;color:#7f77dd}
-.amt-input{flex:1;min-width:60px;border:none;background:transparent;text-align:center;font-size:20px;font-weight:800;color:#2b2440;outline:none}
-.amt-input::placeholder{color:#c4c1e8}
-.amt-unit{font-size:14px;color:#7a7393;font-weight:500}
-
-/* 社会证明滚动高度修复，避免遮挡 */
-.social{height:36px}
-
-/* 庆祝页：聚光灯 */
-.celebrate::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:140%;height:70%;background:radial-gradient(ellipse at top,rgba(127,119,221,.28),transparent 60%);z-index:0;pointer-events:none}
-
-/* 庆祝页：奖杯图标+金色光晕 */
-.reward-card .cele-icon{width:78px;height:78px;border-radius:50%;background:linear-gradient(135deg,#ffd36b,#ff9d5c);box-shadow:0 14px 34px rgba(255,157,92,.45),0 0 0 6px rgba(255,211,107,.18);animation:iconPulse 2.2s ease-in-out infinite}
-.reward-card .cele-icon svg{width:38px;height:38px;fill:#fff}
-.reward-card .cele-title{font-size:24px;font-weight:800;text-shadow:0 2px 12px rgba(0,0,0,.3)}
-.reward-card .cele-amount{font-size:50px;font-weight:800;background:linear-gradient(135deg,#ffd36b,#ff9d5c,#ff7a8a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 8px rgba(255,157,92,.35))}
-.reward-card .cele-rank{background:rgba(255,255,255,.12);padding:7px 16px;border-radius:20px}
-.reward-card .cele-close{background:linear-gradient(135deg,#7f77dd,#534ab7);color:#fff;box-shadow:0 8px 22px rgba(83,74,183,.45)}
-.reward-card .cele-close:hover{background:linear-gradient(135deg,#8f85e6,#6359c4)}
+  .reward-toast svg{width:20px;height:20px;fill:var(--primary);flex-shrink:0}
