@@ -6,7 +6,7 @@
   <title>AI 聚合平台 | 智能创作生态</title>
   <meta name="description" content="高端 AI 聚合平台，汇聚 AI 写小说、AI 多账号管理器、游麟 AI-Agent 等创新项目。">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2300d4ff'/%3E%3Cstop offset='1' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23bg)'/%3E%3Cg fill='%23fff' stroke='%23fff'%3E%3Cpolygon points='50,14 80,32 80,68 50,86 20,68 20,32' fill='none' stroke-width='6' stroke-linejoin='round'/%3E%3Cpolygon points='50,38 62,46 62,62 50,70 38,62 38,46' fill='%23fff' stroke='none'/%3E%3Ccircle cx='50' cy='14' r='5'/%3E%3Ccircle cx='80' cy='32' r='5'/%3E%3Ccircle cx='80' cy='68' r='5'/%3E%3Ccircle cx='50' cy='86' r='5'/%3E%3Ccircle cx='20' cy='68' r='5'/%3E%3Ccircle cx='20' cy='32' r='5'/%3E%3Ccircle cx='50' cy='50' r='4'/%3E%3C/g%3E%3C/svg%3E">
-  <link rel="stylesheet" href="css/style.css?v=56">
+  <link rel="stylesheet" href="css/style.css?v=57">
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -492,7 +492,7 @@
   <div class="reward-mask" id="rewardMask">
     <div class="reward-card">
       <div class="reward-ribbon">
-        <svg class="ribbon-heart" viewBox="0 0 24 24" fill="#fff"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.3 2 5 5.2 5c2 0 3.3 1.2 4.1 2.5C10.1 6.2 11.4 5 13.4 5 16.6 5 18.2 8.3 16.6 11.7 14.1 16.4 12 21 12 21z"/></svg>
+        <svg class="ribbon-heart" viewBox="0 0 24 24" fill="#fff"><path d="M18.5 3H6c-1.1 0-2 .9-2 2v5.71c0 3.83 2.95 7.18 6.78 7.29 3.96.12 7.22-3.06 7.22-7v-1h.5c1.93 0 3.5-1.57 3.5-3.5S20.43 3 18.5 3zM16 8.99V5h2.5c.83 0 1.5.67 1.5 1.5S19.33 8 18.5 8H16v.99zm-10 .02V5h8v4c0 2.76-2.24 5-5 5s-5-2.24-5-5.01zM4 19h16v2H4v-2z"/></svg>
         <span class="ribbon-title">为热爱发电</span>
         <button class="reward-close" id="rewardClose" title="关闭">&times;</button>
       </div>
@@ -508,10 +508,10 @@
           <div class="lead">扫完码回来啦？你刚赞赏了——</div>
           <div class="amt-box">
             <span class="amt-symbol">¥</span>
-            <input id="rewardAmt" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00">
+            <input id="rewardAmt" class="amt-input" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00">
             <span class="amt-unit">元</span>
           </div>
-          <button id="rewardConfirm">确认</button>
+          <button id="rewardConfirm"><svg class="btn-icon" viewBox="0 0 24 24"><path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z"/></svg>确认</button>
           <button class="soft-exit" id="rewardSoft">暂时不想支持，但谢谢你的工具</button>
         </div>
         <div class="social">
