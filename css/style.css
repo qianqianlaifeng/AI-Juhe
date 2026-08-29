@@ -3246,14 +3246,14 @@ section[id] { scroll-margin-top: 86px; }
   }
   .reward-fab:hover{transform:scale(1.08)}
   .reward-fab svg{width:30px;height:30px}
-  .reward-fab span{position:absolute;bottom:-26px;font-size:12px;color:var(--reward-warm-1);font-weight:600;white-space:nowrap}
-  .reward-fab::before,.reward-fab::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--reward-warm-1);animation:pulse 2.6s ease-out infinite}
+  .reward-fab span{position:absolute;bottom:-26px;font-size:12px;color:#7f77dd;font-weight:600;white-space:nowrap}
+  .reward-fab::before,.reward-fab::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #7f77dd;animation:pulse 2.6s ease-out infinite}
   .reward-fab::after{animation-delay:1.3s}
   @keyframes pulse{0%{transform:scale(1);opacity:.7}70%{transform:scale(1.7);opacity:0}100%{opacity:0}}
   @keyframes fabFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 
   /* 弹窗 */
-  .reward-mask{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;background:rgba(28,22,46,.42);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:maskIn .3s ease both}
+  .reward-mask{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;background:rgba(28,22,46,.42);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:maskIn .3s ease both}
   @keyframes maskIn{from{opacity:0}to{opacity:1}}
   .reward-card{position:relative;width:min(396px,92vw);border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 30px 80px rgba(28,22,46,.35);animation:cardIn .42s cubic-bezier(.18,.89,.32,1.28) both}
   @keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.94)}to{opacity:1;transform:none}}
