@@ -447,6 +447,18 @@
       indexLabel: 'Tool 17',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9900
+    },
+    {
+      id: 'tool_delogo',
+      title: 'AI 图片去水印',
+      url: '图片去水印/index.html',
+      description: '本地 AI 模型自动检测并消除图片水印（豆包 / 即梦 / 可灵 / Gemini 等平台水印），上传即处理、一键下载，全程浏览器本地推理，图片不上传服务器。',
+      tags: ['图像处理', '去水印', 'AI修复', '本地'],
+      color: 'purple',
+      image: '',
+      indexLabel: 'Tool 18',
+      actionLabel: '打开工具',
+      createdAt: Date.now() + 50
     }
   ];
 

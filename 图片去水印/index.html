@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>AI 图片去水印</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- onnxruntime-web (UMD, sets global `ort`) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.19.2/dist/ort.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-mark">🪄</span>
+        <div class="brand-text">
+          <h1>AI 图片去水印</h1>
+          <p>本地 AI 模型自动检测并消除图片水印 · 上传即处理 · 图片不会上传到任何服务器</p>
+        </div>
+      </div>
+      <a class="back-link" href="../index.html">← 返回聚合平台</a>
+    </header>
+
+    <main class="app-main">
+      <!-- 模型加载状态 -->
+      <div id="modelBar" class="model-bar">
+        <div class="model-bar-row">
+          <span id="modelStatus" class="model-status">正在加载 AI 模型（首次约需下载 33MB，后续浏览器会缓存）…</span>
+          <span id="modelPct" class="model-pct">0%</span>
+        </div>
+        <div class="progress"><div id="modelProgress" class="progress-fill"></div></div>
+        <div id="modelDetail" class="model-detail"></div>
+      </div>
+
+      <!-- 上传区 -->
+      <section id="dropZone" class="drop-zone" tabindex="0" aria-label="上传图片">
+        <div class="drop-inner">
+          <div class="drop-icon">⤴</div>
+          <p class="drop-title">点击或拖拽图片到此处</p>
+          <p class="drop-sub">支持 JPG / PNG / WEBP，大小 ≤ 40MB</p>
+          <button id="pickBtn" class="btn btn-primary" type="button" disabled>选择图片</button>
+          <input id="fileInput" type="file" accept="image/*" hidden />
+        </div>
+      </section>
+
+      <!-- 预览 + 操作 -->
+      <section id="workspace" class="workspace hidden">
+        <div class="compare">
+          <div class="compare-col">
+            <div class="compare-label">原图</div>
+            <div class="compare-box"><img id="srcImg" alt="原图" /></div>
+          </div>
+          <div class="compare-col">
+            <div class="compare-label">去水印结果</div>
+            <div class="compare-box">
+              <img id="dstImg" alt="去水印结果" hidden />
+              <div id="dstPlaceholder" class="compare-placeholder">等待处理…</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="processBtn" class="btn btn-primary" type="button">🪄 开始去水印</button>
+          <button id="downloadBtn" class="btn btn-accent" type="button" disabled>⬇ 下载结果</button>
+          <button id="resetBtn" class="btn btn-ghost" type="button">↺ 重新上传</button>
+        </div>
+
+        <div id="log" class="log"></div>
+        <p class="note">本工具基于 YOLO 水印检测 + MI-GAN 图像修复，针对常见 AI 生成平台水印（如豆包、即梦、可灵、Gemini 等）训练；若未检出对应水印，将返回原图。</p>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <span>本地处理 · 隐私安全 · 无需登录</span>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
