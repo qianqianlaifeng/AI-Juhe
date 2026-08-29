@@ -3329,3 +3329,29 @@ section[id] { scroll-margin-top: 86px; }
   }
   .reward-toast.show{opacity:1;transform:translateY(0)}
   .reward-toast svg{width:18px;height:18px;fill:var(--reward-warm-1);flex-shrink:0}
+
+
+/* ================= 打赏组件视觉优化（v3）================ */
+
+/* 金额输入框：一体式圆角 */
+.amt-box{display:flex;align-items:center;justify-content:center;gap:8px;max-width:220px;margin:0 auto 14px;padding:10px 20px;background:#f6f5ff;border:1.5px solid #e6e3ff;border-radius:16px;transition:.2s}
+.amt-box:focus-within{border-color:#7f77dd;background:#fff;box-shadow:0 0 0 4px rgba(127,119,221,.12)}
+.amt-symbol{font-size:20px;font-weight:800;color:#7f77dd}
+.amt-input{flex:1;min-width:60px;border:none;background:transparent;text-align:center;font-size:20px;font-weight:800;color:#2b2440;outline:none}
+.amt-input::placeholder{color:#c4c1e8}
+.amt-unit{font-size:14px;color:#7a7393;font-weight:500}
+
+/* 社会证明滚动高度修复，避免遮挡 */
+.social{height:36px}
+
+/* 庆祝页：聚光灯 */
+.celebrate::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:140%;height:70%;background:radial-gradient(ellipse at top,rgba(127,119,221,.28),transparent 60%);z-index:0;pointer-events:none}
+
+/* 庆祝页：奖杯图标+金色光晕 */
+.reward-card .cele-icon{width:78px;height:78px;border-radius:50%;background:linear-gradient(135deg,#ffd36b,#ff9d5c);box-shadow:0 14px 34px rgba(255,157,92,.45),0 0 0 6px rgba(255,211,107,.18);animation:iconPulse 2.2s ease-in-out infinite}
+.reward-card .cele-icon svg{width:38px;height:38px;fill:#fff}
+.reward-card .cele-title{font-size:24px;font-weight:800;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.reward-card .cele-amount{font-size:50px;font-weight:800;background:linear-gradient(135deg,#ffd36b,#ff9d5c,#ff7a8a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 8px rgba(255,157,92,.35))}
+.reward-card .cele-rank{background:rgba(255,255,255,.12);padding:7px 16px;border-radius:20px}
+.reward-card .cele-close{background:linear-gradient(135deg,#7f77dd,#534ab7);color:#fff;box-shadow:0 8px 22px rgba(83,74,183,.45)}
+.reward-card .cele-close:hover{background:linear-gradient(135deg,#8f85e6,#6359c4)}
