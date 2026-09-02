@@ -265,39 +265,32 @@ body {
   transform: scaleX(1);
   transform-origin: left;
 }
-/* AI 商城入口：醒目的渐变胶囊按钮，悬浮发光，与普通导航项明显区分（但仍统一在蓝紫主题内） */
+/* AI 商城入口：灰色文字（与其他导航一致），文字加粗，图标同步加粗，悬浮提亮 */
 .nav-shop{
-  position:relative;
-  color:#fff !important;
+  color:var(--text-secondary);
   font-weight:700;
-  letter-spacing:.5px;
-  padding:10px 20px;
-  background:linear-gradient(135deg,#00c2ff,#0072ff,#7c4dff);
-  box-shadow:0 6px 18px rgba(0,212,255,.30),0 6px 18px rgba(124,58,237,.30);
-}
-.nav-shop::after{display:none}
-.nav-shop::before{
-  content:"";
-  position:absolute;inset:0;border-radius:inherit;
-  background:linear-gradient(135deg,rgba(255,255,255,.18),transparent 60%);
-  pointer-events:none;
 }
 .nav-shop:hover,.nav-shop.active{
-  color:#fff !important;
-  background:linear-gradient(135deg,#19d4ff,#1a80ff,var(--secondary));
-  transform:translateY(-1px);
-  box-shadow:0 10px 26px rgba(0,212,255,.40),0 10px 26px rgba(124,58,237,.40);
+  color:var(--text);
+}
+.shop-ico{
+  display:inline-block;
+  font-weight:700;
+  font-size:1.12em;
+  margin-right:3px;
+  vertical-align:-1px;
+  filter:drop-shadow(0 0 .6px currentColor);
 }
 .mobile-menu .nav-shop{
-  display:flex;align-items:center;justify-content:center;
-  color:#fff !important;font-weight:700;letter-spacing:.5px;
-  padding:14px 20px;
-  background:linear-gradient(135deg,#00c2ff,#0072ff,#7c4dff);
-  box-shadow:0 6px 18px rgba(0,212,255,.30),0 6px 18px rgba(124,58,237,.30);
+  color:var(--text-secondary);
+  font-weight:700;
 }
 .mobile-menu .nav-shop:hover{
-  color:#fff !important;
-  background:linear-gradient(135deg,#19d4ff,#1a80ff,var(--secondary));
+  color:var(--text);
+  background:var(--bg-elevated);
+}
+.mobile-menu .shop-ico{
+  font-size:1.12em;
 }
 
 
