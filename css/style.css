@@ -265,28 +265,22 @@ body {
   transform: scaleX(1);
   transform-origin: left;
 }
-/* AI 商城入口：醒目渐变胶囊按钮，与站点蓝紫主题统一 */
+/* AI 商城入口：与普通导航文字一致的灰色，去掉渐变填充；桌面端和移动端均可点击 */
 .nav-shop{
-  color:#fff !important;
-  font-weight:700;
-  background:linear-gradient(135deg,var(--primary),#0072ff,var(--secondary));
-  box-shadow:0 6px 18px rgba(0,212,255,.28),0 6px 18px rgba(124,58,237,.28);
-  padding:10px 18px;
+  color:var(--text-secondary);
+  font-weight:500;
 }
-.nav-shop::after{display:none}
 .nav-shop:hover,.nav-shop.active{
-  color:#fff !important;
-  background:linear-gradient(135deg,#19d4ff,#1a80ff,var(--secondary));
-  transform:translateY(-1px);
-  box-shadow:0 10px 26px rgba(0,212,255,.35),0 10px 26px rgba(124,58,237,.35);
+  color:var(--text);
 }
 .mobile-menu .nav-shop{
-  display:flex;align-items:center;justify-content:center;
-  color:#fff !important;font-weight:700;
-  background:linear-gradient(135deg,var(--primary),#0072ff,var(--secondary));
-  box-shadow:0 6px 18px rgba(0,212,255,.28),0 6px 18px rgba(124,58,237,.28);
+  color:var(--text-secondary);
+  font-weight:500;
 }
-.mobile-menu .nav-shop:hover{background:linear-gradient(135deg,#19d4ff,#1a80ff,var(--secondary));color:#fff !important}
+.mobile-menu .nav-shop:hover{
+  color:var(--text);
+  background:var(--bg-elevated);
+}
 
 
 .menu-toggle {
