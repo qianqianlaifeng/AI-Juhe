@@ -267,7 +267,7 @@ body {
 }
 /* AI 商城入口：醒目渐变胶囊按钮，与站点蓝紫主题统一 */
 .nav-shop{
-  color:#020205 !important;
+  color:#fff !important;
   font-weight:700;
   background:linear-gradient(135deg,var(--primary),#0072ff,var(--secondary));
   box-shadow:0 6px 18px rgba(0,212,255,.28),0 6px 18px rgba(124,58,237,.28);
@@ -275,18 +275,18 @@ body {
 }
 .nav-shop::after{display:none}
 .nav-shop:hover,.nav-shop.active{
-  color:#020205 !important;
+  color:#fff !important;
   background:linear-gradient(135deg,#19d4ff,#1a80ff,var(--secondary));
   transform:translateY(-1px);
   box-shadow:0 10px 26px rgba(0,212,255,.35),0 10px 26px rgba(124,58,237,.35);
 }
 .mobile-menu .nav-shop{
   display:flex;align-items:center;justify-content:center;
-  color:#020205 !important;font-weight:700;
+  color:#fff !important;font-weight:700;
   background:linear-gradient(135deg,var(--primary),#0072ff,var(--secondary));
   box-shadow:0 6px 18px rgba(0,212,255,.28),0 6px 18px rgba(124,58,237,.28);
 }
-.mobile-menu .nav-shop:hover{background:linear-gradient(135deg,#19d4ff,#1a80ff,var(--secondary));color:#020205 !important}
+.mobile-menu .nav-shop:hover{background:linear-gradient(135deg,#19d4ff,#1a80ff,var(--secondary));color:#fff !important}
 
 
 .menu-toggle {
