@@ -3517,7 +3517,6 @@ section[id] { scroll-margin-top: 86px; }
   animation: canvasFloat 5s ease-in-out infinite;
 }
 .canvas-chip-1 { left: 14%; top: 16%; }
-.canvas-chip-2 { right: 12%; top: 52%; animation-delay: 1.4s; }
 .canvas-chip-3 { left: 26%; bottom: 20%; animation-delay: 2.6s; }
 .canvas-chip-4 { right: 10%; bottom: 30%; animation-delay: 3.4s; }
 @keyframes canvasFloat {
