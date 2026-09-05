@@ -3367,3 +3367,165 @@ section[id] { scroll-margin-top: 86px; }
   }
   .reward-toast.show{opacity:1;transform:translateY(0)}
   .reward-toast svg{width:20px;height:20px;fill:var(--primary);flex-shrink:0}
+
+/* ============ AI 画布 模块 ============ */
+.aicanvas-section {
+  position: relative;
+  padding: 140px 5%;
+  overflow: hidden;
+  text-align: center;
+}
+.aicanvas-aura {
+  position: absolute;
+  top: 8%; left: 50%;
+  width: 760px; height: 760px;
+  max-width: 92vw;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(0,212,255,0.16), transparent 62%);
+  filter: blur(46px);
+  pointer-events: none;
+  z-index: 0;
+}
+.aicanvas-section .section-header { position: relative; z-index: 1; }
+.aicanvas-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.aicanvas-icon {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 4px 14px rgba(0,212,255,0.5));
+}
+.aicanvas-body {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 56px auto 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  text-align: left;
+}
+.aicanvas-lead {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--primary), #a78bfa 45%, var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.aicanvas-desc {
+  color: var(--text-secondary);
+  font-size: 1.08rem;
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+.aicanvas-points {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.aicanvas-points li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+  font-size: 1.02rem;
+}
+.aicanvas-points .dot {
+  width: 9px; height: 9px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  box-shadow: 0 0 12px rgba(0,212,255,0.45);
+}
+.aicanvas-actions { margin-top: 4px; }
+.aicanvas-btn { display: inline-flex; align-items: center; gap: 8px; }
+
+/* 画布视觉 */
+.aicanvas-visual { display: flex; justify-content: center; }
+.canvas-board {
+  width: 100%;
+  max-width: 460px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+}
+.canvas-board-bar {
+  display: flex;
+  gap: 7px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+}
+.canvas-board-bar span {
+  width: 11px; height: 11px; border-radius: 50%;
+  background: rgba(255,255,255,0.16);
+}
+.canvas-board-bar span:nth-child(1){ background:#ff5f57; }
+.canvas-board-bar span:nth-child(2){ background:#febc2e; }
+.canvas-board-bar span:nth-child(3){ background:#28c840; }
+.canvas-stage {
+  position: relative;
+  height: 320px;
+  background:
+    radial-gradient(120% 120% at 18% 12%, rgba(0,212,255,0.30), transparent 55%),
+    radial-gradient(120% 120% at 86% 88%, rgba(124,58,237,0.40), transparent 55%),
+    linear-gradient(135deg, #0f1226, #1a1033 58%, #0c1430);
+  overflow: hidden;
+}
+.canvas-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(8px);
+  opacity: 0.85;
+  animation: canvasFloat 6s ease-in-out infinite;
+}
+.canvas-blob-1 { width: 120px; height: 120px; left: 12%; top: 18%; background: linear-gradient(135deg,#00d4ff,#7c3aed); }
+.canvas-blob-2 { width: 90px; height: 90px; right: 16%; top: 30%; background: linear-gradient(135deg,#7c3aed,#ec4899); animation-delay: 1.2s; }
+.canvas-blob-3 { width: 70px; height: 70px; left: 38%; bottom: 14%; background: linear-gradient(135deg,#22d3ee,#3b82f6); animation-delay: 2.1s; }
+.canvas-stroke {
+  position: absolute;
+  left: 18%; bottom: 24%;
+  width: 64%; height: 2px;
+  background: linear-gradient(90deg, transparent, #00d4ff, #7c3aed, transparent);
+  transform: rotate(-8deg);
+}
+.canvas-chip {
+  position: absolute;
+  padding: 7px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(4px);
+  white-space: nowrap;
+  animation: canvasFloat 5s ease-in-out infinite;
+}
+.canvas-chip-1 { left: 14%; top: 16%; }
+.canvas-chip-2 { right: 12%; top: 52%; animation-delay: 1.4s; }
+.canvas-chip-3 { left: 26%; bottom: 20%; animation-delay: 2.6s; }
+@keyframes canvasFloat {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@media (max-width: 880px) {
+  .aicanvas-body { grid-template-columns: 1fr; gap: 36px; text-align: center; }
+  .aicanvas-points { align-items: center; }
+  .aicanvas-visual { order: -1; }
+}
