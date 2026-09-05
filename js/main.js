@@ -235,7 +235,7 @@
     {
       id: 'tool_gptimage',
       title: '免费GPT-image生图',
-      url: 'https://share.s17t9.my/p/261aa1ae',
+      url: 'https://w99.site/lg6nmi',
       description: '免费在线使用GPT-image系列模型生图，输入文字描述即可生成高质量 AI 图片，适合快速出图与设计灵感。',
       tags: ['AI生图', 'GPT', '免费'],
       color: 'purple',
