@@ -62,7 +62,8 @@
 
 
 
-  <link rel="stylesheet" href="css/style.css?v=66">
+  <link rel="stylesheet" href="css/drama-expert.css?v=1">
+  <link rel="stylesheet" href="css/style.css?v=67">
 
 
 
@@ -3900,6 +3901,67 @@
 
 
 
+<!-- AI 短剧制片专家（私有智能体 · Agnes API） -->
+<section id="drama-expert" class="drama-expert-section">
+  <div class="drama-expert-aura"></div>
+
+  <div class="section-header reveal" style="text-align:center; max-width:760px; margin:0 auto 36px;">
+    <span class="section-eyebrow">AI Drama Producer · 私有专家</span>
+    <h2 class="section-title">AI 短剧制片专家</h2>
+    <p class="section-desc">从创意到成片，每一步严格把关。<b>先确认，后生成</b>；<b>先风格，后动图</b>；<b>先世界，后人物</b>。<br>支持纯对话与<b>对话生图</b>两种模式，所有规则内化在系统层面，不会向你暴露任何方法论原文。</p>
+  </div>
+
+  <div class="drama-expert-wrap">
+    <div class="drama-expert-card">
+
+      <div class="drama-expert-head">
+        <div class="drama-expert-avatar">🎬</div>
+        <div class="drama-expert-title">
+          <h3>AI 制片专家</h3>
+          <p><span class="drama-status-dot"></span><span id="dramaStatus">就绪</span> · 私有专家 · 实时流式</p>
+        </div>
+        <button id="dramaClear" class="drama-clear-btn" title="清空对话">清空</button>
+      </div>
+
+      <div class="drama-chat" id="dramaChat">
+        <!-- 消息动态渲染 -->
+      </div>
+
+      <div class="drama-toolbar">
+        <div class="drama-mode-toggle" role="tablist">
+          <button class="mode-btn active" data-mode="chat" type="button">💬 对话</button>
+          <button class="mode-btn" data-mode="image" type="button">🎨 对话生图</button>
+        </div>
+        <div class="drama-quick-actions">
+          <button class="quick-btn" data-prompt="我有个短剧创意，想从零开发全套资产和提示词" type="button">🚀 从零开发</button>
+          <button class="quick-btn" data-prompt="我已经有剧本，请帮我按四必填项和项目确认草稿开始" type="button">📜 我有剧本</button>
+          <button class="quick-btn" data-prompt="帮我出一份人物白底四视图 + 角色身份板提示词（先确认风格与画幅）" type="button">👤 人物设定</button>
+          <button class="quick-btn" data-prompt="帮我设计一个主要场景的九宫格提示词（含13项参数）" type="button">🏞️ 场景设定</button>
+          <button class="quick-btn" data-prompt="帮我写一个 15 秒分镜脚本，含八项核心要素 + 运镜七要素" type="button">🎬 分镜脚本</button>
+        </div>
+      </div>
+
+      <div class="drama-input-wrap">
+        <textarea id="dramaInput" rows="1" placeholder="描述你的需求，AI 制片专家会先确认必填项再开工..."></textarea>
+        <button id="dramaSend" class="btn btn-primary" type="button">
+          <span class="send-text">发送</span>
+          <span class="send-loading" style="display:none">思考中…</span>
+        </button>
+      </div>
+
+      <div class="drama-input-footer">
+        <span>模型：<code>agnes-2.5-flash</code> · 生图：<code>agnes-image-2.5-flash</code></span>
+        <span class="drama-tip">对话内容仅用于本次会话</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+
+
     <!-- 反馈（飞书表单嵌入） -->
 
 
@@ -4945,6 +5007,8 @@
 
 
 
+
+<script src="js/drama-expert.js?v=1" defer></script>
 
 </body>
 
