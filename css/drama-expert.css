@@ -491,3 +491,72 @@
   .drama-history-head { padding: 10px 14px; }
   .drama-history-list { padding: 12px 14px; }
 }
+
+/* 接口配置面板 */
+.drama-settings-panel {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  max-height: 400px;
+  overflow-y: auto;
+}
+.drama-settings-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-size: 0.85rem;
+  color: rgba(248,250,252,0.7);
+  flex-shrink: 0;
+}
+.drama-settings-head button {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(248,250,252,0.7);
+  font-size: 0.78rem;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.drama-settings-body {
+  padding: 16px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.drama-setting-group label {
+  display: block;
+  font-size: 0.78rem;
+  color: rgba(248,250,252,0.55);
+  margin-bottom: 5px;
+}
+.drama-setting-group input {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: rgba(248,250,252,0.9);
+  font-size: 0.85rem;
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.drama-setting-group input:focus {
+  border-color: rgba(0,212,255,0.4);
+}
+.drama-settings-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.drama-settings-note {
+  font-size: 0.72rem;
+  color: rgba(248,250,252,0.35);
+  margin: 0;
+}
+@media (max-width: 720px) {
+  .drama-settings-head { padding: 10px 14px; }
+  .drama-settings-body { padding: 12px 14px; }
+}

@@ -10,12 +10,29 @@
 (function () {
   'use strict';
 
-  const AGNES_CONFIG = {
+  const DEFAULT_CONFIG = {
     baseURL: 'https://api.agnes-ai.cn/v1',
     apiKey: 'sk-5dxkoayGKuy09DeveyAnlYUHRUzlE6xx9j4RUKHDqcNHoFZ8',
     textModel: 'agnes-2.5-flash',
     imageModel: 'agnes-image-2.5-flash'
   };
+
+  const CONFIG_KEY = 'dramaExpertConfig';
+
+  function loadConfig() {
+    try {
+      const raw = localStorage.getItem(CONFIG_KEY);
+      if (!raw) return Object.assign({}, DEFAULT_CONFIG);
+      const saved = JSON.parse(raw);
+      return Object.assign({}, DEFAULT_CONFIG, saved);
+    } catch (e) { return Object.assign({}, DEFAULT_CONFIG); }
+  }
+
+  function saveConfig(cfg) {
+    try { localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); } catch (e) {}
+  }
+
+  let AGNES_CONFIG = loadConfig();
 
   // ------------------------------------------------------------
   // 私有系统提示（内化制片纪律，不暴露任何原始出处）
@@ -524,6 +541,56 @@
   }
 
   // ------------------------------------------------------------
+  // 接口配置面板
+  // ------------------------------------------------------------
+  function openSettings() {
+    const panel = $('dramaSettingsPanel');
+    if (!panel) return;
+    // 填充当前配置
+    const cfg = loadConfig();
+    const urlEl = $('dramaApiUrl');
+    const keyEl = $('dramaApiKey');
+    const textEl = $('dramaTextModel');
+    const imgEl = $('dramaImageModel');
+    if (urlEl) urlEl.value = cfg.baseURL;
+    if (keyEl) keyEl.value = cfg.apiKey;
+    if (textEl) textEl.value = cfg.textModel;
+    if (imgEl) imgEl.value = cfg.imageModel;
+    panel.style.display = 'flex';
+  }
+
+  function closeSettings() {
+    const panel = $('dramaSettingsPanel');
+    if (panel) panel.style.display = 'none';
+  }
+
+  function saveSettings() {
+    const urlEl = $('dramaApiUrl');
+    const keyEl = $('dramaApiKey');
+    const textEl = $('dramaTextModel');
+    const imgEl = $('dramaImageModel');
+    const cfg = {
+      baseURL: (urlEl && urlEl.value.trim()) || DEFAULT_CONFIG.baseURL,
+      apiKey: (keyEl && keyEl.value.trim()) || DEFAULT_CONFIG.apiKey,
+      textModel: (textEl && textEl.value.trim()) || DEFAULT_CONFIG.textModel,
+      imageModel: (imgEl && imgEl.value.trim()) || DEFAULT_CONFIG.imageModel
+    };
+    saveConfig(cfg);
+    AGNES_CONFIG = cfg;
+    closeSettings();
+    setStatus('配置已保存');
+    setTimeout(() => setStatus('就绪'), 2000);
+  }
+
+  function resetSettings() {
+    try { localStorage.removeItem(CONFIG_KEY); } catch (e) {}
+    AGNES_CONFIG = Object.assign({}, DEFAULT_CONFIG);
+    openSettings();
+    setStatus('已恢复默认');
+    setTimeout(() => setStatus('就绪'), 2000);
+  }
+
+  // ------------------------------------------------------------
   // 暴露
   // ------------------------------------------------------------
   window.DramaExpert = {
@@ -540,6 +607,16 @@
       if (histBtn) histBtn.addEventListener('click', openHistory);
       if (closeBtn) closeBtn.addEventListener('click', closeHistory);
       if (exportBtn) exportBtn.addEventListener('click', exportHistory);
+
+      // 设置面板事件
+      const settingsBtn = $('dramaSettings');
+      const closeSettingsBtn = $('dramaCloseSettings');
+      const saveSettingsBtn = $('dramaSaveSettings');
+      const resetSettingsBtn = $('dramaResetSettings');
+      if (settingsBtn) settingsBtn.addEventListener('click', openSettings);
+      if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', closeSettings);
+      if (saveSettingsBtn) saveSettingsBtn.addEventListener('click', saveSettings);
+      if (resetSettingsBtn) resetSettingsBtn.addEventListener('click', resetSettings);
     },
     send,
     setMode,

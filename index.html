@@ -3924,8 +3924,40 @@
           <h3>AI 短剧专家</h3>
           <p><span class="drama-status-dot"></span><span id="dramaStatus">就绪</span> · 私有专家 · 实时流式</p>
         </div>
+        <button id="dramaSettings" class="drama-clear-btn" title="自定义接口配置">⚙️ 接口</button>
         <button id="dramaHistory" class="drama-clear-btn" title="查看全部聊天记录">记录</button>
         <button id="dramaClear" class="drama-clear-btn" title="清空对话">清空</button>
+      </div>
+
+      <!-- 接口配置面板 -->
+      <div class="drama-settings-panel" id="dramaSettingsPanel" style="display:none">
+        <div class="drama-settings-head">
+          <span>自定义模型接口（保存到本浏览器）</span>
+          <button id="dramaCloseSettings" title="关闭">关闭</button>
+        </div>
+        <div class="drama-settings-body">
+          <div class="drama-setting-group">
+            <label>对话接口地址（OpenAI 兼容）</label>
+            <input id="dramaApiUrl" type="text" placeholder="https://api.agnes-ai.cn/v1" spellcheck="false">
+          </div>
+          <div class="drama-setting-group">
+            <label>API Key</label>
+            <input id="dramaApiKey" type="password" placeholder="sk-..." spellcheck="false">
+          </div>
+          <div class="drama-setting-group">
+            <label>对话模型</label>
+            <input id="dramaTextModel" type="text" placeholder="agnes-2.5-flash" spellcheck="false">
+          </div>
+          <div class="drama-setting-group">
+            <label>生图模型（可选，留空用默认）</label>
+            <input id="dramaImageModel" type="text" placeholder="agnes-image-2.5-flash" spellcheck="false">
+          </div>
+          <div class="drama-settings-actions">
+            <button id="dramaSaveSettings" class="btn btn-primary">保存配置</button>
+            <button id="dramaResetSettings" class="drama-clear-btn">恢复默认</button>
+          </div>
+          <p class="drama-settings-note">配置仅保存在本浏览器 localStorage，不会上传到任何服务器。</p>
+        </div>
       </div>
 
       <div class="drama-history-panel" id="dramaHistoryPanel" style="display:none">
