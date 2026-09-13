@@ -47,9 +47,9 @@
       <a href="#projects" class="nav-link">项目</a>
       <a href="#toolbox" class="nav-link">工具箱</a>
       <a href="#token" class="nav-link">无限 Token</a>
+      <a href="#shortdrama" class="nav-link">AI 短剧</a>
       <a href="#music" class="nav-link">AI 音乐</a>
       <a href="#voice" class="nav-link">语音合成</a>
-      <a href="#shortdrama" class="nav-link">AI 短剧</a>
       <a href="#capabilities" class="nav-link">能力</a>
       <a href="#treasure" class="nav-link">宝藏趣站</a>
       <a href="#comments" class="nav-link">反馈</a>
@@ -69,9 +69,9 @@
     <a href="#projects">项目</a>
     <a href="#toolbox">工具箱</a>
     <a href="#token">无限 Token</a>
+    <a href="#shortdrama">AI 短剧</a>
     <a href="#music">AI 音乐</a>
     <a href="#voice">语音合成</a>
-    <a href="#shortdrama">AI 短剧</a>
     <a href="#capabilities">能力</a>
     <a href="#treasure">宝藏趣站</a>
     <a href="#comments">反馈</a>
@@ -252,22 +252,6 @@
       </div>
     </section>
 
-    <!-- AI 音乐 · 妙响创作平台（抖音旗下 AI 音乐，内嵌页面） -->
-    <section id="music" class="music-section">
-      <div class="music-aura"></div>
-      <div class="section-header reveal">
-        <span class="section-eyebrow">AI Music</span>
-        <h2 class="section-title">AI 音乐 · 妙响创作</h2>
-        <p class="section-desc">抖音旗下 AI 创作平台「妙响」，输入一句灵感即可生成专属 AI 歌曲与伴奏，边听边创作。</p>
-      </div>
-      <div class="music-wrap reveal">
-        <div class="music-actions">
-          <a href="https://music.douyin.com/studio?utm_source=web-note.cn" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-large">前往妙响官网创作 ↗</a>
-          <p class="music-note">点击下方按钮，在新标签页打开妙响创作平台。</p>
-        </div>
-      </div>
-    </section>
-
     <!-- AI 短剧 · 预演（Pavo） -->
     <section id="shortdrama" class="music-section">
       <div class="music-aura"></div>
@@ -284,6 +268,22 @@
       </div>
     </section>
 
+    <!-- AI 音乐 · 妙响创作平台（抖音旗下 AI 音乐） -->
+    <section id="music" class="music-section">
+      <div class="music-aura"></div>
+      <div class="section-header reveal">
+        <span class="section-eyebrow">AI Music</span>
+        <h2 class="section-title">AI 音乐 · 妙响创作</h2>
+        <p class="section-desc">抖音旗下 AI 创作平台「妙响」，输入一句灵感即可生成专属 AI 歌曲与伴奏，边听边创作。</p>
+      </div>
+      <div class="music-wrap reveal">
+        <div class="music-actions">
+          <a href="https://music.douyin.com/studio?utm_source=web-note.cn" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-large">前往妙响官网创作 ↗</a>
+          <p class="music-note">点击下方按钮，在新标签页打开妙响创作平台。</p>
+        </div>
+      </div>
+    </section>
+
     <!-- 语音合成工作台 · VoxCPM-2（内嵌网页） -->
     <section id="voice" class="tts-section">
       <div class="tts-aura"></div>
@@ -294,13 +294,16 @@
       </div>
       <div class="tts-wrap reveal">
         <div class="tts-frame">
-          <iframe class="tts-iframe" src="https://lxl8800.com/tool/html/VoxCPM-TTS.html"
+          <iframe class="tts-iframe" src="https://modelscope.cn/studios/OpenBMB/VoxCPM2-Demo"
             title="VoxCPM-2 语音合成工作台" loading="eager"
             allow="autoplay; clipboard-write; fullscreen; microphone"
             referrerpolicy="no-referrer"
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads allow-presentation allow-modals"></iframe>
         </div>
-
+        <div class="music-actions">
+          <a href="https://modelscope.cn/studios/OpenBMB/VoxCPM2-Demo" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">备用线路 · 魔搭 ↗</a>
+          <p class="music-note">若上方内嵌无法加载，可点击「备用线路 · 魔搭」在新标签页打开。</p>
+        </div>
       </div>
     </section>
 
@@ -540,7 +543,7 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=56"></script>
+  <script src="js/main.js?v=57"></script>
 
   
   <!-- 反馈模块：飞书表单 iframe 嵌入，无需额外前端脚本 -->
