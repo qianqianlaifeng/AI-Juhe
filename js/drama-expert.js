@@ -299,9 +299,6 @@
   }
 
   async function callImage(prompt, n = 1) {
-    if (!AGNES_CONFIG.apiKey) {
-      throw new Error('请先在 ⚙️ 接口设置中配置你的 API Key');
-    }
     const url = AGNES_CONFIG.baseURL + '/images/generations';
     const body = {
       model: AGNES_CONFIG.imageModel,
@@ -319,7 +316,12 @@
     });
     if (!resp.ok) {
       const errText = await resp.text().catch(() => resp.statusText);
-      throw new Error('生图请求失败：' + resp.status + ' ' + errText.slice(0, 200));
+      const errMsg = '生图请求失败：' + resp.status + ' ' + errText.slice(0, 200);
+      // 内置接口失败时，提示用户配置自己的接口
+      if (AGNES_CONFIG.baseURL === DEFAULT_CONFIG.baseURL && AGNES_CONFIG.apiKey === DEFAULT_CONFIG.apiKey) {
+        throw new Error(errMsg + '\n\n如内置接口不可用，请点击 ⚙️ 接口 配置你自己的 API');
+      }
+      throw new Error(errMsg);
     }
     const data = await resp.json();
     const urls = [];
