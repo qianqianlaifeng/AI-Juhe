@@ -426,3 +426,68 @@
   0%, 50% { opacity: 1; }
   51%, 100% { opacity: 0; }
 }
+/* 历史记录面板 */
+.drama-history-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.drama-history-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-size: 0.85rem;
+  color: rgba(248,250,252,0.7);
+  flex-shrink: 0;
+}
+.drama-history-head > div { display: flex; gap: 8px; }
+.drama-history-head button {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(248,250,252,0.7);
+  font-size: 0.78rem;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.drama-history-head button:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.drama-history-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scroll-behavior: smooth;
+}
+.drama-history-item {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: rgba(248,250,252,0.88);
+  user-select: text;
+}
+.drama-history-item.user { background: rgba(0,212,255,0.06); border-color: rgba(0,212,255,0.15); }
+.drama-history-item.assistant { background: rgba(124,58,237,0.05); border-color: rgba(124,58,237,0.12); }
+.drama-history-meta {
+  font-size: 0.72rem;
+  color: rgba(248,250,252,0.38);
+  margin-bottom: 4px;
+  display: flex;
+  gap: 10px;
+}
+.drama-history-empty { color: rgba(248,250,252,0.4); font-size: 0.85rem; text-align: center; margin-top: 60px; }
+@media (max-width: 720px) {
+  .drama-history-panel { height: 100%; }
+  .drama-history-head { padding: 10px 14px; }
+  .drama-history-list { padding: 12px 14px; }
+}

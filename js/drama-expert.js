@@ -465,6 +465,65 @@
   }
 
   // ------------------------------------------------------------
+  // ------------------------------------------------------------
+  // 历史记录面板
+  // ------------------------------------------------------------
+  function renderHistory() {
+    const panel = $('dramaHistoryPanel');
+    const list = $('dramaHistoryList');
+    if (!panel || !list) return;
+    const msgs = loadMessages();
+    list.innerHTML = '';
+    if (!msgs.length) {
+      list.innerHTML = '<div class="drama-history-empty">暂无聊天记录</div>';
+      return;
+    }
+    msgs.forEach(m => {
+      const div = document.createElement('div');
+      div.className = 'drama-history-item ' + m.role;
+      div.innerHTML =
+        '<div class="drama-history-meta">' +
+          '<span>' + (m.role === 'user' ? '你' : 'AI 短剧专家') + '</span>' +
+          (m.ts ? '<span>' + new Date(m.ts).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) + '</span>' : '') +
+        '</div>' +
+        esc(m.content);
+      list.appendChild(div);
+    });
+    list.scrollTop = list.scrollHeight;
+  }
+
+  function openHistory() {
+    renderHistory();
+    const panel = $('dramaHistoryPanel');
+    const chat = $('dramaChat');
+    if (panel) panel.style.display = 'flex';
+    if (chat) chat.style.display = 'none';
+  }
+
+  function closeHistory() {
+    const panel = $('dramaHistoryPanel');
+    const chat = $('dramaChat');
+    if (panel) panel.style.display = 'none';
+    if (chat) chat.style.display = 'flex';
+  }
+
+  function exportHistory() {
+    const msgs = loadMessages();
+    if (!msgs.length) { alert('没有聊天记录可导出'); return; }
+    const lines = msgs.map(m => {
+      const who = m.role === 'user' ? '你' : 'AI 短剧专家';
+      const ts = m.ts ? new Date(m.ts).toLocaleString('zh-CN') : '';
+      return '— ' + who + '  [' + ts + '] —\n' + m.content + '\n';
+    });
+    const blob = new Blob(['\ufeff' + lines.join('\n\n')], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '短剧专家聊天记录_' + new Date().toISOString().slice(0,10) + '.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // ------------------------------------------------------------
   // 暴露
   // ------------------------------------------------------------
   window.DramaExpert = {
@@ -473,9 +532,19 @@
       restoreHistory();
       setMode('chat');
       setStatus('就绪');
+
+      // 历史面板事件
+      const histBtn = $('dramaHistory');
+      const closeBtn = $('dramaCloseHistory');
+      const exportBtn = $('dramaExportHistory');
+      if (histBtn) histBtn.addEventListener('click', openHistory);
+      if (closeBtn) closeBtn.addEventListener('click', closeHistory);
+      if (exportBtn) exportBtn.addEventListener('click', exportHistory);
     },
     send,
-    setMode
+    setMode,
+    openHistory,
+    closeHistory
   };
 
   // 自动初始化

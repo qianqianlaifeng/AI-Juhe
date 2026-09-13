@@ -62,7 +62,7 @@
 
 
 
-  <link rel="stylesheet" href="css/drama-expert.css?v=1000">
+  <link rel="stylesheet" href="css/drama-expert.css?v=1001">
   <link rel="stylesheet" href="css/style.css?v=67">
 
 
@@ -3924,7 +3924,21 @@
           <h3>AI 短剧专家</h3>
           <p><span class="drama-status-dot"></span><span id="dramaStatus">就绪</span> · 私有专家 · 实时流式</p>
         </div>
+        <button id="dramaHistory" class="drama-clear-btn" title="查看全部聊天记录">记录</button>
         <button id="dramaClear" class="drama-clear-btn" title="清空对话">清空</button>
+      </div>
+
+      <div class="drama-history-panel" id="dramaHistoryPanel" style="display:none">
+        <div class="drama-history-head">
+          <span>全部聊天记录（存在本浏览器）</span>
+          <div>
+            <button id="dramaExportHistory" title="导出为文本文件">导出</button>
+            <button id="dramaCloseHistory" title="关闭">关闭</button>
+          </div>
+        </div>
+        <div class="drama-history-list" id="dramaHistoryList">
+          <!-- 历史消息动态渲染 -->
+        </div>
       </div>
 
       <div class="drama-chat" id="dramaChat">
@@ -5009,7 +5023,7 @@
 
 
 
-<script src="js/drama-expert.js?v=1000" defer></script>
+<script src="js/drama-expert.js?v=1001" defer></script>
 
 </body>
 
