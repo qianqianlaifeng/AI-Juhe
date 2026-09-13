@@ -13,8 +13,8 @@
   const AGNES_CONFIG = {
     baseURL: 'https://api.agnes-ai.cn/v1'  // API endpoint,
     apiKey: 'sk-5dxkoayGKuy09DeveyAnlYUHRUzlE6xx9j4RUKHDqcNHoFZ8',
-    textModel: 'default',
-    imageModel: 'default'
+    textModel: 'agnes-2.5-flash',
+    imageModel: 'agnes-image-2.5-flash'
   };
 
   // ------------------------------------------------------------
