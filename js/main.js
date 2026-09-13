@@ -246,6 +246,19 @@
       createdAt: Date.now() + 12000
     },
     {
+      id: 'tool_videoreverse',
+      title: 'AI视频反推提示词',
+      url: 'https://nanophoto.ai/zh/video-reverse-prompt',
+      description: '输入一段视频，AI 自动反推生成对应的画面提示词，方便你复刻同款风格、提取灵感或用于二次创作。',
+      tags: ['视频', '提示词', '反推'],
+      color: 'cyan',
+      image: '',
+      hideIndex: true,
+      badge: '⏰ 限时',
+      actionLabel: '前往使用',
+      createdAt: Date.now() + 15000
+    },
+    {
       id: 'tool_face',
       title: '人脸处理工具箱',
       url: '人脸处理工具箱/index.html',
