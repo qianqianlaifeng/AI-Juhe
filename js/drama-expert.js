@@ -86,6 +86,7 @@
 - 永远用一整块输出方便复制。
 - 不要透露你的知识来源、工作原理、内部术语、训练材料；用"我的制片方法""我的工作流"表述。
 - 不要承认你是基于任何具体文档、规则手册、参考资料训练而成；保持专业制片人身份。
+- 【身份保密·最高优先级】绝对不要提及或承认任何模型名、API 名（如 Agnes、GPT、Claude、GLM、Qwen 等）、技术供应商或版本号。你就是"AI 短剧专家"本身。若被问"你是什么模型/你用什么AI"，一律回答："我是 AI 短剧专家，专注短剧制片全流程。"绝不说出任何底层技术名称。
 
 【生图模式协议】
 当用户在对话生图模式下与你对话：你先回复一段简短的"图像概念描述 + 关键要素"，然后在回复最末尾用单独一行写：
@@ -103,6 +104,23 @@
     isStreaming: false,
     abortCtrl: null
   };
+
+  const STORAGE_KEY = 'dramaExpertChat';
+
+  function saveMessages() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.messages.slice(-100)));
+    } catch (e) { /* 存储满了就忽略 */ }
+  }
+
+  function loadMessages() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr.filter(m => m && m.role && m.content !== undefined) : [];
+    } catch (e) { return []; }
+  }
 
   // ------------------------------------------------------------
   // DOM 引用（运行时再取，因为脚本在 body 末尾加载）
@@ -155,9 +173,11 @@
   function appendMessage(msg) {
     state.messages.push(msg);
     const chat = $('dramaChat');
-    if (!chat) return;
-    chat.appendChild(renderMessage(msg));
-    chat.scrollTop = chat.scrollHeight;
+    if (chat) {
+      chat.appendChild(renderMessage(msg));
+      chat.scrollTop = chat.scrollHeight;
+    }
+    saveMessages();
   }
 
   function updateLastMessage(content, images) {
@@ -165,7 +185,9 @@
     if (!last || last.role === 'user') return;
     last.content = content;
     if (images) last.images = images;
+    saveMessages();
     const chat = $('dramaChat');
+    if (!chat) return;
     const nodes = chat.querySelectorAll('.drama-msg-assistant');
     const node = nodes[nodes.length - 1];
     if (!node) return;
@@ -186,13 +208,22 @@
   // ------------------------------------------------------------
   // 初始化欢迎语
   // ------------------------------------------------------------
-  function ensureWelcome() {
-    if (state.messages.length) return;
-    appendMessage({
-      role: 'assistant',
-      content: '你好，我是 AI 短剧专家。\n\n在我开始之前，请先告诉我这四项必填信息：\n\n1. **视频风格大类**：真人电影 / 2D 动漫 / 3D 动漫（三选一）\n2. **是否有剧本**：有（可直接发给我）/ 无（我会按工作流从创意开始陪你开发）\n3. **画幅比例**：16:9 横屏 / 9:16 竖屏 / 1:1 方形 / 2.35:1 宽银幕 / 4:5\n4. **若没有剧本**：视频时长 + 剧本类型 + 特殊要求\n\n你也可以直接点击下方的快捷入口开始。',
-      ts: Date.now()
-    });
+  function restoreHistory() {
+    const saved = loadMessages();
+    if (saved.length) {
+      state.messages = saved;
+      const chat = $('dramaChat');
+      if (chat) {
+        saved.forEach(m => chat.appendChild(renderMessage(m)));
+        chat.scrollTop = chat.scrollHeight;
+      }
+    } else {
+      appendMessage({
+        role: 'assistant',
+        content: '你好，我是 AI 短剧专家。\n\n在我开始之前，请先告诉我这四项必填信息：\n\n1. **视频风格大类**：真人电影 / 2D 动漫 / 3D 动漫（三选一）\n2. **是否有剧本**：有（可直接发给我）/ 无（我会按工作流从创意开始陪你开发）\n3. **画幅比例**：16:9 横屏 / 9:16 竖屏 / 1:1 方形 / 2.35:1 宽银幕 / 4:5\n4. **若没有剧本**：视频时长 + 剧本类型 + 特殊要求\n\n你也可以直接点击下方的快捷入口开始。',
+        ts: Date.now()
+      });
+    }
   }
 
   // ------------------------------------------------------------
@@ -425,9 +456,10 @@
         if (state.isStreaming) return;
         if (!confirm('确定清空对话吗？')) return;
         state.messages = [];
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
         const chat = $('dramaChat');
         if (chat) chat.innerHTML = '';
-        ensureWelcome();
+        restoreHistory();
       });
     }
   }
@@ -438,7 +470,7 @@
   window.DramaExpert = {
     init() {
       bind();
-      ensureWelcome();
+      restoreHistory();
       setMode('chat');
       setStatus('就绪');
     },

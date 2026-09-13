@@ -34,6 +34,7 @@
   display: flex;
   flex-direction: column;
   min-height: 560px;
+  max-height: 72vh;
 }
 
 .drama-expert-head {
@@ -114,10 +115,14 @@
   flex: 1;
   padding: 22px;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 18px;
   scroll-behavior: smooth;
+  overscroll-behavior: contain;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .drama-chat::-webkit-scrollbar {
@@ -384,6 +389,9 @@
 @media (max-width: 720px) {
   .drama-expert-section {
     padding: 70px 4% 60px;
+  }
+  .drama-expert-card {
+    max-height: 80vh;
   }
   .drama-expert-head {
     padding: 14px 16px;
