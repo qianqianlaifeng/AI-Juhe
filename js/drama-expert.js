@@ -247,6 +247,9 @@
   // API 调用
   // ------------------------------------------------------------
   async function callChat(messages, onDelta) {
+    if (!AGNES_CONFIG.apiKey) {
+      throw new Error('请先在 ⚙️ 接口设置中配置你的 API Key');
+    }
     const url = AGNES_CONFIG.baseURL + '/chat/completions';
     const body = {
       model: AGNES_CONFIG.textModel,
@@ -296,6 +299,9 @@
   }
 
   async function callImage(prompt, n = 1) {
+    if (!AGNES_CONFIG.apiKey) {
+      throw new Error('请先在 ⚙️ 接口设置中配置你的 API Key');
+    }
     const url = AGNES_CONFIG.baseURL + '/images/generations';
     const body = {
       model: AGNES_CONFIG.imageModel,
@@ -553,7 +559,12 @@
     const textEl = $('dramaTextModel');
     const imgEl = $('dramaImageModel');
     if (urlEl) urlEl.value = cfg.baseURL;
-    if (keyEl) keyEl.value = cfg.apiKey;
+    // 不显示已保存的密钥（脱敏），只显示部分
+    if (keyEl && cfg.apiKey) {
+      keyEl.value = cfg.apiKey.slice(0, 6) + '***' + cfg.apiKey.slice(-4);
+    } else {
+      keyEl.value = '';
+    }
     if (textEl) textEl.value = cfg.textModel;
     if (imgEl) imgEl.value = cfg.imageModel;
     panel.style.display = 'flex';
