@@ -62,7 +62,7 @@
 
 
 
-  <link rel="stylesheet" href="css/drama-expert.css?v=1006">
+  <link rel="stylesheet" href="css/drama-expert.css?v=1007">
   <link rel="stylesheet" href="css/style.css?v=67">
 
 
@@ -3935,29 +3935,37 @@
           <span>自定义模型接口（保存到本浏览器）</span>
           <button id="dramaCloseSettings" title="关闭">关闭</button>
         </div>
-        <div class="drama-settings-body">
-          <div class="drama-setting-group">
-            <label>对话接口地址（OpenAI 兼容）</label>
-            <input id="dramaApiUrl" type="text" placeholder="https://api.agnes-ai.cn/v1" spellcheck="false">
+          <div class="drama-settings-body">
+            <div class="drama-setting-group">
+              <label>对话接口地址（OpenAI 兼容）</label>
+              <input id="dramaApiUrl" type="text" placeholder="" spellcheck="false">
+            </div>
+            <div class="drama-setting-group">
+              <label>对话 API Key</label>
+              <input id="dramaApiKey" type="password" placeholder="" spellcheck="false">
+            </div>
+            <div class="drama-setting-group">
+              <label>对话模型</label>
+              <input id="dramaTextModel" type="text" placeholder="" spellcheck="false">
+            </div>
+            <div class="drama-setting-group">
+              <label>生图接口地址（OpenAI 兼容，可选）</label>
+              <input id="dramaImageApiUrl" type="text" placeholder="" spellcheck="false">
+            </div>
+            <div class="drama-setting-group">
+              <label>生图 API Key（可选）</label>
+              <input id="dramaImageApiKey" type="password" placeholder="" spellcheck="false">
+            </div>
+            <div class="drama-setting-group">
+              <label>生图模型（可选）</label>
+              <input id="dramaImageModel" type="text" placeholder="" spellcheck="false">
+            </div>
+            <div class="drama-settings-actions">
+              <button id="dramaSaveSettings" class="btn btn-primary">保存配置</button>
+              <button id="dramaResetSettings" class="drama-clear-btn">恢复默认</button>
+            </div>
+            <p class="drama-settings-note">配置仅保存在本浏览器 localStorage，不会上传到任何服务器。</p>
           </div>
-          <div class="drama-setting-group">
-            <label>API Key</label>
-            <input id="dramaApiKey" type="password" placeholder="sk-..." spellcheck="false">
-          </div>
-          <div class="drama-setting-group">
-            <label>对话模型</label>
-            <input id="dramaTextModel" type="text" placeholder="agnes-2.5-flash" spellcheck="false">
-          </div>
-          <div class="drama-setting-group">
-            <label>生图模型（可选，留空用默认）</label>
-            <input id="dramaImageModel" type="text" placeholder="agnes-image-2.5-flash" spellcheck="false">
-          </div>
-          <div class="drama-settings-actions">
-            <button id="dramaSaveSettings" class="btn btn-primary">保存配置</button>
-            <button id="dramaResetSettings" class="drama-clear-btn">恢复默认</button>
-          </div>
-          <p class="drama-settings-note">配置仅保存在本浏览器 localStorage，不会上传到任何服务器。</p>
-        </div>
       </div>
 
       <div class="drama-history-panel" id="dramaHistoryPanel" style="display:none">
@@ -5055,7 +5063,7 @@
 
 
 
-<script src="js/drama-expert.js?v=1006" defer></script>
+<script src="js/drama-expert.js?v=1007" defer></script>
 
 </body>
 

@@ -247,12 +247,14 @@
   // API 调用
   // ------------------------------------------------------------
   async function callChat(messages, onDelta) {
-    if (!AGNES_CONFIG.apiKey) {
-      throw new Error('请先在 ⚙️ 接口设置中配置你的 API Key');
-    }
-    const url = AGNES_CONFIG.baseURL + '/chat/completions';
+    const cfg = AGNES_CONFIG;
+    const userCfg = cfg.userConfig || {};
+    const apiBase = userCfg.apiBase || DEFAULT_CONFIG.baseURL;
+    const apiKey = userCfg.apiKey || DEFAULT_CONFIG.apiKey;
+    const textModel = userCfg.textModel || DEFAULT_CONFIG.textModel;
+    const url = apiBase + '/chat/completions';
     const body = {
-      model: AGNES_CONFIG.textModel,
+      model: textModel,
       messages: messages,
       stream: true,
       temperature: 0.7
@@ -261,7 +263,7 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + AGNES_CONFIG.apiKey
+        'Authorization': 'Bearer ' + apiKey
       },
       body: JSON.stringify(body),
       signal: state.abortCtrl ? state.abortCtrl.signal : undefined
@@ -299,9 +301,14 @@
   }
 
   async function callImage(prompt, n = 1) {
-    const url = AGNES_CONFIG.baseURL + '/images/generations';
+    const cfg = AGNES_CONFIG;
+    const userCfg = cfg.userConfig || {};
+    const apiBase = userCfg.imageBase || DEFAULT_CONFIG.baseURL;
+    const apiKey = userCfg.imageKey || DEFAULT_CONFIG.apiKey;
+    const imageModel = userCfg.imageModel || DEFAULT_CONFIG.imageModel;
+    const url = apiBase + '/images/generations';
     const body = {
-      model: AGNES_CONFIG.imageModel,
+      model: imageModel,
       prompt: prompt,
       n: n,
       size: '1024x1024'
@@ -310,18 +317,13 @@
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + AGNES_CONFIG.apiKey
+        'Authorization': 'Bearer ' + apiKey
       },
       body: JSON.stringify(body)
     });
     if (!resp.ok) {
       const errText = await resp.text().catch(() => resp.statusText);
-      const errMsg = '生图请求失败：' + resp.status + ' ' + errText.slice(0, 200);
-      // 内置接口失败时，提示用户配置自己的接口
-      if (AGNES_CONFIG.baseURL === DEFAULT_CONFIG.baseURL && AGNES_CONFIG.apiKey === DEFAULT_CONFIG.apiKey) {
-        throw new Error(errMsg + '\n\n如内置接口不可用，请点击 ⚙️ 接口 配置你自己的 API');
-      }
-      throw new Error(errMsg);
+      throw new Error('生图请求失败：' + resp.status + ' ' + errText.slice(0, 200));
     }
     const data = await resp.json();
     const urls = [];
@@ -554,33 +556,21 @@
   function openSettings() {
     const panel = $('dramaSettingsPanel');
     if (!panel) return;
-    // 填充当前配置
+    // 填充当前用户自定义配置（不显示内置默认值）
     const cfg = loadConfig();
     const urlEl = $('dramaApiUrl');
     const keyEl = $('dramaApiKey');
     const textEl = $('dramaTextModel');
+    const imgUrlEl = $('dramaImageApiUrl');
+    const imgKeyEl = $('dramaImageApiKey');
     const imgEl = $('dramaImageModel');
-    if (urlEl) urlEl.value = cfg.baseURL;
-    // 只显示用户自定义的密钥，不显示内置默认值
-    const savedCfg = localStorage.getItem(CONFIG_KEY);
-    if (keyEl) {
-      if (savedCfg) {
-        try {
-          const saved = JSON.parse(savedCfg);
-          if (saved.apiKey && saved.apiKey !== DEFAULT_CONFIG.apiKey) {
-            keyEl.value = saved.apiKey;
-          } else {
-            keyEl.value = '';
-          }
-        } catch (e) {
-          keyEl.value = '';
-        }
-      } else {
-        keyEl.value = '';
-      }
-    }
-    if (textEl) textEl.value = cfg.textModel;
-    if (imgEl) imgEl.value = cfg.imageModel;
+    // 只填充用户自定义的值，没有就留空
+    if (urlEl) urlEl.value = (cfg.userConfig && cfg.userConfig.apiBase) ? cfg.userConfig.apiBase : '';
+    if (keyEl) keyEl.value = (cfg.userConfig && cfg.userConfig.apiKey) ? cfg.userConfig.apiKey : '';
+    if (textEl) textEl.value = (cfg.userConfig && cfg.userConfig.textModel) ? cfg.userConfig.textModel : '';
+    if (imgUrlEl) imgUrlEl.value = (cfg.userConfig && cfg.userConfig.imageBase) ? cfg.userConfig.imageBase : '';
+    if (imgKeyEl) imgKeyEl.value = (cfg.userConfig && cfg.userConfig.imageKey) ? cfg.userConfig.imageKey : '';
+    if (imgEl) imgEl.value = (cfg.userConfig && cfg.userConfig.imageModel) ? cfg.userConfig.imageModel : '';
     panel.style.display = 'flex';
   }
 
@@ -593,13 +583,18 @@
     const urlEl = $('dramaApiUrl');
     const keyEl = $('dramaApiKey');
     const textEl = $('dramaTextModel');
+    const imgUrlEl = $('dramaImageApiUrl');
+    const imgKeyEl = $('dramaImageApiKey');
     const imgEl = $('dramaImageModel');
-    const cfg = {
-      baseURL: (urlEl && urlEl.value.trim()) || DEFAULT_CONFIG.baseURL,
-      apiKey: (keyEl && keyEl.value.trim()) || DEFAULT_CONFIG.apiKey,
-      textModel: (textEl && textEl.value.trim()) || DEFAULT_CONFIG.textModel,
-      imageModel: (imgEl && imgEl.value.trim()) || DEFAULT_CONFIG.imageModel
-    };
+    // 保存用户自定义配置
+    const userConfig = {};
+    if (urlEl && urlEl.value.trim()) userConfig.apiBase = urlEl.value.trim();
+    if (keyEl && keyEl.value.trim()) userConfig.apiKey = keyEl.value.trim();
+    if (textEl && textEl.value.trim()) userConfig.textModel = textEl.value.trim();
+    if (imgUrlEl && imgUrlEl.value.trim()) userConfig.imageBase = imgUrlEl.value.trim();
+    if (imgKeyEl && imgKeyEl.value.trim()) userConfig.imageKey = imgKeyEl.value.trim();
+    if (imgEl && imgEl.value.trim()) userConfig.imageModel = imgEl.value.trim();
+    const cfg = Object.assign({}, DEFAULT_CONFIG, { userConfig });
     saveConfig(cfg);
     AGNES_CONFIG = cfg;
     closeSettings();
