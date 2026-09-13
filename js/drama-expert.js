@@ -447,9 +447,14 @@
   };
 
   // 自动初始化
+  console.log('DramaExpert: script loaded, readyState=' + document.readyState);
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => window.DramaExpert && window.DramaExpert.init());
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DramaExpert: DOMContentLoaded fired');
+      window.DramaExpert && window.DramaExpert.init();
+    });
   } else {
+    console.log('DramaExpert: DOM already ready, init immediately');
     window.DramaExpert && window.DramaExpert.init();
   }
 })();
