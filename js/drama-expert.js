@@ -231,7 +231,7 @@
       buffer = lines.pop() || '';
       for (const line of lines) {
         const trimmed = line.trim();
-        if (!trimmed || !trim.startsWith('data:')) continue;
+        if (!trimmed || !line.trim().startsWith('data:')) continue;
         const data = trimmed.slice(5).trim();
         if (data === '[DONE]') continue;
         try {
