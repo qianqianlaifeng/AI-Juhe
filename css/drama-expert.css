@@ -94,6 +94,24 @@
   50% { opacity: 0.4; }
 }
 
+/* 思考中动画 */
+.drama-status-dot.thinking {
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+  animation: think-pulse 0.8s ease-in-out infinite;
+}
+
+@keyframes think-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+}
+
+.drama-status-dot.error {
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+  animation: none;
+}
+
 .drama-clear-btn {
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.1);
