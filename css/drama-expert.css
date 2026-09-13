@@ -1,0 +1,420 @@
+/* ============================================================
+ * AI 短剧专家智能体 — 聊天界面样式
+ * ============================================================ */
+
+.drama-expert-section {
+  padding: 100px 5% 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.drama-expert-aura {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 0%, rgba(0, 212, 255, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 100%, rgba(124, 58, 237, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.drama-expert-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.drama-expert-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 560px;
+}
+
+.drama-expert-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.0) 100%);
+}
+
+.drama-expert-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary, #00d4ff), var(--secondary, #7c3aed));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.35);
+  flex-shrink: 0;
+}
+
+.drama-expert-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.drama-expert-title h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--text, #f8fafc);
+  font-weight: 600;
+}
+
+.drama-expert-title p {
+  margin: 2px 0 0;
+  font-size: 0.78rem;
+  color: rgba(248, 250, 252, 0.55);
+}
+
+.drama-status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  margin-right: 6px;
+  box-shadow: 0 0 8px #22c55e;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.drama-clear-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(248,250,252,0.7);
+  font-size: 0.78rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.drama-clear-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+/* 消息区域 */
+.drama-chat {
+  flex: 1;
+  padding: 22px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  scroll-behavior: smooth;
+}
+
+.drama-chat::-webkit-scrollbar {
+  width: 6px;
+}
+.drama-chat::-webkit-scrollbar-track {
+  background: transparent;
+}
+.drama-chat::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+}
+.drama-chat::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.16);
+}
+
+/* 单条消息 */
+.drama-msg {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.drama-msg-user {
+  flex-direction: row-reverse;
+}
+
+.drama-msg-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.drama-msg-user .drama-msg-avatar {
+  background: linear-gradient(135deg, rgba(0,212,255,0.18), rgba(124,58,237,0.18));
+  border-color: rgba(0,212,255,0.3);
+}
+
+.drama-msg-body {
+  flex: 1;
+  min-width: 0;
+  max-width: calc(100% - 60px);
+}
+
+.drama-msg-user .drama-msg-body {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.drama-msg-meta {
+  font-size: 0.72rem;
+  color: rgba(248,250,252,0.45);
+  margin-bottom: 4px;
+}
+
+.drama-msg-content {
+  display: inline-block;
+  padding: 11px 16px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text, #f8fafc);
+  font-size: 0.92rem;
+  line-height: 1.65;
+  white-space: normal;
+  word-wrap: break-word;
+  text-align: left;
+}
+
+.drama-msg-user .drama-msg-content {
+  background: linear-gradient(135deg, rgba(0,212,255,0.18), rgba(124,58,237,0.18));
+  border-color: rgba(0,212,255,0.28);
+}
+
+.drama-msg-content strong {
+  color: var(--primary, #00d4ff);
+  font-weight: 600;
+}
+
+.drama-pre {
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 8px 0;
+  font-family: 'Menlo', 'Consolas', monospace;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: #c5f8ff;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.drama-images {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.drama-images a {
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.drama-images a:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0,212,255,0.5);
+}
+
+.drama-images img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 工具栏 */
+.drama-toolbar {
+  padding: 14px 22px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.015);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.drama-mode-toggle {
+  display: inline-flex;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.mode-btn {
+  background: transparent;
+  border: none;
+  color: rgba(248,250,252,0.6);
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.25s;
+}
+
+.mode-btn:hover {
+  color: #fff;
+}
+
+.mode-btn.active {
+  background: linear-gradient(135deg, rgba(0,212,255,0.25), rgba(124,58,237,0.25));
+  color: #fff;
+  box-shadow: 0 0 12px rgba(0,212,255,0.2);
+}
+
+.drama-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
+}
+
+.quick-btn {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(248,250,252,0.75);
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.quick-btn:hover {
+  background: rgba(0,212,255,0.1);
+  border-color: rgba(0,212,255,0.35);
+  color: #fff;
+}
+
+/* 输入区 */
+.drama-input-wrap {
+  padding: 16px 22px 20px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+#dramaInput {
+  flex: 1;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 0.92rem;
+  color: var(--text, #f8fafc);
+  font-family: inherit;
+  resize: none;
+  outline: none;
+  transition: border-color 0.25s, background 0.25s;
+  min-height: 44px;
+  max-height: 180px;
+  line-height: 1.5;
+}
+
+#dramaInput::placeholder {
+  color: rgba(248,250,252,0.4);
+}
+
+#dramaInput:focus {
+  border-color: rgba(0,212,255,0.45);
+  background: rgba(0,212,255,0.04);
+}
+
+#dramaSend {
+  flex-shrink: 0;
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+#dramaSend:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.drama-input-footer {
+  padding: 0 22px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  color: rgba(248,250,252,0.45);
+  border-top: 1px dashed rgba(255,255,255,0.05);
+}
+
+.drama-input-footer .drama-tip {
+  color: rgba(248,250,252,0.35);
+}
+
+/* 响应式 */
+@media (max-width: 720px) {
+  .drama-expert-section {
+    padding: 70px 4% 60px;
+  }
+  .drama-expert-head {
+    padding: 14px 16px;
+  }
+  .drama-chat {
+    padding: 16px;
+  }
+  .drama-toolbar,
+  .drama-input-wrap,
+  .drama-input-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .drama-quick-actions {
+    width: 100%;
+  }
+  .drama-msg-body {
+    max-width: calc(100% - 50px);
+  }
+}
+
+/* 加载光标动画 */
+.drama-msg-assistant .drama-msg-content.streaming::after {
+  content: "▌";
+  display: inline-block;
+  margin-left: 2px;
+  animation: blink 1s steps(1) infinite;
+  color: var(--primary, #00d4ff);
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
