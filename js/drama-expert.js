@@ -559,11 +559,23 @@
     const textEl = $('dramaTextModel');
     const imgEl = $('dramaImageModel');
     if (urlEl) urlEl.value = cfg.baseURL;
-    // 不显示已保存的密钥（脱敏），只显示部分
-    if (keyEl && cfg.apiKey) {
-      keyEl.value = cfg.apiKey.slice(0, 6) + '***' + cfg.apiKey.slice(-4);
-    } else {
-      keyEl.value = '';
+    // 只显示用户自定义的密钥，不显示内置默认值
+    const savedCfg = localStorage.getItem(CONFIG_KEY);
+    if (keyEl) {
+      if (savedCfg) {
+        try {
+          const saved = JSON.parse(savedCfg);
+          if (saved.apiKey && saved.apiKey !== DEFAULT_CONFIG.apiKey) {
+            keyEl.value = saved.apiKey;
+          } else {
+            keyEl.value = '';
+          }
+        } catch (e) {
+          keyEl.value = '';
+        }
+      } else {
+        keyEl.value = '';
+      }
     }
     if (textEl) textEl.value = cfg.textModel;
     if (imgEl) imgEl.value = cfg.imageModel;
