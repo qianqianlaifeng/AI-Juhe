@@ -749,35 +749,94 @@
 }
 
 /* ============================================================
- * 联动模块 — 喵咛（独立）
+
+/* ============================================================
+ * 联动模块 — 喵咛导演台（独立模块 · 视频为主 · 大厂级展示）
  * ============================================================ */
-.miorning-card {
-  max-width: 720px;
-  margin: 0 auto;
-  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.015) 100%);
-  border: 1px solid rgba(255,255,255,0.09);
-  border-radius: 24px;
-  padding: 28px;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.35);
-}
-
-.miorning-logo {
-  text-align: center;
-  margin-bottom: 20px;
-}
-.miorning-logo img {
-  height: 56px;
-  width: auto;
-  filter: drop-shadow(0 6px 20px rgba(124,58,237,0.35));
-}
-
-.miorning-video-box {
+.miorning-section {
   position: relative;
-  border-radius: 18px;
+  padding: 96px 0 60px;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: #0a0a12;
+}
+.miorning-aura {
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1100px;
+  height: 700px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(124, 58, 237, 0.16), transparent 55%),
+    radial-gradient(circle at 70% 40%, rgba(0, 212, 255, 0.14), transparent 55%);
+  filter: blur(20px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.miorning-showcase {
+  position: relative;
+  z-index: 1;
+  max-width: 1040px;
+  margin: 56px auto 0;
+  animation: miorningIn 0.85s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes miorningIn {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 品牌条：logo + 名称 */
+.miorning-brandbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+.miorning-logo-plate {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(250, 250, 252, 0.95);
+  border-radius: 16px;
+  padding: 11px 18px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+.miorning-tag {
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: rgba(124, 58, 237, 0.9);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+.miorning-logo-plate img {
+  height: 32px;
+  width: auto;
+  display: block;
+}
+/* 视频舞台：大尺寸、渐变描边、悬浮按钮内嵌 */
+.miorning-stage {
+  position: relative;
+  border-radius: 26px;
+  overflow: hidden;
+  background: #08080f;
   aspect-ratio: 16 / 9;
+  box-shadow:
+    0 40px 110px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+}
+.miorning-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  padding: 1.5px;
+  background: linear-gradient(140deg, rgba(124, 58, 237, 0.7), rgba(0, 212, 255, 0.4), transparent 55%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 3;
 }
 .miorning-video {
   position: absolute;
@@ -786,55 +845,153 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  z-index: 1;
+}
+/* 上/下方暗化渐变，保证左上角按钮可读 */
+.miorning-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(6, 6, 12, 0.6) 0%, transparent 45%),
+    linear-gradient(to bottom, rgba(6, 6, 12, 0.5) 0%, transparent 34%);
+  pointer-events: none;
+  z-index: 2;
 }
 
-.miorning-overlay {
+/* 悬浮在主视频上的入口按钮，点击直达 B 站导演台 */
+.miorning-video-btn {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 18px 22px;
-  text-decoration: none;
-  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.8) 100%);
-  transition: background 0.3s ease;
-}
-.miorning-overlay:hover {
-  background: linear-gradient(180deg, transparent 0%, rgba(124,58,237,0.35) 60%, rgba(10,10,20,0.92) 100%);
-}
-.overlay-badge {
+  z-index: 4;
+  left: 30px;
+  top: 30px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: 0.5px;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
-}
-.overlay-go {
-  font-size: 0.82rem;
-  font-weight: 600;
+  gap: 10px;
+  padding: 14px 30px;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
   color: #fff;
   background: linear-gradient(135deg, #7c3aed 0%, #00d4ff 100%);
-  border-radius: 999px;
-  padding: 8px 18px;
-  white-space: nowrap;
-  box-shadow: 0 8px 22px rgba(124,58,237,0.4);
-  transition: transform 0.25s ease, filter 0.25s ease;
+  box-shadow: 0 16px 44px rgba(124, 58, 237, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
 }
-.miorning-overlay:hover .overlay-go {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
+/* 按钮背后的呼吸光晕，吸引点击 */
+.miorning-video-btn::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #7c3aed, #00d4ff);
+  filter: blur(15px);
+  opacity: 0.5;
+  z-index: -1;
+  animation: miorningBtnGlow 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes miorningBtnGlow {
+  0%, 100% { opacity: 0.38; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+.miorning-video-btn:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.08);
+  box-shadow: 0 22px 56px rgba(0, 212, 255, 0.45);
+}
+.vb-ico {
+  font-size: 0.85rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+}
+.vb-text {
+  letter-spacing: 0.5px;
 }
 
-@media (max-width: 760px) {
-  .miorning-card { padding: 18px; border-radius: 18px; }
-  .miorning-logo img { height: 44px; }
-  .overlay-badge { font-size: 1.05rem; }
-  .overlay-go { padding: 7px 14px; font-size: 0.76rem; }
-  .miorning-overlay { padding: 14px 16px; }
+.screen-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.08) 50%, transparent 60%);
+  animation: screenShine 5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes screenShine {
+  0%, 100% { transform: translateX(-120%) skewX(-18deg); }
+  50% { transform: translateX(120%) skewX(-18deg); }
+}
+
+/* 能力标签 */
+.miorning-specs {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 26px;
+}
+.miorning-spec {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+/* hover 时顶部浮现渐变高光线 */
+.miorning-spec::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00d4ff, #7c3aed);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+  opacity: 0.85;
+}
+.miorning-spec:hover {
+  background: rgba(124, 58, 237, 0.1);
+  border-color: rgba(124, 58, 237, 0.28);
+  transform: translateY(-2px);
+}
+.miorning-spec:hover::before {
+  transform: scaleX(1);
+}
+.spec-no {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: #00d4ff;
+  opacity: 0.9;
+}
+.spec-txt {
+  font-size: 0.86rem;
+  color: rgba(248, 250, 252, 0.82);
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .miorning-section { padding: 72px 0 48px; }
+  .miorning-brandbar { gap: 12px; margin-bottom: 22px; }
+  .miorning-video-btn { left: 20px; top: 20px; padding: 12px 24px; font-size: 0.92rem; }
+  .miorning-specs {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
 }

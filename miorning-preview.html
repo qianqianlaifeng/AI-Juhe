@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>喵咛导演台 · 模块预览（v1014）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: radial-gradient(circle at 20% 10%, #131326 0%, #0a0a12 60%);
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    color: #f8fafc;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  /* ===== 通用区块标题（与全站一致） ===== */
+  .section-header { text-align: center; max-width: 760px; margin: 0 auto 40px; }
+  .section-eyebrow {
+    display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: 2.5px;
+    text-transform: uppercase; color: #00d4ff; background: rgba(0,212,255,.08);
+    border: 1px solid rgba(0,212,255,.22); border-radius: 999px; padding: 6px 16px; margin-bottom: 14px;
+  }
+  .section-title { font-size: 2.1rem; font-weight: 800; color: rgba(248,250,252,.96); margin: 0 0 10px; letter-spacing: .6px; }
+  .section-desc { font-size: 1rem; color: rgba(248,250,252,.55); margin: 0; font-weight: 400; line-height: 1.7; }
+
+  /* ===== 喵咛导演台模块（与 css/drama-expert.css 完全一致） ===== */
+  .miorning-section { position: relative; padding: 96px 0 60px; overflow: hidden; }
+  .miorning-aura {
+    position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
+    width: 1100px; height: 700px;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(124,58,237,.16), transparent 55%),
+      radial-gradient(circle at 70% 40%, rgba(0,212,255,.14), transparent 55%);
+    filter: blur(20px); pointer-events: none; z-index: 0;
+  }
+  .miorning-showcase { position: relative; z-index: 1; max-width: 1040px; margin: 56px auto 0; animation: miorningIn .85s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes miorningIn { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+  .miorning-brandbar { display: flex; align-items: center; gap: 16px; margin-bottom: 30px; }
+  .miorning-logo-plate {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: rgba(250,250,252,.95); border-radius: 16px; padding: 11px 18px;
+    box-shadow: 0 12px 34px rgba(0,0,0,.3); flex-shrink: 0;
+  }
+  .miorning-tag { font-size: .66rem; font-weight: 700; color: rgba(124,58,237,.9); letter-spacing: 1.2px; text-transform: uppercase; }
+  .miorning-logo-plate img { height: 32px; width: auto; display: block; }
+  .miorning-stage {
+    position: relative; border-radius: 26px; overflow: hidden; background: #08080f;
+    aspect-ratio: 16 / 9;
+    box-shadow: 0 40px 110px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.05) inset;
+  }
+  .miorning-stage::before {
+    content: ""; position: absolute; inset: 0; border-radius: 26px; padding: 1.5px;
+    background: linear-gradient(140deg, rgba(124,58,237,.7), rgba(0,212,255,.4), transparent 55%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; z-index: 3;
+  }
+  .miorning-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; z-index: 1; }
+  .miorning-stage::after {
+    content: ""; position: absolute; inset: 0;
+    background:
+      linear-gradient(to top, rgba(6,6,12,.6) 0%, transparent 45%),
+      linear-gradient(to bottom, rgba(6,6,12,.5) 0%, transparent 34%);
+    pointer-events: none; z-index: 2;
+  }
+  .miorning-video-btn {
+    position: absolute; z-index: 4; left: 30px; top: 30px;
+    display: inline-flex; align-items: center; gap: 10px; padding: 14px 30px; border-radius: 999px;
+    font-size: 1rem; font-weight: 700; text-decoration: none; color: #fff;
+    background: linear-gradient(135deg, #7c3aed 0%, #00d4ff 100%);
+    box-shadow: 0 16px 44px rgba(124,58,237,.5); border: 1px solid rgba(255,255,255,.18);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+  }
+  .miorning-video-btn::after {
+    content: ""; position: absolute; inset: -5px; border-radius: 999px;
+    background: linear-gradient(135deg, #7c3aed, #00d4ff); filter: blur(15px);
+    opacity: .5; z-index: -1; animation: miorningBtnGlow 2.8s ease-in-out infinite; pointer-events: none;
+  }
+  @keyframes miorningBtnGlow { 0%,100% { opacity: .38; transform: scale(1); } 50% { opacity: .7; transform: scale(1.05); } }
+  .miorning-video-btn:hover { transform: translateY(-3px); filter: brightness(1.08); box-shadow: 0 22px 56px rgba(0,212,255,.45); }
+  .vb-ico {
+    font-size: .85rem; line-height: 1; display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.22);
+  }
+  .vb-text { letter-spacing: .5px; }
+  .screen-shine {
+    position: absolute; inset: 0; z-index: 3;
+    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.08) 50%, transparent 60%);
+    animation: screenShine 5s ease-in-out infinite; pointer-events: none;
+  }
+  @keyframes screenShine { 0%,100% { transform: translateX(-120%) skewX(-18deg); } 50% { transform: translateX(120%) skewX(-18deg); } }
+  .miorning-specs { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-top: 26px; }
+  .miorning-spec {
+    position: relative; display: flex; align-items: center; gap: 10px; padding: 14px 16px;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); border-radius: 14px;
+    overflow: hidden; transition: background .25s ease, border-color .25s ease, transform .25s ease;
+  }
+  .miorning-spec::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, #00d4ff, #7c3aed); transform: scaleX(0); transform-origin: left;
+    transition: transform .3s ease; opacity: .85;
+  }
+  .miorning-spec:hover { background: rgba(124,58,237,.1); border-color: rgba(124,58,237,.28); transform: translateY(-2px); }
+  .miorning-spec:hover::before { transform: scaleX(1); }
+  .spec-no { font-size: .74rem; font-weight: 800; color: #00d4ff; opacity: .9; }
+  .spec-txt { font-size: .86rem; color: rgba(248,250,252,.82); font-weight: 500; }
+
+  @media (max-width: 900px) {
+    .miorning-section { padding: 72px 0 48px; }
+    .miorning-brandbar { gap: 12px; margin-bottom: 22px; }
+    .miorning-video-btn { left: 20px; top: 20px; padding: 12px 24px; font-size: .92rem; }
+    .miorning-specs { grid-template-columns: 1fr 1fr; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===== 喵咛导演台（独立模块，与 AI 剧本区块解耦） ===== -->
+  <section id="miorning" class="miorning-section">
+    <div class="miorning-aura"></div>
+
+    <div class="section-header">
+      <span class="section-eyebrow">联动伙伴 · Miorning</span>
+      <h2 class="section-title">喵咛导演台</h2>
+      <p class="section-desc">喵咛导演台：给一句需求或一张参考图，AI 帮你把场景、镜头角度、景别、朝向逐一定制，从分镜到成片一气呵成。</p>
+    </div>
+
+    <div class="miorning-showcase">
+      <div class="miorning-brandbar">
+        <div class="miorning-logo-plate">
+          <span class="miorning-tag">Powered by</span>
+          <img src="https://3432435.s148i.508eduusr.com/4/101/AJQBCAAQBBgAIIWftMcGKO6Q0OECMJ4COFA.png" alt="喵咛 Miorning" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="miorning-stage">
+        <video class="miorning-video" src="https://3432435.s148i.508eduusr.com/58/101/AJQBCAAQOhgAIJiw288GKIS-o7MGMAA4AA.mp4" autoplay muted loop playsinline preload="metadata"></video>
+        <a class="miorning-video-btn" href="https://www.bilibili.com/toy/MiorningDYT/index.html" target="_blank" rel="noopener noreferrer">
+          <span class="vb-ico">▶</span>
+          <span class="vb-text">进入喵咛导演台</span>
+        </a>
+        <div class="screen-shine"></div>
+      </div>
+
+      <div class="miorning-specs">
+        <div class="miorning-spec"><span class="spec-no">01</span><span class="spec-txt">场景设计</span></div>
+        <div class="miorning-spec"><span class="spec-no">02</span><span class="spec-txt">镜头角度</span></div>
+        <div class="miorning-spec"><span class="spec-no">03</span><span class="spec-txt">景别控制</span></div>
+        <div class="miorning-spec"><span class="spec-no">04</span><span class="spec-txt">朝向构图</span></div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>
