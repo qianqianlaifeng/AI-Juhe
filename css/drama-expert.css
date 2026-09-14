@@ -749,166 +749,92 @@
 }
 
 /* ============================================================
- * 联动模块 — 一条龙创作链路
+ * 联动模块 — 喵咛（独立）
  * ============================================================ */
-.script-flow-wrap {
-  max-width: 980px;
-  margin: 56px auto 0;
+.miorning-card {
+  max-width: 720px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.015) 100%);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+}
+
+.miorning-logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.miorning-logo img {
+  height: 56px;
+  width: auto;
+  filter: drop-shadow(0 6px 20px rgba(124,58,237,0.35));
+}
+
+.miorning-video-box {
   position: relative;
-}
-
-.script-flow-head {
-  text-align: center;
-  margin-bottom: 30px;
-}
-.flow-kicker {
-  display: inline-block;
-  font-size: 0.72rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: rgba(0, 212, 255, 0.7);
-  border: 1px solid rgba(0, 212, 255, 0.25);
-  border-radius: 999px;
-  padding: 4px 14px;
-  margin-bottom: 12px;
-}
-.flow-title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: rgba(248, 250, 252, 0.95);
-  margin: 0 0 8px;
-}
-.flow-sub {
-  font-size: 0.88rem;
-  color: rgba(248, 250, 252, 0.5);
-  margin: 0;
-}
-
-.script-flow-chain {
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-  gap: 0;
-  flex-wrap: nowrap;
-}
-
-.flow-node {
-  flex: 1 1 0;
-  max-width: 200px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 22px 16px;
-  text-align: center;
-  text-decoration: none;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.015) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 18px;
-  position: relative;
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: #0a0a12;
+  aspect-ratio: 16 / 9;
 }
-.flow-node::before {
-  content: "";
+.miorning-video {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at top, rgba(124, 58, 237, 0.18), transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.flow-node:hover {
-  transform: translateY(-6px);
-  border-color: rgba(0, 212, 255, 0.45);
-  box-shadow: 0 20px 50px rgba(0, 212, 255, 0.22);
-}
-.flow-node:hover::before { opacity: 1; }
-
-.flow-ico {
-  position: relative;
-  font-size: 30px;
-  line-height: 1;
-  filter: drop-shadow(0 4px 12px rgba(124, 58, 237, 0.4));
-}
-.flow-name {
-  position: relative;
-  font-size: 0.98rem;
-  font-weight: 600;
-  color: rgba(248, 250, 252, 0.92);
-}
-.flow-tag {
-  position: relative;
-  font-size: 0.7rem;
-  color: rgba(248, 250, 252, 0.45);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-  padding: 2px 10px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-.flow-arrow {
-  flex: 0 0 44px;
+.miorning-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  position: relative;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 22px;
+  text-decoration: none;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.8) 100%);
+  transition: background 0.3s ease;
 }
-.flow-arrow i {
-  display: block;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(0, 212, 255, 0.15), rgba(124, 58, 237, 0.6), rgba(0, 212, 255, 0.15));
-  position: relative;
-  border-radius: 2px;
+.miorning-overlay:hover {
+  background: linear-gradient(180deg, transparent 0%, rgba(124,58,237,0.35) 60%, rgba(10,10,20,0.92) 100%);
 }
-.flow-arrow i::after {
-  content: "";
-  position: absolute;
-  right: -2px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-left: 7px solid rgba(124, 58, 237, 0.8);
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  animation: flow-pulse 1.6s ease-in-out infinite;
+.overlay-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
 }
-@keyframes flow-pulse {
-  0%, 100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
-  50% { opacity: 1; transform: translateY(-50%) translateX(4px); }
+.overlay-go {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed 0%, #00d4ff 100%);
+  border-radius: 999px;
+  padding: 8px 18px;
+  white-space: nowrap;
+  box-shadow: 0 8px 22px rgba(124,58,237,0.4);
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+.miorning-overlay:hover .overlay-go {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
 }
 
 @media (max-width: 760px) {
-  .script-flow-chain {
-    flex-wrap: wrap;
-    gap: 14px;
-  }
-  .flow-node {
-    flex: 1 1 calc(50% - 14px);
-    max-width: none;
-  }
-  .flow-arrow {
-    flex-basis: 100%;
-    height: 30px;
-  }
-  .flow-arrow i {
-    width: 2px;
-    height: 100%;
-    background: linear-gradient(180deg, rgba(0, 212, 255, 0.15), rgba(124, 58, 237, 0.6), rgba(0, 212, 255, 0.15));
-  }
-  .flow-arrow i::after {
-    right: 50%;
-    top: auto;
-    bottom: -2px;
-    transform: translateX(50%);
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 7px solid rgba(124, 58, 237, 0.8);
-    animation: flow-pulse-v 1.6s ease-in-out infinite;
-  }
-  @keyframes flow-pulse-v {
-    0%, 100% { opacity: 0.5; transform: translateX(50%) translateY(0); }
-    50% { opacity: 1; transform: translateX(50%) translateY(4px); }
-  }
+  .miorning-card { padding: 18px; border-radius: 18px; }
+  .miorning-logo img { height: 44px; }
+  .overlay-badge { font-size: 1.05rem; }
+  .overlay-go { padding: 7px 14px; font-size: 0.76rem; }
+  .miorning-overlay { padding: 14px 16px; }
 }
