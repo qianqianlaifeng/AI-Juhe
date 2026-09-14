@@ -747,3 +747,168 @@
   .script-gen-title { font-size: 1.25rem; }
   .script-gen-btn { padding: 13px 26px; font-size: 0.95rem; }
 }
+
+/* ============================================================
+ * 联动模块 — 一条龙创作链路
+ * ============================================================ */
+.script-flow-wrap {
+  max-width: 980px;
+  margin: 56px auto 0;
+  position: relative;
+}
+
+.script-flow-head {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.flow-kicker {
+  display: inline-block;
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(0, 212, 255, 0.7);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 999px;
+  padding: 4px 14px;
+  margin-bottom: 12px;
+}
+.flow-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: rgba(248, 250, 252, 0.95);
+  margin: 0 0 8px;
+}
+.flow-sub {
+  font-size: 0.88rem;
+  color: rgba(248, 250, 252, 0.5);
+  margin: 0;
+}
+
+.script-flow-chain {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: nowrap;
+}
+
+.flow-node {
+  flex: 1 1 0;
+  max-width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 22px 16px;
+  text-align: center;
+  text-decoration: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.015) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  position: relative;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+.flow-node::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top, rgba(124, 58, 237, 0.18), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.flow-node:hover {
+  transform: translateY(-6px);
+  border-color: rgba(0, 212, 255, 0.45);
+  box-shadow: 0 20px 50px rgba(0, 212, 255, 0.22);
+}
+.flow-node:hover::before { opacity: 1; }
+
+.flow-ico {
+  position: relative;
+  font-size: 30px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 12px rgba(124, 58, 237, 0.4));
+}
+.flow-name {
+  position: relative;
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: rgba(248, 250, 252, 0.92);
+}
+.flow-tag {
+  position: relative;
+  font-size: 0.7rem;
+  color: rgba(248, 250, 252, 0.45);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+
+.flow-arrow {
+  flex: 0 0 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.flow-arrow i {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(0, 212, 255, 0.15), rgba(124, 58, 237, 0.6), rgba(0, 212, 255, 0.15));
+  position: relative;
+  border-radius: 2px;
+}
+.flow-arrow i::after {
+  content: "";
+  position: absolute;
+  right: -2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 7px solid rgba(124, 58, 237, 0.8);
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  animation: flow-pulse 1.6s ease-in-out infinite;
+}
+@keyframes flow-pulse {
+  0%, 100% { opacity: 0.5; transform: translateY(-50%) translateX(0); }
+  50% { opacity: 1; transform: translateY(-50%) translateX(4px); }
+}
+
+@media (max-width: 760px) {
+  .script-flow-chain {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .flow-node {
+    flex: 1 1 calc(50% - 14px);
+    max-width: none;
+  }
+  .flow-arrow {
+    flex-basis: 100%;
+    height: 30px;
+  }
+  .flow-arrow i {
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(0, 212, 255, 0.15), rgba(124, 58, 237, 0.6), rgba(0, 212, 255, 0.15));
+  }
+  .flow-arrow i::after {
+    right: 50%;
+    top: auto;
+    bottom: -2px;
+    transform: translateX(50%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 7px solid rgba(124, 58, 237, 0.8);
+    animation: flow-pulse-v 1.6s ease-in-out infinite;
+  }
+  @keyframes flow-pulse-v {
+    0%, 100% { opacity: 0.5; transform: translateX(50%) translateY(0); }
+    50% { opacity: 1; transform: translateX(50%) translateY(4px); }
+  }
+}
