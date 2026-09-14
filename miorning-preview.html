@@ -36,11 +36,10 @@
   }
   .miorning-showcase { position: relative; z-index: 1; max-width: 1040px; margin: 56px auto 0; animation: miorningIn .85s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes miorningIn { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
-  .miorning-brandbar { display: flex; align-items: center; gap: 16px; margin-bottom: 30px; }
   .miorning-logo-plate {
     display: inline-flex; align-items: center; gap: 12px;
     background: rgba(250,250,252,.95); border-radius: 16px; padding: 11px 18px;
-    box-shadow: 0 12px 34px rgba(0,0,0,.3); flex-shrink: 0;
+    box-shadow: 0 12px 34px rgba(0,0,0,.3); flex-shrink: 0; margin: 14px 0 10px;
   }
   .miorning-tag { font-size: .66rem; font-weight: 700; color: rgba(124,58,237,.9); letter-spacing: 1.2px; text-transform: uppercase; }
   .miorning-logo-plate img { height: 32px; width: auto; display: block; }
@@ -108,7 +107,7 @@
 
   @media (max-width: 900px) {
     .miorning-section { padding: 72px 0 48px; }
-    .miorning-brandbar { gap: 12px; margin-bottom: 22px; }
+    .miorning-logo-plate { margin: 10px 0 8px; }
     .miorning-video-btn { left: 20px; top: 20px; padding: 12px 24px; font-size: .92rem; }
     .miorning-specs { grid-template-columns: 1fr 1fr; gap: 10px; }
   }
@@ -122,17 +121,14 @@
 
     <div class="section-header">
       <span class="section-eyebrow">联动伙伴 · Miorning</span>
-      <h2 class="section-title">喵咛导演台</h2>
+      <div class="miorning-logo-plate">
+        <span class="miorning-tag">Powered by</span>
+        <img src="https://3432435.s148i.508eduusr.com/4/101/AJQBCAAQBBgAIIWftMcGKO6Q0OECMJ4COFA.png" alt="喵咛 Miorning" loading="lazy" />
+      </div>
       <p class="section-desc">喵咛导演台：给一句需求或一张参考图，AI 帮你把场景、镜头角度、景别、朝向逐一定制，从分镜到成片一气呵成。</p>
     </div>
 
     <div class="miorning-showcase">
-      <div class="miorning-brandbar">
-        <div class="miorning-logo-plate">
-          <span class="miorning-tag">Powered by</span>
-          <img src="https://3432435.s148i.508eduusr.com/4/101/AJQBCAAQBBgAIIWftMcGKO6Q0OECMJ4COFA.png" alt="喵咛 Miorning" loading="lazy" />
-        </div>
-      </div>
 
       <div class="miorning-stage">
         <video class="miorning-video" src="https://3432435.s148i.508eduusr.com/58/101/AJQBCAAQOhgAIJiw288GKIS-o7MGMAA4AA.mp4" autoplay muted loop playsinline preload="metadata"></video>
