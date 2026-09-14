@@ -578,3 +578,172 @@
   .drama-settings-head { padding: 10px 14px; }
   .drama-settings-body { padding: 12px 14px; }
 }
+
+/* ============================================================
+ * AI 剧本生成模块 — 样式
+ * ============================================================ */
+.script-gen-section {
+  padding: 100px 5% 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.script-gen-aura {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 45% at 18% 8%, rgba(124, 58, 237, 0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 82% 95%, rgba(0, 212, 255, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.script-gen-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.script-gen-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.015) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 26px;
+  padding: 44px 40px 38px;
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.script-gen-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(124, 58, 237, 0.35);
+  box-shadow: 0 40px 100px rgba(124, 58, 237, 0.22);
+}
+
+.script-gen-glow {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 160px;
+  background: radial-gradient(ellipse at center, rgba(124, 58, 237, 0.35) 0%, transparent 70%);
+  filter: blur(28px);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.script-gen-icon {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.25), rgba(0, 212, 255, 0.18));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.25);
+}
+
+.script-gen-title {
+  position: relative;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: rgba(248, 250, 252, 0.95);
+  margin: 0 0 12px;
+  letter-spacing: 0.3px;
+}
+
+.script-gen-desc {
+  position: relative;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: rgba(248, 250, 252, 0.62);
+  max-width: 540px;
+  margin: 0 auto 24px;
+}
+
+.script-gen-feats {
+  position: relative;
+  list-style: none;
+  padding: 0;
+  margin: 0 auto 28px;
+  max-width: 480px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  text-align: left;
+}
+.script-gen-feats li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: rgba(248, 250, 252, 0.78);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 11px 14px;
+  transition: background 0.25s ease;
+}
+.script-gen-feats li:hover {
+  background: rgba(124, 58, 237, 0.1);
+}
+.feat-ico {
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+
+.script-gen-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 34px;
+  border-radius: 14px;
+  font-size: 1.02rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed 0%, #00d4ff 100%);
+  box-shadow: 0 14px 36px rgba(124, 58, 237, 0.4);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+.script-gen-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+  box-shadow: 0 20px 48px rgba(0, 212, 255, 0.45);
+}
+.script-gen-btn:active {
+  transform: translateY(0);
+}
+.btn-ico {
+  font-size: 1.15rem;
+}
+
+.script-gen-hint {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  color: rgba(248, 250, 252, 0.55);
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.22);
+}
+.hint-ico {
+  font-size: 0.95rem;
+}
+
+@media (max-width: 720px) {
+  .script-gen-card { padding: 34px 22px 28px; border-radius: 20px; }
+  .script-gen-feats { grid-template-columns: 1fr; gap: 10px; }
+  .script-gen-title { font-size: 1.25rem; }
+  .script-gen-btn { padding: 13px 26px; font-size: 0.95rem; }
+}
