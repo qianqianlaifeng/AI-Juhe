@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>喵咛导演台 · 模块预览（v1014）</title>
+<title>喵咛导演台 · 模块预览（v1017）</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -37,12 +37,13 @@
   .miorning-showcase { position: relative; z-index: 1; max-width: 1040px; margin: 56px auto 0; animation: miorningIn .85s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes miorningIn { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
   .miorning-logo-plate {
-    display: inline-flex; align-items: center; gap: 12px;
-    background: rgba(250,250,252,.95); border-radius: 16px; padding: 11px 18px;
-    box-shadow: 0 12px 34px rgba(0,0,0,.3); flex-shrink: 0; margin: 14px 0 10px;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    width: fit-content;
+    background: rgba(250,250,252,.95); border-radius: 16px; padding: 13px 22px;
+    box-shadow: 0 12px 34px rgba(0,0,0,.3); margin: 14px auto 10px;
   }
   .miorning-tag { font-size: .66rem; font-weight: 700; color: rgba(124,58,237,.9); letter-spacing: 1.2px; text-transform: uppercase; }
-  .miorning-logo-plate img { height: 32px; width: auto; display: block; }
+  .miorning-logo-plate img { height: 36px; width: auto; display: block; }
   .miorning-stage {
     position: relative; border-radius: 26px; overflow: hidden; background: #08080f;
     aspect-ratio: 16 / 9;
@@ -59,13 +60,14 @@
     content: ""; position: absolute; inset: 0;
     background:
       linear-gradient(to top, rgba(6,6,12,.6) 0%, transparent 45%),
-      linear-gradient(to bottom, rgba(6,6,12,.5) 0%, transparent 34%);
+      linear-gradient(to bottom, rgba(6,6,12,.5) 0%, transparent 34%),
+      linear-gradient(to right, rgba(6,6,12,.42) 0%, transparent 40%);
     pointer-events: none; z-index: 2;
   }
   .miorning-video-btn {
-    position: absolute; z-index: 4; left: 30px; top: 30px;
-    display: inline-flex; align-items: center; gap: 10px; padding: 14px 30px; border-radius: 999px;
-    font-size: 1rem; font-weight: 700; text-decoration: none; color: #fff;
+    position: absolute; z-index: 4; left: 6%; top: 50%; transform: translateY(-50%);
+    display: inline-flex; align-items: center; gap: 12px; padding: 17px 38px; border-radius: 999px;
+    font-size: 1.08rem; font-weight: 700; text-decoration: none; color: #fff;
     background: linear-gradient(135deg, #7c3aed 0%, #00d4ff 100%);
     box-shadow: 0 16px 44px rgba(124,58,237,.5); border: 1px solid rgba(255,255,255,.18);
     backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
@@ -79,8 +81,8 @@
   @keyframes miorningBtnGlow { 0%,100% { opacity: .38; transform: scale(1); } 50% { opacity: .7; transform: scale(1.05); } }
   .miorning-video-btn:hover { transform: translateY(-3px); filter: brightness(1.08); box-shadow: 0 22px 56px rgba(0,212,255,.45); }
   .vb-ico {
-    font-size: .85rem; line-height: 1; display: inline-flex; align-items: center; justify-content: center;
-    width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.22);
+    font-size: .95rem; line-height: 1; display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.22);
   }
   .vb-text { letter-spacing: .5px; }
   .screen-shine {
@@ -107,8 +109,8 @@
 
   @media (max-width: 900px) {
     .miorning-section { padding: 72px 0 48px; }
-    .miorning-logo-plate { margin: 10px 0 8px; }
-    .miorning-video-btn { left: 20px; top: 20px; padding: 12px 24px; font-size: .92rem; }
+    .miorning-logo-plate { margin: 10px auto 8px; }
+    .miorning-video-btn { left: 5%; top: 50%; transform: translateY(-50%); padding: 14px 28px; font-size: 1rem; }
     .miorning-specs { grid-template-columns: 1fr 1fr; gap: 10px; }
   }
 </style>
