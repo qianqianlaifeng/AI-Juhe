@@ -665,3 +665,46 @@
     initLuziNotice();
   }
 })();
+
+/* ============================================================
+ * 喵咛导演台入口按钮：点击「进入异世界」传送冲击波
+ * ============================================================ */
+(function () {
+  function initWarpBurst() {
+    var btn = document.querySelector('.miorning-video-btn');
+    if (!btn) return;
+
+    var timer = null;
+
+    btn.addEventListener('click', function () {
+      var rect = btn.getBoundingClientRect();
+      var cx = rect.left + rect.width / 2;
+      var cy = rect.top + rect.height / 2;
+      var size = Math.max(window.innerWidth, window.innerHeight) * 2.4;
+
+      var burst = document.createElement('div');
+      burst.className = 'warp-burst';
+      burst.style.width = size + 'px';
+      burst.style.height = size + 'px';
+      burst.style.left = cx + 'px';
+      burst.style.top = cy + 'px';
+      document.body.appendChild(burst);
+      window.setTimeout(function () {
+        if (burst.parentNode) burst.parentNode.removeChild(burst);
+      }, 950);
+
+      // 按钮瞬间爆亮
+      btn.classList.add('is-warping');
+      window.clearTimeout(timer);
+      timer = window.setTimeout(function () {
+        btn.classList.remove('is-warping');
+      }, 420);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initWarpBurst);
+  } else {
+    initWarpBurst();
+  }
+})();
