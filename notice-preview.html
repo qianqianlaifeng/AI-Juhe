@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>平台公告 · 预览（v1018）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: radial-gradient(circle at 20% 10%, #131326 0%, #0a0a12 60%);
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    color: #f8fafc;
+    min-height: 100vh;
+  }
+  /* ===== 背景示意（模拟平台页面） ===== */
+  .demo-bg { padding: 70px 24px 120px; max-width: 880px; margin: 0 auto; opacity: .45; }
+  .demo-bg h1 { font-size: 1.7rem; margin-bottom: 14px; letter-spacing: .5px; }
+  .demo-bg p { color: rgba(248,250,252,.55); line-height: 1.9; font-size: .95rem; }
+  .demo-tip {
+    position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 50;
+    background: rgba(15,20,30,.92); border: 1px solid rgba(255,255,255,.12); border-radius: 10px;
+    padding: 10px 16px; font-size: .82rem; color: rgba(248,250,252,.75);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); white-space: nowrap;
+  }
+  .reopen-btn {
+    position: fixed; right: 22px; bottom: 22px; z-index: 50;
+    padding: 10px 16px; border-radius: 10px; cursor: pointer;
+    border: 1px solid rgba(0,212,255,.35); background: rgba(0,212,255,.1); color: #00d4ff;
+    font-size: .84rem; font-weight: 700; font-family: inherit;
+    transition: background .2s ease;
+  }
+  .reopen-btn:hover { background: rgba(0,212,255,.2); }
+
+  /* ===== 公告弹窗（与 css/drama-expert.css 完全一致） ===== */
+  .luzi-notice-mask {
+    position: fixed; inset: 0; z-index: 100000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    background: rgba(6, 6, 14, 0.62);
+    backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px);
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+  }
+  .luzi-notice-mask.is-open { opacity: 1; visibility: visible; }
+  .luzi-notice {
+    position: relative; width: min(580px, 100%); max-height: min(80vh, 660px); overflow-y: auto;
+    background: linear-gradient(165deg, rgba(24, 24, 44, 0.97), rgba(13, 13, 25, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 22px;
+    padding: 30px 30px 26px;
+    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6);
+    transform: translateY(20px) scale(0.96);
+    transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .luzi-notice-mask.is-open .luzi-notice { transform: translateY(0) scale(1); }
+  .luzi-notice::before {
+    content: ""; position: absolute; inset: 0; border-radius: 22px; padding: 1.5px;
+    background: linear-gradient(140deg, rgba(0, 212, 255, 0.55), rgba(124, 58, 237, 0.55), transparent 62%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+  }
+  .luzi-notice-close {
+    position: absolute; top: 14px; right: 16px; width: 32px; height: 32px; border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.06);
+    color: rgba(248, 250, 252, 0.72); font-size: 18px; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.25s ease;
+  }
+  .luzi-notice-close:hover { background: rgba(255, 255, 255, 0.14); color: #fff; transform: rotate(90deg); }
+  .luzi-notice-badge {
+    display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 2.2px;
+    color: #00d4ff; background: rgba(0, 212, 255, 0.09); border: 1px solid rgba(0, 212, 255, 0.25);
+    border-radius: 999px; padding: 5px 14px; margin-bottom: 14px;
+  }
+  .luzi-notice-title {
+    font-size: 1.34rem; font-weight: 800; color: rgba(248, 250, 252, 0.97);
+    margin: 0 0 12px; letter-spacing: 0.4px; line-height: 1.45;
+  }
+  .luzi-notice-title .luzi-hl {
+    background: linear-gradient(90deg, #00d4ff, #7c3aed);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .luzi-notice-text { font-size: 0.94rem; line-height: 1.9; color: rgba(248, 250, 252, 0.66); margin: 0 0 22px; }
+  .luzi-notice-text b { color: rgba(248, 250, 252, 0.92); font-weight: 700; }
+  .luzi-notice-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .luzi-notice-btn {
+    flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center;
+    padding: 13px 18px; border-radius: 12px; font-size: 0.95rem; font-weight: 700;
+    text-decoration: none; cursor: pointer; border: 1px solid transparent; white-space: nowrap;
+    font-family: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+  .luzi-notice-btn-primary {
+    color: #fff; background: linear-gradient(135deg, #7c3aed 0%, #00d4ff 100%);
+    box-shadow: 0 14px 34px rgba(124, 58, 237, 0.4);
+  }
+  .luzi-notice-btn-primary:hover { transform: translateY(-2px); filter: brightness(1.08); box-shadow: 0 18px 44px rgba(0, 212, 255, 0.4); }
+  .luzi-notice-btn-ghost {
+    color: rgba(248, 250, 252, 0.82); background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+  .luzi-notice-btn-ghost:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.24); color: #fff; }
+  @media (max-width: 640px) {
+    .luzi-notice-mask { padding: 16px; }
+    .luzi-notice { padding: 24px 20px 20px; border-radius: 18px; }
+    .luzi-notice-title { font-size: 1.14rem; }
+    .luzi-notice-text { font-size: 0.9rem; }
+    .luzi-notice-actions { flex-direction: column; }
+    .luzi-notice-btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- 背景示意 -->
+  <div class="demo-bg">
+    <h1>AI 聚合平台</h1>
+    <p>这是背景示意图 —— 实际站点上，访问页面后公告弹窗会自动盖在整个页面上方，<br>
+       访客点「继续使用聚合平台」或右上角 × 即可关闭，继续正常使用。</p>
+  </div>
+
+  <div class="demo-tip">预览提示：下方右下角可「重新打开公告」反复查看</div>
+  <button class="reopen-btn" id="reopenBtn" type="button">重新打开公告</button>
+
+  <!-- ===== 公告弹窗（与 index.html 结构一致） ===== -->
+  <div class="luzi-notice-mask" id="luziNoticeMask" aria-hidden="true">
+    <div class="luzi-notice" role="dialog" aria-modal="true" aria-labelledby="luziNoticeTitle">
+      <button class="luzi-notice-close" id="luziNoticeClose" type="button" aria-label="关闭公告">&times;</button>
+      <div class="luzi-notice-badge">📢 平台公告</div>
+      <h3 class="luzi-notice-title" id="luziNoticeTitle"><span class="luzi-hl">「炉子」AI 能力网络平台</span> 上线了</h3>
+      <p class="luzi-notice-text">AI 发展越来越快，但很多朋友会遇到这些难题：找不到好用的 AI 能力，各类提示词、Skill 分散在各处不好管理，想要分享自己打磨好的 AI 能力，却没有合适的渠道。为此<b>「炉子」AI 能力网络平台诞生！</b>私有 AI 能力仓库 + 能力交换社区，存储管理 Skill 与提示词，分享获取 AI 能力。</p>
+      <div class="luzi-notice-actions">
+        <a class="luzi-notice-btn luzi-notice-btn-primary" href="https://luzi.ai" target="_blank" rel="noopener noreferrer">下载使用炉子</a>
+        <button class="luzi-notice-btn luzi-notice-btn-ghost" id="luziNoticeLater" type="button">继续使用聚合平台</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  var mask = document.getElementById('luziNoticeMask');
+  var closeBtn = document.getElementById('luziNoticeClose');
+  var laterBtn = document.getElementById('luziNoticeLater');
+  var reopenBtn = document.getElementById('reopenBtn');
+  if (!mask) return;
+
+  function openNotice() {
+    mask.classList.add('is-open');
+    mask.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeNotice() {
+    mask.classList.remove('is-open');
+    mask.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  setTimeout(openNotice, 500);
+  if (closeBtn) closeBtn.addEventListener('click', closeNotice);
+  if (laterBtn) laterBtn.addEventListener('click', closeNotice);
+  if (reopenBtn) reopenBtn.addEventListener('click', openNotice);
+  mask.addEventListener('click', function (e) { if (e.target === mask) closeNotice(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeNotice(); });
+})();
+</script>
+</body>
+</html>

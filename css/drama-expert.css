@@ -993,3 +993,162 @@
     gap: 10px;
   }
 }
+
+/* ============================================================
+ * 公告弹窗：「炉子」AI 能力网络平台
+ * ============================================================ */
+.luzi-notice-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(6, 6, 14, 0.62);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+.luzi-notice-mask.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+.luzi-notice {
+  position: relative;
+  width: min(580px, 100%);
+  max-height: min(80vh, 660px);
+  overflow-y: auto;
+  background: linear-gradient(165deg, rgba(24, 24, 44, 0.97), rgba(13, 13, 25, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 22px;
+  padding: 30px 30px 26px;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6);
+  transform: translateY(20px) scale(0.96);
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.luzi-notice-mask.is-open .luzi-notice {
+  transform: translateY(0) scale(1);
+}
+/* 渐变描边 */
+.luzi-notice::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  padding: 1.5px;
+  background: linear-gradient(140deg, rgba(0, 212, 255, 0.55), rgba(124, 58, 237, 0.55), transparent 62%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.luzi-notice-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(248, 250, 252, 0.72);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.25s ease;
+}
+.luzi-notice-close:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  transform: rotate(90deg);
+}
+.luzi-notice-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2.2px;
+  color: #00d4ff;
+  background: rgba(0, 212, 255, 0.09);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 999px;
+  padding: 5px 14px;
+  margin-bottom: 14px;
+}
+.luzi-notice-title {
+  font-size: 1.34rem;
+  font-weight: 800;
+  color: rgba(248, 250, 252, 0.97);
+  margin: 0 0 12px;
+  letter-spacing: 0.4px;
+  line-height: 1.45;
+}
+.luzi-notice-title .luzi-hl {
+  background: linear-gradient(90deg, #00d4ff, #7c3aed);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.luzi-notice-text {
+  font-size: 0.94rem;
+  line-height: 1.9;
+  color: rgba(248, 250, 252, 0.66);
+  margin: 0 0 22px;
+}
+.luzi-notice-text b {
+  color: rgba(248, 250, 252, 0.92);
+  font-weight: 700;
+}
+.luzi-notice-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.luzi-notice-btn {
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 18px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+.luzi-notice-btn-primary {
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed 0%, #00d4ff 100%);
+  box-shadow: 0 14px 34px rgba(124, 58, 237, 0.4);
+}
+.luzi-notice-btn-primary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+  box-shadow: 0 18px 44px rgba(0, 212, 255, 0.4);
+}
+.luzi-notice-btn-ghost {
+  color: rgba(248, 250, 252, 0.82);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+.luzi-notice-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #fff;
+}
+@media (max-width: 640px) {
+  .luzi-notice-mask { padding: 16px; }
+  .luzi-notice { padding: 24px 20px 20px; border-radius: 18px; }
+  .luzi-notice-title { font-size: 1.14rem; }
+  .luzi-notice-text { font-size: 0.9rem; }
+  .luzi-notice-actions { flex-direction: column; }
+  .luzi-notice-btn { width: 100%; }
+}

@@ -616,3 +616,52 @@
     window.DramaExpert && window.DramaExpert.init();
   }
 })();
+
+/* ============================================================
+ * 公告弹窗：「炉子」AI 能力网络平台
+ * ============================================================ */
+(function () {
+  function initLuziNotice() {
+    var mask = document.getElementById('luziNoticeMask');
+    if (!mask) return;
+
+    var closeBtn = document.getElementById('luziNoticeClose');
+    var laterBtn = document.getElementById('luziNoticeLater');
+    var isOpen = false;
+
+    function openNotice() {
+      if (isOpen) return;
+      isOpen = true;
+      mask.classList.add('is-open');
+      mask.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeNotice() {
+      if (!isOpen) return;
+      isOpen = false;
+      mask.classList.remove('is-open');
+      mask.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    // 首屏加载完成后延迟弹出，避免与页面渲染打架
+    setTimeout(openNotice, 900);
+
+    if (closeBtn) closeBtn.addEventListener('click', closeNotice);
+    if (laterBtn) laterBtn.addEventListener('click', closeNotice);
+    // 点击遮罩空白处也能关闭
+    mask.addEventListener('click', function (e) {
+      if (e.target === mask) closeNotice();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && isOpen) closeNotice();
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLuziNotice);
+  } else {
+    initLuziNotice();
+  }
+})();
