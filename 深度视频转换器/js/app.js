@@ -55,6 +55,7 @@ const state = {
     settings: {
         modelId: 'onnx-community/depth-anything-v2-small-ONNX',
         sourceMode: 'auto', // auto | modelscope | huggingface
+        modelRes: 518, // 喂给模型的输入最长边像素（0=原画）；降低可显著提速，深度图本就平滑，画质影响很小
         invert: false,
         contrast: 0,
         brightness: 0,
@@ -763,10 +764,18 @@ async function loadModel(requestedModelId) {
             const fileProgress = {}; // { filename: { progress, loaded, total, done } }
             let downloadStartTime = null;
 
-            state.depthEstimator = await pipeline('depth-estimation', requestedModelId, {
-                device: device,
-                dtype: hasWebGPU ? 'fp32' : 'q8',
-                progress_callback: (progress) => {
+            // dtype 选择：WebGPU 优先 fp16（比 fp32 快数倍、显存更省，画质几乎无差）；
+            // 若 fp16 不可用则自动回退 fp32。WASM 仍用 q8。
+            const dtypeCandidates = hasWebGPU ? ['fp16', 'fp32'] : ['q8'];
+            let estimator = null;
+            let lastDtypeErr = null;
+            for (const tryDtype of dtypeCandidates) {
+                try {
+                    log(`加载模型（device=${device}, dtype=${tryDtype}）...`, 'info');
+                    estimator = await pipeline('depth-estimation', requestedModelId, {
+                        device: device,
+                        dtype: tryDtype,
+                        progress_callback: (progress) => {
                     try {
                         const file = progress.file || 'unknown';
 
@@ -805,7 +814,17 @@ async function loadModel(requestedModelId) {
                         console.warn('[模型下载进度回调] 错误:', callbackErr);
                     }
                 },
-            });
+                    });
+                    break; // fp16/fp32 任一成功即跳出精度循环
+                } catch (dtypeErr) {
+                    lastDtypeErr = dtypeErr;
+                    log(`dtype=${tryDtype} 加载失败: ${dtypeErr.message}，尝试下一个精度`, 'warning');
+                }
+            }
+            if (!estimator) {
+                throw lastDtypeErr || new Error('模型加载失败（所有精度均不可用）');
+            }
+            state.depthEstimator = estimator;
 
             // 模型下载完成
             state.modelLoaded = true;
@@ -1003,23 +1022,7 @@ function depthResultToImageData(depthResult) {
  * Draw depth result to canvas with effects
  */
 function drawDepthToCanvas(ctx, depthResult, targetWidth, targetHeight, settings) {
-    // Debug log the structure of the depth result
-    if (depthResult) {
-        const info = {
-            type: Object.prototype.toString.call(depthResult),
-            width: depthResult.width,
-            height: depthResult.height,
-            dims: depthResult.dims,
-            dataType: depthResult.data ? Object.prototype.toString.call(depthResult.data) : 'none',
-            dataLength: depthResult.data ? depthResult.data.length : 0,
-            channels: depthResult.channels,
-            format: depthResult.format,
-            resultType: depthResult.type,
-        };
-        console.log('Depth result structure:', info);
-    }
-
-    // Create temp canvas from depth image
+    // Create temp canvas from depth image (深度图本身是平滑的，低分辨率推理后放大几乎无画质损失)
     const imageData = depthResultToImageData(depthResult);
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = imageData.width;
@@ -1088,6 +1091,20 @@ function seekTo(video, time) {
         video.addEventListener('seeked', onSeeked);
         video.currentTime = Math.min(time, video.duration);
     });
+}
+
+/**
+ * 计算喂给模型的输入尺寸：在保持比例的前提下，把最长边限制到 maxSide。
+ * maxSide<=0 时直接返回原始尺寸。Depth-Anything 在 ~518 像素已足够，
+ * 降低输入分辨率可大幅减少逐帧推理耗时（深度图平滑，画质损失极小）。
+ */
+function computeModelInputSize(srcW, srcH, maxSide) {
+    if (!maxSide || maxSide <= 0) return { w: srcW, h: srcH };
+    const scale = Math.min(1, maxSide / Math.max(srcW, srcH));
+    return {
+        w: Math.max(1, Math.round(srcW * scale)),
+        h: Math.max(1, Math.round(srcH * scale)),
+    };
 }
 
 /**
@@ -1297,9 +1314,12 @@ async function processWithWebCodecs(video, estimator, settings, callbacks) {
     }
 
     // Setup canvases
-    const inputCanvas = document.createElement('canvas');
-    inputCanvas.width = srcWidth;
-    inputCanvas.height = srcHeight;
+    // 关键提速点：模型喂低分辨率输入（深度图本就平滑，放大无感），全分辨率只在最后上采样
+    const modelInput = computeModelInputSize(srcWidth, srcHeight, settings.modelRes);
+    const modelInputCanvas = document.createElement('canvas');
+    modelInputCanvas.width = modelInput.w;
+    modelInputCanvas.height = modelInput.h;
+    const modelInputCtx = modelInputCanvas.getContext('2d', { willReadFrequently: true });
 
     const outputCanvas = document.createElement('canvas');
     outputCanvas.width = outWidth;
@@ -1308,6 +1328,13 @@ async function processWithWebCodecs(video, estimator, settings, callbacks) {
 
     const originalCanvas = $('original-canvas');
     const depthCanvas = $('depth-canvas');
+    // 预览画布尺寸只需设置一次（每帧改 width/height 会清空并重分配显存，极浪费）
+    const originalCtx = originalCanvas.getContext('2d');
+    const depthCtx = depthCanvas.getContext('2d');
+    originalCanvas.width = srcWidth;
+    originalCanvas.height = srcHeight;
+    depthCanvas.width = outWidth;
+    depthCanvas.height = outHeight;
 
     // Setup muxer (with optional audio track) — MP4 container
     const muxerConfig = {
@@ -1381,14 +1408,13 @@ async function processWithWebCodecs(video, estimator, settings, callbacks) {
         await seekTo(video, time);
 
         // Transformers.js pipeline does not accept HTMLVideoElement directly.
-        // Draw the current video frame to a canvas and pass the canvas instead.
-        const inputCtx = inputCanvas.getContext('2d');
-        inputCtx.drawImage(video, 0, 0, srcWidth, srcHeight);
+        // 用「低分辨率」画布喂模型：drawImage 时把整帧缩到 modelInput 尺寸，推理计算量大降。
+        modelInputCtx.drawImage(video, 0, 0, modelInput.w, modelInput.h);
 
         // Run depth estimation
         let result;
         try {
-            result = await estimator(inputCanvas);
+            result = await estimator(modelInputCanvas);
         } catch (err) {
             console.warn('Estimator failed on canvas input:', err);
             throw new Error(`深度估计失败: ${err.message}`);
@@ -1405,18 +1431,12 @@ async function processWithWebCodecs(video, estimator, settings, callbacks) {
             throw new Error('深度估计结果缺少 depth 或 predicted_depth 字段');
         }
 
-        // Draw depth to output canvas
+        // Draw depth to output canvas（内部会按 outWidth×outHeight 上采样）
         drawDepthToCanvas(outputCtx, depthData, outWidth, outHeight, settings);
 
-        // Update preview canvases
-        const previewCtx = originalCanvas.getContext('2d');
-        originalCanvas.width = srcWidth;
-        originalCanvas.height = srcHeight;
-        previewCtx.drawImage(video, 0, 0, srcWidth, srcHeight);
-
-        depthCanvas.width = outWidth;
-        depthCanvas.height = outHeight;
-        depthCanvas.getContext('2d').drawImage(outputCanvas, 0, 0);
+        // Update preview canvases（尺寸已在循环外设置，这里只重绘）
+        originalCtx.drawImage(video, 0, 0, srcWidth, srcHeight);
+        depthCtx.drawImage(outputCanvas, 0, 0);
 
         // Create VideoFrame and encode
         const frame = new VideoFrame(outputCanvas, {
@@ -1479,9 +1499,12 @@ async function processWithMediaRecorder(video, estimator, settings, callbacks) {
     log(`输出尺寸: ${outWidth}×${outHeight} @ ${fps}fps`, 'info');
 
     // Setup canvases
-    const inputCanvas = document.createElement('canvas');
-    inputCanvas.width = srcWidth;
-    inputCanvas.height = srcHeight;
+    // 关键提速点：模型喂低分辨率输入（深度图本就平滑，放大无感），全分辨率只在最后上采样
+    const modelInput = computeModelInputSize(srcWidth, srcHeight, settings.modelRes);
+    const modelInputCanvas = document.createElement('canvas');
+    modelInputCanvas.width = modelInput.w;
+    modelInputCanvas.height = modelInput.h;
+    const modelInputCtx = modelInputCanvas.getContext('2d', { willReadFrequently: true });
 
     const outputCanvas = document.createElement('canvas');
     outputCanvas.width = outWidth;
@@ -1491,6 +1514,13 @@ async function processWithMediaRecorder(video, estimator, settings, callbacks) {
     // Setup preview canvases
     const originalCanvas = $('original-canvas');
     const depthCanvas = $('depth-canvas');
+    // 预览画布尺寸只需设置一次
+    const originalCtx = originalCanvas.getContext('2d');
+    const depthCtx = depthCanvas.getContext('2d');
+    originalCanvas.width = srcWidth;
+    originalCanvas.height = srcHeight;
+    depthCanvas.width = outWidth;
+    depthCanvas.height = outHeight;
 
     // Setup MediaRecorder
     const stream = outputCanvas.captureStream(0);
@@ -1547,14 +1577,13 @@ async function processWithMediaRecorder(video, estimator, settings, callbacks) {
         await seekTo(video, time);
 
         // Transformers.js pipeline does not accept HTMLVideoElement directly.
-        // Draw the current video frame to a canvas and pass the canvas instead.
-        const inputCtx = inputCanvas.getContext('2d');
-        inputCtx.drawImage(video, 0, 0, srcWidth, srcHeight);
+        // 用「低分辨率」画布喂模型：drawImage 时把整帧缩到 modelInput 尺寸，推理计算量大降。
+        modelInputCtx.drawImage(video, 0, 0, modelInput.w, modelInput.h);
 
         // Run depth estimation
         let result;
         try {
-            result = await estimator(inputCanvas);
+            result = await estimator(modelInputCanvas);
         } catch (err) {
             console.warn('Estimator failed on canvas input:', err);
             throw new Error(`深度估计失败: ${err.message}`);
@@ -1574,15 +1603,9 @@ async function processWithMediaRecorder(video, estimator, settings, callbacks) {
         // Draw depth to output canvas
         drawDepthToCanvas(outputCtx, depthData, outWidth, outHeight, settings);
 
-        // Update preview
-        const previewCtx = originalCanvas.getContext('2d');
-        originalCanvas.width = srcWidth;
-        originalCanvas.height = srcHeight;
-        previewCtx.drawImage(video, 0, 0, srcWidth, srcHeight);
-
-        depthCanvas.width = outWidth;
-        depthCanvas.height = outHeight;
-        depthCanvas.getContext('2d').drawImage(outputCanvas, 0, 0);
+        // Update preview（尺寸已在循环外设置，这里只重绘）
+        originalCtx.drawImage(video, 0, 0, srcWidth, srcHeight);
+        depthCtx.drawImage(outputCanvas, 0, 0);
 
         // Capture frame
         if (track.requestFrame) {
@@ -1941,6 +1964,23 @@ function bindEvents() {
         $('source-desc').textContent = option.dataset.desc || '';
         try { localStorage.setItem('dv_source_mode', e.target.value); } catch { /* 忽略 */ }
         log(`已切换模型源模式: ${e.target.value}`, 'info');
+    });
+
+    // 模型推理分辨率（性能开关：喂给 AI 的图越小越快，深度图放大几乎无差）
+    const savedModelRes = (() => { try { return localStorage.getItem('dv_model_res'); } catch { return null; } })();
+    if (savedModelRes !== null) {
+        const mr = parseInt(savedModelRes, 10);
+        if (!Number.isNaN(mr)) {
+            state.settings.modelRes = mr;
+            const mrs = $('modelres-select');
+            if (mrs) mrs.value = String(mr);
+        }
+    }
+    $('modelres-select').addEventListener('change', (e) => {
+        const v = parseInt(e.target.value, 10);
+        state.settings.modelRes = Number.isNaN(v) ? 0 : v;
+        try { localStorage.setItem('dv_model_res', e.target.value); } catch { /* 忽略 */ }
+        log(`已设置模型推理分辨率: ${state.settings.modelRes === 0 ? '原画' : state.settings.modelRes + 'px'}`, 'info');
     });
 
     // Clear model cache（清空本地模型缓存，修复缓存损坏导致的反复失败）
