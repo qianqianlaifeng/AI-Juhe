@@ -1193,8 +1193,16 @@ async function encodeAudioToMuxer(muxer, audioBuffer, durationSec) {
     }
 
     let audioEncoderError = null;
+    let lastAudioTs = -1;
     const audioEncoder = new AudioEncoder({
-        output: (chunk, meta) => muxer.addAudioChunk(chunk, meta),
+        output: (chunk, meta) => {
+            // 保底单调：极少数编码器可能输出重复/回退的时间戳，会让 mp4-muxer 抛
+            // "Timestamps must be monotonically increasing"。仅在必要时 +1µs 兜底。
+            let ts = chunk.timestamp;
+            if (ts <= lastAudioTs) ts = lastAudioTs + 1;
+            lastAudioTs = ts;
+            muxer.addAudioChunk(chunk, meta, ts);
+        },
         error: (e) => {
             audioEncoderError = e;
             console.error('Audio encoder error:', e);
@@ -1296,6 +1304,7 @@ async function processWithWebCodecs(video, estimator, settings, callbacks) {
     const outWidth = Math.round(srcWidth * settings.resolution);
     const outHeight = Math.round(srcHeight * settings.resolution);
     const fps = settings.fps;
+    const frameDurationUs = Math.round(1_000_000 / fps);
     const duration = video.duration;
     const totalFrames = Math.min(Math.floor(duration * fps), 720); // Cap at 720 frames
 
@@ -1365,8 +1374,18 @@ async function processWithWebCodecs(video, estimator, settings, callbacks) {
 
     // Setup encoder
     let encoderError = null;
+    // 显式维护「单调递增」的时间戳：mp4-muxer 要求每轨 DTS 严格递增、首块为 0，
+    // 但部分浏览器/编码器会输出乱序或非 0 起点的 chunk，导致
+    //   "Timestamps must be monotonically increasing (DTS went from A to B)"
+    //   "The first chunk for your media track must have a timestamp of 0"
+    // 用「自增序号 × 帧时长」覆盖时间戳，保证从 0 开始且严格递增。
+    // （正常不乱序时，该值与原 chunk 时间戳完全等价，输出无变化。）
+    let videoChunkCount = 0;
     const encoder = new VideoEncoder({
-        output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+        output: (chunk, meta) => {
+            muxer.addVideoChunk(chunk, meta, videoChunkCount * frameDurationUs);
+            videoChunkCount++;
+        },
         error: (e) => {
             encoderError = e;
             console.error('Encoder error:', e);
@@ -1405,8 +1424,6 @@ async function processWithWebCodecs(video, estimator, settings, callbacks) {
 
     log(`编码器: WebCodecs (${codecString})`, 'info');
     log(`输出尺寸: ${outWidth}×${outHeight} @ ${fps}fps`, 'info');
-
-    const frameDurationUs = Math.round(1_000_000 / fps);
 
     for (let i = 0; i < totalFrames; i++) {
         if (encoderError) throw encoderError;
