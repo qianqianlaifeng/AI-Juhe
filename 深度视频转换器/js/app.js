@@ -1346,10 +1346,17 @@ async function processWithWebCodecs(video, estimator, settings, callbacks) {
             frameRate: fps,
         },
         fastStart: 'in-memory',
+        // 关键：mp4-muxer 默认 'strict'，要求每条轨首帧时间戳必须为 0；
+        // 实际编码器（尤其音频轨/AAC priming）首块时间戳常非 0，会直接抛
+        // "The first chunk for your media track must have a timestamp of 0"。
+        // 用 'offset' 让每条轨按各自首时间戳归零（首个已是 0 时无影响）。
+        firstTimestampBehavior: 'offset',
     };
     if (audioBuffer) {
         muxerConfig.audio = {
-            codec: 'mp4a.40.2',
+            // 注意：mp4-muxer 的 audio.codec 只认 'aac' / 'opus'，
+            // 不是 WebCodecs 的 'mp4a.40.2'（后者是 AudioEncoder.configure 用的）。
+            codec: 'aac',
             sampleRate: audioBuffer.sampleRate,
             numberOfChannels: audioBuffer.numberOfChannels,
         };
