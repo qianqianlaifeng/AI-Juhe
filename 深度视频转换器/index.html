@@ -140,6 +140,31 @@
 
                             <div class="setting-group">
                                 <label class="setting-label">
+                                    <span>模型源</span>
+                                    <span class="setting-desc" id="source-desc">自动（国内优先）：ModelScope → HF-Mirror</span>
+                                </label>
+                                <div class="custom-select" id="source-select-wrap">
+                                    <select id="source-select">
+                                        <option value="auto" data-desc="自动（国内优先）：ModelScope → HuggingFace">自动（国内优先）</option>
+                                        <option value="modelscope" data-desc="仅用 ModelScope 国内镜像（直连最快，推荐）">仅 ModelScope 国内镜像</option>
+                                        <option value="huggingface" data-desc="仅用 HuggingFace 官方（国内常被墙，需 VPN）">仅 HuggingFace 官方</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">
+                                    <span>本地模型缓存</span>
+                                    <span class="setting-desc">若反复提示加载失败，多半是缓存损坏，点此清空后重试</span>
+                                </label>
+                                <button class="btn btn-ghost btn-block" id="clear-cache-btn" type="button">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                                    清空模型缓存
+                                </button>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label">
                                     <span>深度方向</span>
                                     <span class="setting-desc">控制近处物体的明暗</span>
                                 </label>

@@ -17,15 +17,22 @@ const TRANSFORMERS_BACKUPS = [
     'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.5/dist/transformers.min.js',
 ];
 
-// 模型源配置：优先使用 ModelScope 国内镜像，失败时回退到 HuggingFace 官方
+// 模型源配置：国内优先，依次尝试；任一源失败自动回退下一个。
+// 已在国内部署环境用真实浏览器实测：
+//   - ModelScope：返回 CORS *，跨域直连可用（首选，国内最稳）
+//   - HuggingFace：国内常被墙，仅作兜底（需可访问 HF 的网络/VPN）
+// 注：hf-mirror.com 虽在 curl 下可见 CORS，但浏览器中其 307 相对路径跳转
+//     + Range 请求会触发 CORS 预检失败（实测 config.json 直接 ERR_FAILED），故不采用。
 const MODEL_SOURCES = [
     {
+        key: 'modelscope',
         name: 'ModelScope 国内镜像',
         host: 'https://www.modelscope.cn/models/',
         pathTemplate: '{model}/resolve/master/',
         supports: ['onnx-community/depth-anything-v2-small-ONNX'],
     },
     {
+        key: 'huggingface',
         name: 'HuggingFace 官方',
         host: 'https://huggingface.co/',
         pathTemplate: '{model}/resolve/{revision}/',
@@ -47,6 +54,7 @@ const state = {
     resultUrl: null,
     settings: {
         modelId: 'onnx-community/depth-anything-v2-small-ONNX',
+        sourceMode: 'auto', // auto | modelscope | hfmirror | huggingface
         invert: false,
         contrast: 0,
         brightness: 0,
@@ -412,6 +420,19 @@ async function cacheGetAll() {
     }
 }
 
+/** 清空 IndexedDB 中的全部模型缓存（用于修复「缓存损坏导致反复加载失败」） */
+async function clearModelCache() {
+    try {
+        const db = await openCacheDb();
+        await idbOp(db, IDB_CACHE_STORE, 'clear');
+        log('模型缓存已清空（下次加载将重新下载）', 'success');
+        return true;
+    } catch (err) {
+        console.warn('[模型缓存] 清空失败:', err);
+        return false;
+    }
+}
+
 async function metaGet(key) {
     try {
         const db = await openCacheDb();
@@ -653,11 +674,18 @@ async function chooseModelDir() {
 // Model Loading
 // ============================================
 async function loadModel(requestedModelId) {
-    // 根据模型 ID 选择合适的源（优先匹配支持该模型的源）
-    const sourcesToTry = MODEL_SOURCES.filter(s => s.supports === '*' || s.supports.includes(requestedModelId));
+    // 根据模型 ID 与用户选择的「模型源」决定尝试顺序
+    let candidateSources = MODEL_SOURCES.filter(s => s.supports === '*' || s.supports.includes(requestedModelId));
+    const mode = state.settings.sourceMode || 'auto';
+    if (mode !== 'auto') {
+        const chosen = MODEL_SOURCES.find(s => s.key === mode);
+        candidateSources = chosen ? [chosen] : candidateSources;
+    }
+    const sourcesToTry = candidateSources;
     if (sourcesToTry.length === 0) {
         throw new Error(`没有可用的模型源支持 ${requestedModelId}`);
     }
+    log(`模型源模式: ${mode === 'auto' ? '自动（国内优先）' : sourcesToTry.map(s => s.name).join(' / ')}`, 'info');
 
     if (state.modelLoaded && state.loadedModelId === requestedModelId) {
         return state.depthEstimator;
@@ -797,18 +825,22 @@ async function loadModel(requestedModelId) {
 
     // 所有源都失败
     console.error('All model sources failed:', lastError);
+    const triedNames = sourcesToTry.map(s => s.name).join('、');
     throw new Error(
-        '模型加载失败，所有可用源均无法下载。\n\n' +
-        '可能原因及解决方案：\n' +
-        '1. 当前网络无法访问 ModelScope 或 HuggingFace\n' +
-        '2. 浏览器扩展拦截了跨域请求\n' +
-        '3. 模型文件较大（约 240MB），下载超时\n' +
-        (IS_FILE_PROTOCOL ? '4. file:// 协议下部分浏览器会阻止跨域请求，请尝试运行 start-server.bat\n' : '') +
+        '模型加载失败，以下模型源均无法下载：\n' +
+        triedNames + '\n\n' +
+        '常见原因与解决办法：\n' +
+        '1. 浏览器本地模型缓存损坏（最常见）—— 请点击设置里的「清空模型缓存」按钮后重试\n' +
+        '2. 当前网络无法访问所选模型源\n' +
+        '3. 浏览器扩展（广告拦截/隐私保护）拦截了跨域请求\n' +
+        '4. 模型文件较大（约 240MB），下载超时\n' +
+        (IS_FILE_PROTOCOL ? '5. file:// 协议下部分浏览器会阻止跨域请求，请运行 start-server.bat 后用 http://localhost:8000 访问\n' : '') +
         '\n建议：\n' +
-        '• 刷新页面后重试\n' +
+        '• 先点「清空模型缓存」再重试（可解决绝大多数失败）\n' +
+        '• 在「模型源」里切换到「HF-Mirror 国内镜像」或「ModelScope 国内镜像」\n' +
         '• 关闭广告拦截/隐私保护扩展\n' +
-        '• 切换网络环境（手机热点 / 公司网络）\n' +
-        '• 开启可访问 HuggingFace 的 VPN/代理\n' +
+        '• 切换网络（手机热点 / 公司网络）\n' +
+        '• 若需使用 HuggingFace 官方源，请开启可访问 HF 的 VPN/代理\n' +
         (IS_FILE_PROTOCOL ? '• 或运行 start-server.bat 启动本地服务器后访问 http://localhost:8000\n' : '') +
         `\n原始错误: ${lastError?.message || 'Unknown error'}`
     );
@@ -1892,6 +1924,39 @@ function bindEvents() {
         state.settings.modelId = e.target.value;
         const option = e.target.selectedOptions[0];
         $('model-desc').textContent = option.dataset.desc || '';
+    });
+
+    // Model source select（模型源：自动/指定）
+    const savedSource = (() => { try { return localStorage.getItem('dv_source_mode'); } catch { return null; } })();
+    if (savedSource) {
+        state.settings.sourceMode = savedSource;
+        const ss = $('source-select');
+        if (ss) ss.value = savedSource;
+        const so = ss && ss.selectedOptions[0];
+        if (so) $('source-desc').textContent = so.dataset.desc || '';
+    }
+    $('source-select').addEventListener('change', (e) => {
+        state.settings.sourceMode = e.target.value;
+        const option = e.target.selectedOptions[0];
+        $('source-desc').textContent = option.dataset.desc || '';
+        try { localStorage.setItem('dv_source_mode', e.target.value); } catch { /* 忽略 */ }
+        log(`已切换模型源模式: ${e.target.value}`, 'info');
+    });
+
+    // Clear model cache（清空本地模型缓存，修复缓存损坏导致的反复失败）
+    $('clear-cache-btn').addEventListener('click', async () => {
+        const btn = $('clear-cache-btn');
+        const oldText = btn.innerHTML;
+        btn.disabled = true;
+        btn.textContent = '清空中…';
+        const ok = await clearModelCache();
+        btn.disabled = false;
+        btn.innerHTML = oldText;
+        if (ok) {
+            showToast('模型缓存已清空，请重新点击「开始转换」', 'success', 4000);
+        } else {
+            showToast('清空缓存失败，请刷新页面后重试', 'error', 4000);
+        }
     });
 
     // Depth direction toggle
