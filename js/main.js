@@ -291,6 +291,20 @@
       createdAt: Date.now() + 50
     },
     {
+      id: 'tool_depthvideo',
+      title: '白日梦深度视频转换器',
+      url: '深度视频转换器/index.html',
+      description: '上传视频，AI 逐帧分析场景深度，一键生成富有层次感的黑白深度图视频。支持深度方向、对比度、亮度、帧率与输出尺寸自由调节，可保留原声，全程浏览器本地处理、视频不上传。',
+      tags: ['视频处理', '深度视频', 'AI', '本地'],
+      color: 'blue',
+      image: '',
+      badge: '🛠️ 自研',
+      badgeClass: 'badge-self',
+      indexLabel: 'Tool 03',
+      actionLabel: '打开工具',
+      createdAt: Date.now() + 100
+    },
+    {
       id: 'tool_aihuamian',
       title: 'AI画面提示词实战教程',
       url: 'AI画面提示词实战教程.html',
@@ -300,7 +314,7 @@
       image: '',
       badge: '🛠️ 自研',
       badgeClass: 'badge-self',
-      indexLabel: 'Tool 03',
+      indexLabel: 'Tool 04',
       actionLabel: '打开工具',
       createdAt: Date.now() + 500
     },
@@ -312,7 +326,7 @@
       tags: ['AI 价格', '成本对比', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 04',
+      indexLabel: 'Tool 05',
       actionLabel: '打开工具',
       createdAt: Date.now() + 20000
     },
@@ -324,7 +338,7 @@
       tags: ['AI 对话', 'ChatGPT', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 05',
+      indexLabel: 'Tool 06',
       actionLabel: '打开工具',
       createdAt: Date.now() - 1000
     },
@@ -336,7 +350,7 @@
       tags: ['图像处理', 'AI 编辑', '在线'],
       color: 'blue',
       image: '',
-      indexLabel: 'Tool 06',
+      indexLabel: 'Tool 07',
       actionLabel: '打开工具',
       createdAt: Date.now() - 2000
     },
@@ -348,7 +362,7 @@
       tags: ['无损音乐', 'FLAC', '在线'],
       color: 'purple',
       image: '',
-      indexLabel: 'Tool 07',
+      indexLabel: 'Tool 08',
       actionLabel: '打开工具',
       createdAt: Date.now() - 3000
     },
@@ -360,7 +374,7 @@
       tags: ['水印去除', '视频处理', '在线'],
       color: 'pink',
       image: '',
-      indexLabel: 'Tool 08',
+      indexLabel: 'Tool 09',
       actionLabel: '打开工具',
       createdAt: Date.now() - 4000
     },
@@ -372,7 +386,7 @@
       tags: ['提示词', 'AI 反推', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 09',
+      indexLabel: 'Tool 10',
       actionLabel: '打开工具',
       createdAt: Date.now() - 5000
     },
@@ -384,7 +398,7 @@
       tags: ['视频翻译', '语音转录', 'AI配音'],
       color: 'blue',
       image: '',
-      indexLabel: 'Tool 10',
+      indexLabel: 'Tool 11',
       actionLabel: '前往下载',
       createdAt: Date.now() - 6000
     },
@@ -396,7 +410,7 @@
       tags: ['提示词', 'Prompt', '高效'],
       color: 'purple',
       image: '',
-      indexLabel: 'Tool 11',
+      indexLabel: 'Tool 12',
       actionLabel: '打开工具',
       createdAt: Date.now() - 7000
     },
@@ -408,7 +422,7 @@
       tags: ['在线工具', '多媒体', '免费'],
       color: 'purple',
       image: '',
-      indexLabel: 'Tool 12',
+      indexLabel: 'Tool 13',
       actionLabel: '打开工具',
       createdAt: Date.now() - 8000
     },
@@ -420,7 +434,7 @@
       tags: ['付费墙', '阅读', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 13',
+      indexLabel: 'Tool 14',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9000
     },
@@ -432,7 +446,7 @@
       tags: ['AI编程', '智能助手', '在线'],
       color: 'blue',
       image: '',
-      indexLabel: 'Tool 14',
+      indexLabel: 'Tool 15',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9500
     },
@@ -444,7 +458,7 @@
       tags: ['音频分离', '人声提取', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 15',
+      indexLabel: 'Tool 16',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9600
     },
@@ -456,7 +470,7 @@
       tags: ['声音克隆', '语音合成', '在线'],
       color: 'purple',
       image: '',
-      indexLabel: 'Tool 16',
+      indexLabel: 'Tool 17',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9700
     },
@@ -468,7 +482,7 @@
       tags: ['视频去水印', '多媒体', '在线工具'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 17',
+      indexLabel: 'Tool 18',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9800
     },
@@ -480,7 +494,7 @@
       tags: ['临时邮箱', '隐私保护', '在线'],
       color: 'blue',
       image: '',
-      indexLabel: 'Tool 18',
+      indexLabel: 'Tool 19',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9900
     }
