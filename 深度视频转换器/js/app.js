@@ -54,7 +54,7 @@ const state = {
     resultUrl: null,
     settings: {
         modelId: 'onnx-community/depth-anything-v2-small-ONNX',
-        sourceMode: 'auto', // auto | modelscope | hfmirror | huggingface
+        sourceMode: 'auto', // auto | modelscope | huggingface
         invert: false,
         contrast: 0,
         brightness: 0,
@@ -837,7 +837,7 @@ async function loadModel(requestedModelId) {
         (IS_FILE_PROTOCOL ? '5. file:// 协议下部分浏览器会阻止跨域请求，请运行 start-server.bat 后用 http://localhost:8000 访问\n' : '') +
         '\n建议：\n' +
         '• 先点「清空模型缓存」再重试（可解决绝大多数失败）\n' +
-        '• 在「模型源」里切换到「HF-Mirror 国内镜像」或「ModelScope 国内镜像」\n' +
+        '• 在「模型源」里切换到「仅 ModelScope 国内镜像」（国内直连最稳）\n' +
         '• 关闭广告拦截/隐私保护扩展\n' +
         '• 切换网络（手机热点 / 公司网络）\n' +
         '• 若需使用 HuggingFace 官方源，请开启可访问 HF 的 VPN/代理\n' +
