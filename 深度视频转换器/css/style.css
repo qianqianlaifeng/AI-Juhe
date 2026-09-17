@@ -411,6 +411,73 @@ body::before {
     gap: 24px;
 }
 
+/* 运行设备提示条 */
+.device-badge {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.device-badge .device-dot {
+    flex: 0 0 auto;
+    width: 9px;
+    height: 9px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: var(--text-tertiary);
+}
+
+.device-badge strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.device-badge.ok {
+    border-color: rgba(16, 185, 129, 0.45);
+    background: var(--success-soft);
+}
+
+.device-badge.ok .device-dot {
+    background: var(--success);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+}
+
+.device-badge.warn {
+    border-color: rgba(245, 158, 11, 0.45);
+    background: var(--warning-soft);
+}
+
+.device-badge.warn .device-dot {
+    background: var(--warning);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
+}
+
+.device-tips {
+    margin: 8px 0 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.device-tips code {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 11px;
+    color: var(--accent-light);
+}
+
 .setting-group {
     display: flex;
     flex-direction: column;
@@ -421,14 +488,32 @@ body::before {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
     font-size: 14px;
     font-weight: 500;
 }
 
+/* 标签文字不参与收缩：否则同行的说明变长时，中文会被逐字挤成「竖排」 */
+.setting-label > span:first-child {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
 .setting-desc {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: right;
     font-size: 12px;
     color: var(--text-tertiary);
     font-weight: 400;
+}
+
+/* 折叠下拉下方的长说明：独占一行，给足宽度 */
+.setting-hint {
+    margin-top: 9px;
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--text-tertiary);
 }
 
 .setting-value {
@@ -1185,6 +1270,13 @@ body::before {
 
 .footer a:hover {
     text-decoration: underline;
+}
+
+.footer-note {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    opacity: 0.75;
 }
 
 /* ===== Toast ===== */

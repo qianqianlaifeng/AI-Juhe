@@ -123,19 +123,26 @@
                             <h3>参数设置</h3>
                         </div>
                         <div class="settings-body">
+                            <!-- 运行设备提示：一眼看出有没有用上显卡 -->
+                            <div class="device-badge" id="device-badge">
+                                <span class="device-dot"></span>
+                                <div>正在检测运行设备…</div>
+                            </div>
+
                             <div class="setting-group">
                                 <label class="setting-label">
-                                    <span>AI 模型</span>
-                                    <span class="setting-desc" id="model-desc">轻量快速，适合大多数场景</span>
+                                    <span>处理质量</span>
                                 </label>
-                                <div class="custom-select" id="model-select-wrap">
-                                    <select id="model-select">
-                                        <option value="onnx-community/depth-anything-v2-small-ONNX" data-desc="V2 轻量版，优先从 ModelScope 国内镜像加载（推荐）">Depth Anything V2 Small（国内源）</option>
-                                        <option value="onnx-community/depth-anything-v2-small" data-desc="V2 轻量版，从 HuggingFace 官方加载（需可访问 HF 的网络）">Depth Anything V2 Small（官方源）</option>
-                                        <option value="Xenova/depth-anything-small-hf" data-desc="V1 轻量版，处理速度快">Depth Anything V1 Small</option>
-                                        <option value="Xenova/depth-anything-base-hf" data-desc="V1 基础版，深度精度更高，处理较慢">Depth Anything V1 Base</option>
+                                <div class="custom-select" id="quality-select-wrap">
+                                    <select id="quality-select">
+                                        <option value="fast">快速 — V2 Small，省时间（长视频用）</option>
+                                        <option value="standard" selected>标准 — V2 Base，推荐（清晰度/速度平衡）</option>
+                                        <option value="high">高清 — V2 Base，模型原生分辨率（细节更准，较慢）</option>
+                                        <option value="ultra">极致 — V2 Large，效果最好（很慢，仅适合 10 秒内短视频）</option>
                                     </select>
                                 </div>
+                                <!-- 说明文字较长（含预计耗时），单独占一行，避免把左侧标签挤成竖排 -->
+                                <div class="setting-hint" id="quality-desc">推荐：清晰度和速度平衡</div>
                             </div>
 
                             <div class="setting-group">
@@ -161,21 +168,6 @@
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
                                     清空模型缓存
                                 </button>
-                            </div>
-
-                            <div class="setting-group">
-                                <label class="setting-label">
-                                    <span>模型推理分辨率</span>
-                                    <span class="setting-desc" id="modelres-desc">喂给 AI 的图越小越快；深度图本就平滑，放大后几乎无差（推荐 518）</span>
-                                </label>
-                                <div class="custom-select">
-                                    <select id="modelres-select">
-                                        <option value="256">极速（256px，画质略降）</option>
-                                        <option value="384">快（384px）</option>
-                                        <option value="518" selected>平衡（518px，推荐）</option>
-                                        <option value="0">原画（最慢，最高清）</option>
-                                    </select>
-                                </div>
                             </div>
 
                             <div class="setting-group">
@@ -294,7 +286,7 @@
                             </div>
                             <div class="model-download-titles">
                                 <h3 id="model-dl-title">正在下载 AI 深度模型</h3>
-                                <p id="model-dl-subtitle">首次使用需要下载约 240MB 模型文件，下载后会自动永久缓存到浏览器，后续无需重复下载</p>
+                                <p id="model-dl-subtitle">首次使用需要下载模型文件，下载后会自动永久缓存到浏览器，后续无需重复下载</p>
                             </div>
                         </div>
                         <div class="model-dl-overall">
@@ -389,6 +381,7 @@
         <!-- ===== Footer ===== -->
         <footer class="footer">
             <p>直接双击 index.html 即可使用 · 所有处理在浏览器本地完成 · 视频不会上传到任何服务器 · 基于 <a href="https://huggingface.co/depth-anything" target="_blank" rel="noopener">Depth Anything</a> AI 模型</p>
+            <p class="footer-note">模型说明：Depth Anything V2 Small 为 Apache-2.0；Base / Large 为 CC-BY-NC-4.0（仅限非商业用途）。</p>
         </footer>
     </div>
 
