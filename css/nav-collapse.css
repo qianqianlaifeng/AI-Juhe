@@ -1,0 +1,233 @@
+/* ==========================================================================
+   导航栏「收缩」改造（独立文件，只作用于导航）
+   --------------------------------------------------------------------------
+   背景：导航原有 14 个入口全部平铺，实测需要 1625px 视口宽才放得下，
+         窗口一旦窄于 1625px（1440 / 1280 / 1080 全中招），flex 会把每个
+         链接压扁 → 文字逐字竖排换行，视觉上直接垮掉。
+
+   方案：
+     · ≥1626px  —— 全部平铺（display:contents 让下拉里的项直接参与导航排布）
+     · ≤1625px  —— 次要入口收进「更多 ▾」下拉，导航永不换行
+     · ≤1280px  —— 收紧内边距/间距，给导航多留出空间
+     · ≤1024px  —— 整条交给汉堡菜单（比原来的 768px 更早收，避免挤压）
+
+   这里不碰背景视频层（.bg-layer / #bg-video / #video-canvas），
+   也不碰视差层（.plx-*），改动范围仅限 .navbar 内部。
+   ========================================================================== */
+
+/* ---------- 1. 永不换行：从根上杜绝「逐字竖排」 ---------- */
+.nav-links {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.nav-link {
+  white-space: nowrap;
+}
+
+/* ---------- 2. 「更多」容器 ---------- */
+.nav-more {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  /* 必须用 normal：与 <a> 的行盒高度保持一致（1.4 会让按钮矮 3px，
+     虽然垂直居中相同，但盒子高度不同会显得「不齐」） */
+  line-height: normal;
+  cursor: pointer;
+  font-family: inherit;
+  background: transparent;
+  border: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* 小三角（纯 CSS，不引图标库） */
+.nav-more-btn .nav-caret {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+  opacity: 0.7;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+
+.nav-more.open .nav-more-btn {
+  color: var(--text);
+  background: var(--bg-elevated);
+}
+
+.nav-more.open .nav-more-btn .nav-caret {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* ---------- 3. 下拉面板 ---------- */
+.nav-more-panel {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  min-width: 198px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background:
+    linear-gradient(180deg, rgba(26, 32, 58, 0.94) 0%, rgba(10, 12, 24, 0.96) 100%);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
+  backdrop-filter: blur(26px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.62),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 1px 0 rgba(255, 255, 255, 0.14) inset,
+    0 0 44px rgba(0, 212, 255, 0.14),
+    0 0 90px rgba(124, 58, 237, 0.12);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px) scale(0.97);
+  transform-origin: top right;
+  transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s;
+  pointer-events: none;
+  z-index: 1200;
+}
+
+/* 按钮与面板之间留一条看不见的「悬停桥」，鼠标移过去不会中途掉出去 */
+.nav-more-panel::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -14px;
+  height: 14px;
+}
+
+.nav-more.open .nav-more-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  pointer-events: auto;
+}
+
+.nav-more-panel .nav-link {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  text-align: left;
+  color: var(--text-secondary);
+}
+
+/* 下拉里不要底部下划线，改成左侧竖条高亮更清楚 */
+.nav-more-panel .nav-link::after {
+  content: none;
+}
+
+.nav-more-panel .nav-link:hover,
+.nav-more-panel .nav-link.active {
+  color: var(--text);
+  background: linear-gradient(90deg, rgba(0, 212, 255, 0.12), rgba(255, 255, 255, 0.035));
+}
+
+.nav-more-panel .nav-link.active {
+  box-shadow: inset 2px 0 0 var(--primary);
+}
+
+.nav-more-panel .nav-shop {
+  font-weight: 700;
+}
+
+/* ---------- 4. 超宽屏：全部平铺，不要「更多」 ---------- */
+@media (min-width: 1626px) {
+  /* display:contents = 盒子本身不产生，子元素直接成为 .nav-links 的 flex 项 */
+  .nav-more {
+    display: contents;
+  }
+
+  .nav-more-btn {
+    display: none;
+  }
+
+  .nav-more-panel {
+    position: static;
+    display: contents;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .nav-more-panel::before {
+    display: none;
+  }
+
+  .nav-more-panel .nav-link {
+    display: inline-block;
+    width: auto;
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-size: 0.92rem;
+    text-align: center;
+  }
+
+  .nav-more-panel .nav-link::after {
+    content: '';
+  }
+
+  .nav-more-panel .nav-link.active {
+    box-shadow: none;
+  }
+}
+
+/* ---------- 5. 中等宽度：收紧内边距与间距 ---------- */
+@media (max-width: 1280px) {
+  .navbar {
+    padding: 20px 3.2%;
+  }
+
+  .navbar.scrolled {
+    padding: 12px 3.2%;
+  }
+
+  .nav-links {
+    gap: 6px;
+  }
+
+  .nav-link {
+    padding: 9px 15px;
+    font-size: 0.9rem;
+  }
+
+  .nav-more-panel .nav-link {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ---------- 6. 平板/窄屏：整条交给汉堡菜单 ---------- */
+@media (max-width: 1024px) {
+  .nav-links {
+    display: none;
+  }
+
+  .menu-toggle {
+    display: flex;
+  }
+}
+
+/* ---------- 7. 动效降级 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .nav-more-panel,
+  .nav-more-btn .nav-caret {
+    transition: none;
+  }
+}

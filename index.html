@@ -64,6 +64,8 @@
 
   <link rel="stylesheet" href="css/drama-expert.css?v=1020">
   <link rel="stylesheet" href="css/style.css?v=67">
+  <link rel="stylesheet" href="css/parallax.css?v=1">
+  <link rel="stylesheet" href="css/nav-collapse.css?v=1">
 
 
 
@@ -362,105 +364,30 @@
 
 
     <div class="nav-links">
-
-
-
-
-
-
-
       <a href="#home" class="nav-link active">首页</a>
-
-
-
-
-
-
-
       <a href="#projects" class="nav-link">项目</a>
-
-
-
-
-
-
-
       <a href="#toolbox" class="nav-link">工具箱</a>
-
-
-
-
-
-
-
       <a href="#token" class="nav-link">无限 Token</a>
-
-
-
-
-
-
-
       <a href="#shortdrama" class="nav-link">AI 短剧</a>
-
-
-
-
-
-
-
       <a href="#music" class="nav-link">AI 音乐</a>
 
-
-
-
-
-
-
-      <a href="#voice" class="nav-link">语音合成</a>
-
-      <a href="#drama-expert" class="nav-link">短剧专家</a>
-      <a href="#script-gen" class="nav-link">剧本生成</a>
-      <a href="#miorning" class="nav-link">喵咛</a>
-
-
-
-
-
-
-
-      <a href="#capabilities" class="nav-link">能力</a>
-
-
-
-
-
-
-
-      <a href="#treasure" class="nav-link">宝藏趣站</a>
-
-
-
-
-
-
-
-      <a href="#comments" class="nav-link">反馈</a>
-
-
-
-
-
-
+      <!-- 次要入口：窄屏收进「更多」下拉；≥1626px 自动平铺（display:contents） -->
+      <div class="nav-more">
+        <button class="nav-link nav-more-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="更多导航">
+          更多<span class="nav-caret" aria-hidden="true"></span>
+        </button>
+        <div class="nav-more-panel" role="menu">
+          <a href="#voice" class="nav-link nav-more-item" role="menuitem">语音合成</a>
+          <a href="#drama-expert" class="nav-link nav-more-item" role="menuitem">短剧专家</a>
+          <a href="#script-gen" class="nav-link nav-more-item" role="menuitem">剧本生成</a>
+          <a href="#miorning" class="nav-link nav-more-item" role="menuitem">喵咛</a>
+          <a href="#capabilities" class="nav-link nav-more-item" role="menuitem">能力</a>
+          <a href="#treasure" class="nav-link nav-more-item" role="menuitem">宝藏趣站</a>
+          <a href="#comments" class="nav-link nav-more-item" role="menuitem">反馈</a>
+        </div>
+      </div>
 
       <a href="https://fakashop.ccwu.cc" class="nav-link nav-shop" target="_blank" rel="noopener"><span class="shop-ico">🛒</span> AI商城</a>
-
-
-
-
-
-
-
     </div>
 
 
@@ -864,6 +791,103 @@
 
 
 
+
+    <!-- 前沿 AI 引力场：纯内容层的分层视差（不涉及固定背景视频） -->
+    <section class="plx-field" aria-label="前沿 AI 引力场">
+
+      <div class="plx-layer plx-stars" data-plx="0.04" data-plx-max="70" aria-hidden="true"></div>
+
+      <span class="plx-nebula plx-nebula-a" data-plx="0.09" data-plx-max="110" aria-hidden="true"></span>
+
+      <span class="plx-nebula plx-nebula-b" data-plx="0.13" data-plx-max="140" aria-hidden="true"></span>
+
+      <div class="plx-aurora" data-plx="0.06" data-plx-max="80" aria-hidden="true"></div>
+
+      <div class="plx-floor" data-plx="0.17" data-plx-max="120" aria-hidden="true">
+        <div class="plx-floor-inner"></div>
+      </div>
+
+      <div class="plx-ring plx-ring-c" data-plx="0.20" data-plx-max="150" aria-hidden="true"></div>
+
+      <div class="plx-ring plx-ring-b" data-plx="0.26" data-plx-max="170" aria-hidden="true"></div>
+
+      <div class="plx-orbit" data-plx="0.32" data-plx-max="190" aria-hidden="true">
+        <div class="plx-orbit-ring"><span class="plx-orbit-dot"></span></div>
+        <div class="plx-orbit-ring plx-orbit-ring-2"></div>
+      </div>
+
+      <div class="plx-ring plx-ring-a" data-plx="0.40" data-plx-max="210" aria-hidden="true"></div>
+
+      <div class="plx-pointer-glow" aria-hidden="true"></div>
+
+      <div class="plx-beam" data-plx="0.36" data-plx-max="150" aria-hidden="true"></div>
+
+      <div class="plx-chips" aria-hidden="true">
+        <span class="plx-chip" data-plx="0.30" data-plx-max="150">多模态大模型</span>
+        <span class="plx-chip" data-plx="0.42" data-plx-max="190">智能体 Agent</span>
+        <span class="plx-chip" data-plx="0.36" data-plx-max="170">AIGC 创作</span>
+        <span class="plx-chip" data-plx="0.28" data-plx-max="150">具身智能</span>
+        <span class="plx-chip" data-plx="0.46" data-plx-max="200">推理与思维链</span>
+        <span class="plx-chip" data-plx="0.34" data-plx-max="165">检索增强 RAG</span>
+        <span class="plx-chip" data-plx="0.44" data-plx-max="195">端侧轻量化</span>
+        <span class="plx-chip" data-plx="0.32" data-plx-max="160">实时语音交互</span>
+      </div>
+
+      <div class="plx-core" data-plx="0.12" data-plx-max="70">
+
+        <div class="plx-emblem" aria-hidden="true">
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="plxEmblemGrad" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#9fefff"/>
+                <stop offset="0.55" stop-color="#00d4ff"/>
+                <stop offset="1" stop-color="#7c3aed"/>
+              </linearGradient>
+            </defs>
+            <polygon points="32,6 54,19 54,45 32,58 10,45 10,19" fill="none" stroke="url(#plxEmblemGrad)" stroke-width="2.4" stroke-linejoin="round"/>
+            <polygon points="32,22 42.5,28 42.5,40 32,46 21.5,40 21.5,28" fill="url(#plxEmblemGrad)"/>
+            <circle cx="32" cy="6" r="2.6" fill="#9fefff"/>
+            <circle cx="54" cy="19" r="2.6" fill="#6fe3ff"/>
+            <circle cx="54" cy="45" r="2.6" fill="#00d4ff"/>
+            <circle cx="32" cy="58" r="2.6" fill="#5b8dff"/>
+            <circle cx="10" cy="45" r="2.6" fill="#7c3aed"/>
+            <circle cx="10" cy="19" r="2.6" fill="#a78bfa"/>
+          </svg>
+        </div>
+
+        <div class="plx-eyebrow">Frontier AI Gravity Field</div>
+
+        <h2 class="plx-title">把散落的前沿 AI<br><span class="plx-grad">聚成一片星系</span></h2>
+
+        <p class="plx-desc">大模型、智能体、生成式创作、实时语音——散落在各处的 AI 能力，在这里被收拢到同一个入口。从一个项目、一件工具开始，一路抵达人工智能的边界。</p>
+
+        <div class="plx-stats">
+          <div class="plx-stat">
+            <div class="plx-stat-value" data-src="#projects-grid .project-card">0</div>
+            <div class="plx-stat-label">聚合项目</div>
+          </div>
+          <div class="plx-stat">
+            <div class="plx-stat-value" data-src="#toolbox-grid .project-card">0</div>
+            <div class="plx-stat-label">前沿工具</div>
+          </div>
+          <div class="plx-stat">
+            <div class="plx-stat-value" data-src="#toolbox-grid .badge-self">0</div>
+            <div class="plx-stat-label">自研工具</div>
+          </div>
+          <div class="plx-stat">
+            <div class="plx-stat-value" data-src=".capability-card">0</div>
+            <div class="plx-stat-label">能力维度</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="plx-hint" aria-hidden="true">
+        <span>Scroll</span>
+        <span class="plx-hint-arrow"></span>
+      </div>
+
+    </section>
 
     <!-- AI 实时热榜（多源聚合 · 仅 AI 相关内容 · 无平台标识） -->
 
@@ -4599,7 +4623,8 @@
 
 
 
-  <script src="js/main.js?v=59"></script>
+  <script src="js/main.js?v=60"></script>
+  <script src="js/parallax.js?v=1" defer></script>
 
 
 

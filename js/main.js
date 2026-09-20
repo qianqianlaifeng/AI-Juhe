@@ -656,6 +656,73 @@
     });
   }
 
+  // 「更多 ▾」收缩菜单：桌面窄屏把次要入口收起来，避免导航被挤成竖排
+  function initNavMore() {
+    const wrap = document.querySelector('.nav-more');
+    if (!wrap) return;
+
+    const btn = wrap.querySelector('.nav-more-btn');
+    const panel = wrap.querySelector('.nav-more-panel');
+    if (!btn || !panel) return;
+
+    let hoverTimer = null;
+    let openedByHover = false;
+
+    const setOpen = (open) => {
+      wrap.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+
+    setOpen(false);
+
+    // 鼠标悬停即展开（桌面手感更顺）
+    wrap.addEventListener('mouseenter', () => {
+      clearTimeout(hoverTimer);
+      openedByHover = true;
+      setOpen(true);
+    });
+
+    wrap.addEventListener('mouseleave', () => {
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(() => {
+        openedByHover = false;
+        setOpen(false);
+      }, 240);
+    });
+
+    // 点击切换：悬停已展开时点一下不收（避免「点一下就没了」的别扭感）
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (openedByHover) return;
+      setOpen(!wrap.classList.contains('open'));
+    });
+
+    // 点面板里的任意链接后收起
+    panel.querySelectorAll('a').forEach((a) => {
+      a.addEventListener('click', () => {
+        openedByHover = false;
+        setOpen(false);
+      });
+    });
+
+    // 点空白处 / 按 Esc / 页面滚动 → 收起
+    document.addEventListener('click', (e) => {
+      if (!wrap.contains(e.target)) setOpen(false);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    });
+
+    window.addEventListener('scroll', () => {
+      if (wrap.classList.contains('open')) {
+        openedByHover = false;
+        setOpen(false);
+      }
+    }, { passive: true });
+  }
+
   function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(link => {
       link.addEventListener('click', (e) => {
@@ -1490,6 +1557,7 @@
       initBgVideoAutoplay,
       initNavbar,
       initMobileMenu,
+      initNavMore,
       initSmoothScroll,
       initReveal,
       initScrollProgress,

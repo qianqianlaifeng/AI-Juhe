@@ -1,0 +1,542 @@
+/* ============================================================================
+   视差滚动 Parallax —— 内容层专用
+   ----------------------------------------------------------------------------
+   ⚠️ 本文件刻意不触碰以下固定背景层，背景视频保持原样：
+        .bg-layer / #bg-video / #video-canvas / .video-overlay
+        .ambient-glow / .grain
+      视差全部作用在「随页面滚动的正文内容」上，靠层与层之间的速度差制造纵深。
+
+   设计约束（踩过坑，别改）：
+      1. 视差位移统一走 transform: translate3d(...)，由 js/parallax.js 写入。
+         → 所以被视差的元素**自己不能有别的 transform**（否则会被覆盖）。
+         需要「自转 / 浮动」的元素一律往里再套一层承载动画。
+      2. 段落标题的视差挂在 .section-header 的**子节点**上，不能挂 .section-header 本身
+         —— main.js 的 initReveal() 会给它加 .reveal（transform: translateY(40px) +
+         transition: all 0.9s），挂上去会被覆盖、还会被 transition 拖成"糊"。
+      3. 位移量一律带 max 上限，避免长页面里偏移过大把版面顶乱。
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1. 段落标题的内部分层视差
+      .section-eyebrow / .section-title / .section-desc 三者速度不同 → 标题自带纵深
+   --------------------------------------------------------------------------- */
+.section-eyebrow,
+.section-title,
+.section-desc {
+  backface-visibility: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+   2. 「前沿 AI 引力场」整段
+   --------------------------------------------------------------------------- */
+.plx-field {
+  position: relative;
+  min-height: 116vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 130px 5%;
+  overflow: hidden;
+  /* 指针跟随光晕的坐标（js 写入） */
+  --mx: 50%;
+  --my: 44%;
+}
+
+/* 只负责裁切与定位的装饰层外壳：inset 故意做成负值，位移时不会露出边缘 */
+.plx-layer {
+  position: absolute;
+  inset: -16% -8%;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* --- 2.1 星点场：两层不同疏密，视差速度不同 → 星空纵深 --- */
+.plx-stars::before,
+.plx-stars::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.plx-stars::before {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.34) 1px, transparent 1.5px);
+  background-size: 92px 92px;
+  opacity: 0.55;
+  -webkit-mask-image: radial-gradient(ellipse 78% 70% at 50% 50%, #000 20%, transparent 82%);
+  mask-image: radial-gradient(ellipse 78% 70% at 50% 50%, #000 20%, transparent 82%);
+}
+
+.plx-stars::after {
+  background-image: radial-gradient(circle, rgba(124, 214, 255, 0.30) 1px, transparent 1.7px);
+  background-size: 168px 168px;
+  background-position: 46px 62px;
+  opacity: 0.5;
+  -webkit-mask-image: radial-gradient(ellipse 70% 62% at 50% 46%, #000 18%, transparent 84%);
+  mask-image: radial-gradient(ellipse 70% 62% at 50% 46%, #000 18%, transparent 84%);
+}
+
+/* --- 2.2 星云光团：大半径径向渐变（不用 filter:blur，省 GPU） --- */
+.plx-nebula {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.plx-nebula-a {
+  width: 62vw;
+  height: 62vw;
+  max-width: 980px;
+  max-height: 980px;
+  left: 4%;
+  top: 6%;
+  background: radial-gradient(circle at 50% 50%,
+      rgba(0, 212, 255, 0.20) 0%,
+      rgba(0, 150, 255, 0.10) 34%,
+      rgba(0, 90, 200, 0.04) 56%,
+      transparent 72%);
+}
+
+.plx-nebula-b {
+  width: 56vw;
+  height: 56vw;
+  max-width: 900px;
+  max-height: 900px;
+  right: 2%;
+  bottom: 2%;
+  background: radial-gradient(circle at 50% 50%,
+      rgba(124, 58, 237, 0.22) 0%,
+      rgba(90, 40, 190, 0.11) 36%,
+      rgba(60, 20, 140, 0.04) 58%,
+      transparent 74%);
+}
+
+/* 极光扫光：靠 background-position 动画，不占 transform，可与视差叠加 */
+.plx-aurora {
+  position: absolute;
+  inset: 8% -20%;
+  background: linear-gradient(104deg,
+      transparent 0%,
+      rgba(0, 212, 255, 0.07) 28%,
+      rgba(124, 58, 237, 0.09) 50%,
+      rgba(0, 212, 255, 0.05) 72%,
+      transparent 100%);
+  background-size: 260% 100%;
+  animation: plxAurora 28s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes plxAurora {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* --- 2.3 透视地面网格：透视变换放在内层，外壳留给视差 --- */
+.plx-floor {
+  position: absolute;
+  left: -18%;
+  right: -18%;
+  bottom: -4%;
+  height: 68%;
+  will-change: transform;
+}
+
+.plx-floor-inner {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(0, 212, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 212, 255, 0.13) 1px, transparent 1px);
+  background-size: 68px 68px;
+  transform: perspective(640px) rotateX(74deg);
+  transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0, 0, 0, 0.5) 42%, transparent 80%);
+  mask-image: linear-gradient(to top, #000 0%, rgba(0, 0, 0, 0.5) 42%, transparent 80%);
+}
+
+/* --- 2.4 同心圆环 + 自转轨道 --- */
+.plx-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.plx-ring-a {
+  width: 46vmin;
+  height: 46vmin;
+  margin: -23vmin 0 0 -23vmin;
+  border: 1px solid rgba(0, 212, 255, 0.20);
+}
+
+.plx-ring-b {
+  width: 72vmin;
+  height: 72vmin;
+  margin: -36vmin 0 0 -36vmin;
+  border: 1px dashed rgba(124, 58, 237, 0.22);
+}
+
+.plx-ring-c {
+  width: 102vmin;
+  height: 102vmin;
+  margin: -51vmin 0 0 -51vmin;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 自转轨道：外壳负责视差，内层负责自转（避免 transform 互相覆盖） */
+.plx-orbit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88vmin;
+  height: 88vmin;
+  margin: -44vmin 0 0 -44vmin;
+  will-change: transform;
+}
+
+.plx-orbit-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  border-top-color: rgba(0, 212, 255, 0.55);
+  border-right-color: rgba(0, 212, 255, 0.14);
+  animation: plxSpin 26s linear infinite;
+}
+
+.plx-orbit-ring-2 {
+  inset: 10%;
+  border-top-color: rgba(124, 58, 237, 0.5);
+  border-right-color: transparent;
+  border-left-color: rgba(124, 58, 237, 0.16);
+  animation-duration: 38s;
+  animation-direction: reverse;
+}
+
+@keyframes plxSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 轨道上的运行亮点 */
+.plx-orbit-dot {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: #7cf5ff;
+  box-shadow: 0 0 16px 4px rgba(0, 212, 255, 0.65);
+}
+
+/* --- 2.5 指针跟随光晕 --- */
+.plx-pointer-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(420px circle at var(--mx) var(--my),
+      rgba(0, 212, 255, 0.10),
+      rgba(124, 58, 237, 0.05) 46%,
+      transparent 70%);
+  transition: background-position 0.2s ease-out;
+  will-change: transform;
+}
+
+/* --- 2.6 横向光带 --- */
+.plx-beam {
+  position: absolute;
+  left: -12%;
+  right: -12%;
+  top: 40%;
+  height: 1px;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.42), rgba(124, 58, 237, 0.30), transparent);
+  will-change: transform;
+}
+
+/* --- 2.7 前沿方向标签：每颗自己的视差速度 --- */
+/* 统一装在 .plx-chips 里，这样 nth-child 定位不会被同级装饰元素打乱 */
+.plx-chips {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.plx-chip {
+  position: absolute;
+  padding: 9px 17px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: rgba(248, 250, 252, 0.88);
+  background: rgba(6, 12, 24, 0.46);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  -webkit-backdrop-filter: blur(9px);
+  backdrop-filter: blur(9px);
+  animation: plxChipPulse 5.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* 呼吸用 box-shadow / 边框色，不用 transform —— 留给视差 */
+@keyframes plxChipPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); border-color: rgba(255, 255, 255, 0.10); }
+  50% { box-shadow: 0 0 22px 0 rgba(0, 212, 255, 0.14); border-color: rgba(0, 212, 255, 0.24); }
+}
+
+/* 标签落位（百分比，随容器缩放）
+   约束：正文区宽 860px 居中，所以左右两列标签必须落在正文列之外，
+   且纵向别挤到中段（统计数字一带）。 */
+.plx-chips .plx-chip:nth-child(1) { left: 5%; top: 21%; animation-delay: 0s; }
+.plx-chips .plx-chip:nth-child(2) { left: 2%; top: 58%; animation-delay: -1.2s; }
+.plx-chips .plx-chip:nth-child(3) { left: 30%; top: 13%; animation-delay: -2.4s; }
+.plx-chips .plx-chip:nth-child(4) { right: 6%; top: 25%; animation-delay: -3.6s; }
+.plx-chips .plx-chip:nth-child(5) { right: 2%; top: 58%; animation-delay: -4.8s; }
+.plx-chips .plx-chip:nth-child(6) { right: 31%; top: 12%; animation-delay: -0.9s; }
+.plx-chips .plx-chip:nth-child(7) { left: 10%; bottom: 17%; animation-delay: -2.1s; }
+.plx-chips .plx-chip:nth-child(8) { right: 11%; bottom: 15%; animation-delay: -3.3s; }
+
+/* --- 2.8 段落收边 ---
+   上边缘刻意从「全透明」开始ramp，避免与上一段（视频直接透出的 hero 底部）
+   出现一条生硬的明暗接缝；下边缘压深，与下一段自然衔接。
+   中间保持低透明度，背景视频依旧清晰可见。 */
+.plx-field::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(to bottom,
+      transparent 0%,
+      rgba(2, 2, 5, 0.26) 14%,
+      rgba(2, 2, 5, 0.32) 46%,
+      rgba(2, 2, 5, 0.52) 80%,
+      rgba(2, 2, 5, 0.94) 100%);
+}
+
+/* --- 2.9 中央主体 --- */
+.plx-core {
+  position: relative;
+  z-index: 6;
+  max-width: 860px;
+  text-align: center;
+}
+
+/* 正文后方的一团柔和暗场：保证文字在任何视频画面上都清晰，
+   同时不遮挡背景视频（只是压暗一圈，边缘完全化开）。 */
+.plx-core::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 136%;
+  height: 176%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%,
+      rgba(2, 2, 5, 0.86) 0%,
+      rgba(2, 2, 5, 0.72) 34%,
+      rgba(2, 2, 5, 0.42) 56%,
+      rgba(2, 2, 5, 0.16) 72%,
+      transparent 82%);
+}
+
+.plx-emblem {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 26px;
+  display: block;
+}
+
+.plx-emblem svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 18px rgba(0, 212, 255, 0.45));
+}
+
+.plx-eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 20px;
+}
+
+.plx-title {
+  font-size: clamp(2.3rem, 6.2vw, 4.3rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 6px 34px rgba(0, 212, 255, 0.22));
+}
+
+.plx-title .plx-grad {
+  background: linear-gradient(98deg, #ffffff 0%, #9fefff 26%, #00d4ff 52%, #7c3aed 96%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.plx-desc {
+  font-size: clamp(1rem, 1.7vw, 1.16rem);
+  line-height: 1.85;
+  color: var(--text-secondary);
+  max-width: 660px;
+  margin: 0 auto;
+}
+
+.plx-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(26px, 5vw, 68px);
+  margin-top: 52px;
+}
+
+.plx-stat {
+  min-width: 96px;
+}
+
+.plx-stat-value {
+  font-size: clamp(1.75rem, 4vw, 2.55rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(180deg, #ffffff 0%, #8fe6ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.plx-stat-label {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+}
+
+/* 向下滚动提示 */
+.plx-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 34px;
+  z-index: 6;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.plx-hint-arrow {
+  width: 1px;
+  height: 30px;
+  background: linear-gradient(to bottom, rgba(0, 212, 255, 0.7), transparent);
+  animation: plxHint 2.1s ease-in-out infinite;
+}
+
+@keyframes plxHint {
+  0%, 100% { opacity: 0.25; transform: scaleY(0.7); transform-origin: top; }
+  50% { opacity: 1; transform: scaleY(1); transform-origin: top; }
+}
+
+/* ---------------------------------------------------------------------------
+   3. 平板
+   --------------------------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .plx-field { min-height: 104vh; }
+
+  .plx-chips .plx-chip:nth-child(3),
+  .plx-chips .plx-chip:nth-child(6) { display: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   4. 手机：装饰退到背景里，前沿标签改成流式标签云
+      —— 小屏上正文几乎占满宽度，绝对定位的标签一定会压到字，
+         所以改为正常流：正文在上、标签云在下，并且禁掉标签的纵向位移。
+   --------------------------------------------------------------------------- */
+@media (max-width: 760px) {
+  .plx-field {
+    flex-direction: column;
+    justify-content: center;
+    gap: 26px;
+    min-height: auto;
+    padding: 84px 6%;
+  }
+
+  .plx-core { order: 1; }
+  .plx-chips { order: 2; }
+
+  .plx-chips {
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 9px;
+    max-width: 100%;
+    z-index: 2;
+  }
+
+  .plx-chips .plx-chip {
+    position: static;
+    font-size: 0.72rem;
+    padding: 7px 13px;
+    animation-delay: 0s;
+    /* 流式排布下再做纵向位移会压到正文，直接关掉 */
+    transform: none !important;
+  }
+
+  /* 手机上只留 6 颗，避免标签云太长 */
+  .plx-chips .plx-chip:nth-child(n + 7) { display: none; }
+
+  .plx-ring-c { display: none; }
+  .plx-stats { gap: 22px 34px; margin-top: 36px; }
+  .plx-stat { min-width: 84px; }
+  .plx-stat-label { font-size: 0.7rem; letter-spacing: 0.1em; }
+  .plx-hint { display: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   5. 降低动态效果偏好：视差与装饰动画全部让位
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .plx-layer,
+  .plx-nebula,
+  .plx-aurora,
+  .plx-floor,
+  .plx-ring,
+  .plx-orbit,
+  .plx-chip,
+  .plx-beam,
+  .plx-orbit-ring,
+  .plx-hint-arrow {
+    animation: none !important;
+    transform: none !important;
+    will-change: auto !important;
+  }
+
+  .section-eyebrow,
+  .section-title,
+  .section-desc {
+    transform: none !important;
+  }
+
+  .plx-field { min-height: auto; padding: 110px 5%; }
+}
