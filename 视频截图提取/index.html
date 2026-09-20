@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频截图提取 · 逐帧抓图 / 批量导出 · 本地处理</title>
+    <meta name="description" content="上传视频，逐帧或按间隔批量提取画面截图，支持 PNG / JPEG / WebP，可一键打包 ZIP 下载，全程浏览器本地处理、视频不上传">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='16' width='52' height='36' rx='8' fill='%236366f1'/%3E%3Crect x='22' y='9' width='20' height='10' rx='4' fill='%23818cf8'/%3E%3Ccircle cx='32' cy='34' r='11' fill='%230a0a0f'/%3E%3Ccircle cx='32' cy='34' r='6' fill='%23a5b4fc'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app">
+
+        <!-- ===== Header ===== -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-mark" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="camGrad" x1="8" y1="10" x2="56" y2="54" gradientUnits="userSpaceOnUse">
+                                    <stop offset="0" stop-color="#a5b4fc"/>
+                                    <stop offset="0.55" stop-color="#818cf8"/>
+                                    <stop offset="1" stop-color="#6366f1"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="6" y="16" width="52" height="36" rx="8" fill="url(#camGrad)"/>
+                            <rect x="22" y="9" width="20" height="10" rx="4" fill="#818cf8"/>
+                            <circle cx="32" cy="34" r="11" fill="#0a0a0f"/>
+                            <circle cx="32" cy="34" r="6" fill="#a5b4fc"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-title">视频截图提取</span>
+                        <span class="logo-subtitle">Bairimeng Video Screenshot</span>
+                    </div>
+                </div>
+                <div class="header-badges">
+                    <span class="badge" title="所有处理在浏览器本地完成，视频不会上传">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        本地处理
+                    </span>
+                    <span class="badge" title="一次提取多张，打包成 ZIP 下载">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+                        批量导出
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <!-- ===== Main ===== -->
+        <main class="main">
+
+            <!-- ---------- Step 1: 选择视频 ---------- -->
+            <section id="upload-section" class="section active">
+                <div class="section-head">
+                    <span class="step-no">1</span>
+                    <div>
+                        <h2>选择视频</h2>
+                        <p class="section-sub">视频只在你的电脑上打开，不会上传到任何服务器</p>
+                    </div>
+                </div>
+                <div class="drop-zone" id="drop-zone">
+                    <input type="file" id="file-input" accept="video/*" hidden>
+                    <div class="drop-icon">
+                        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v13"/></svg>
+                    </div>
+                    <p class="drop-title">把视频拖进来，或点击选择</p>
+                    <p class="drop-hint">支持 MP4 / MOV / WebM / MKV 等浏览器能播放的格式</p>
+                </div>
+            </section>
+
+            <!-- ---------- 工作区（载入视频后显示） ---------- -->
+            <div id="workspace" class="workspace" hidden>
+
+                <!-- 文件信息 -->
+                <div class="file-bar">
+                    <div class="file-bar-left">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                        <span id="file-name" class="file-name">—</span>
+                        <span id="file-meta" class="file-meta">—</span>
+                    </div>
+                    <button type="button" class="btn btn-ghost btn-sm" id="reset-btn">换一个视频</button>
+                </div>
+
+                <!-- ---------- Step 2: 定位并截图 ---------- -->
+                <section class="section">
+                    <div class="section-head">
+                        <span class="step-no">2</span>
+                        <div>
+                            <h2>找到想要的那一帧</h2>
+                            <p class="section-sub">播放到目标位置后暂停，用「上一帧 / 下一帧」精确定位，再点「截取这一帧」</p>
+                        </div>
+                    </div>
+
+                    <div class="player">
+                        <div class="video-wrap">
+                            <video id="video" playsinline preload="auto"></video>
+                        </div>
+
+                        <!-- 播放控制条 -->
+                        <div class="controls">
+                            <button type="button" class="icon-btn" id="play-btn" title="播放 / 暂停（空格）">
+                                <svg id="play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                            </button>
+                            <span class="time-label" id="time-current">0:00.00</span>
+                            <input type="range" id="seek-bar" class="seek-bar" min="0" max="1000" value="0" step="1" aria-label="播放进度">
+                            <span class="time-label time-total" id="time-total">0:00.00</span>
+                            <span class="fps-chip" id="fps-chip" title="自动探测的视频帧率">— fps</span>
+                        </div>
+
+                        <!-- 精确定位 + 截图 -->
+                        <div class="capture-bar">
+                            <div class="step-group">
+                                <button type="button" class="btn btn-soft" id="prev-frame-btn" title="上一帧（←）">◀ 上一帧</button>
+                                <button type="button" class="btn btn-soft" id="next-frame-btn" title="下一帧（→）">下一帧 ▶</button>
+                                <div class="time-input">
+                                    <span class="time-input-label">跳到</span>
+                                    <input type="number" id="jump-input" min="0" step="0.01" placeholder="0.00" aria-label="跳转时间（秒）">
+                                    <span class="time-input-label">秒</span>
+                                    <button type="button" class="btn btn-ghost btn-sm" id="jump-btn">跳转</button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-capture" id="capture-btn" title="截取当前帧（S 键）">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                截取这一帧
+                            </button>
+                        </div>
+                        <p class="kbd-hint">快捷键：<kbd>空格</kbd> 播放/暂停 · <kbd>←</kbd> <kbd>→</kbd> 前后一帧 · <kbd>S</kbd> 截图 · <kbd>Shift</kbd>+<kbd>←</kbd>/<kbd>→</kbd> 跳 1 秒</p>
+                    </div>
+                </section>
+
+                <!-- ---------- Step 3: 批量提取 ---------- -->
+                <section class="section">
+                    <div class="section-head">
+                        <span class="step-no">3</span>
+                        <div>
+                            <h2>批量提取（可选）</h2>
+                            <p class="section-sub">想一次性拿走整段视频的画面？按间隔或按张数自动抓取</p>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="setting-grid">
+                            <div class="setting-group">
+                                <label class="setting-label"><span>提取方式</span></label>
+                                <div class="custom-select">
+                                    <select id="batch-mode">
+                                        <option value="interval" selected>按间隔：每隔几秒抓一张</option>
+                                        <option value="count">按数量：全片均匀抓 N 张</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="setting-group" id="interval-group">
+                                <label class="setting-label"><span>间隔（秒）</span></label>
+                                <input type="number" id="interval-input" class="num-input" value="1" min="0.04" step="0.5">
+                            </div>
+
+                            <div class="setting-group" id="count-group" hidden>
+                                <label class="setting-label"><span>张数</span></label>
+                                <input type="number" id="count-input" class="num-input" value="12" min="1" max="200" step="1">
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label"><span>时间范围（秒）</span></label>
+                                <div class="range-row">
+                                    <input type="number" id="range-start" class="num-input num-input-half" value="0" min="0" step="0.1" aria-label="起始时间">
+                                    <span class="range-sep">~</span>
+                                    <input type="number" id="range-end" class="num-input num-input-half" placeholder="到结尾" min="0" step="0.1" aria-label="结束时间">
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="batch-preview" id="batch-preview">—</p>
+
+                        <div class="panel-actions">
+                            <button type="button" class="btn btn-primary" id="batch-btn">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                                开始批量提取
+                            </button>
+                            <button type="button" class="btn btn-ghost" id="batch-cancel" hidden>停止</button>
+                            <span class="batch-progress" id="batch-progress" hidden></span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ---------- Step 4: 导出设置 + 结果 ---------- -->
+                <section class="section">
+                    <div class="section-head">
+                        <span class="step-no">4</span>
+                        <div>
+                            <h2>取走截图</h2>
+                            <p class="section-sub">单张可下载或复制到剪贴板，多张可一键打包成 ZIP</p>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="setting-grid">
+                            <div class="setting-group">
+                                <label class="setting-label"><span>图片格式</span></label>
+                                <div class="custom-select">
+                                    <select id="format-select">
+                                        <option value="image/png" selected>PNG（无损，体积大）</option>
+                                        <option value="image/jpeg">JPEG（体积小，适合发图）</option>
+                                        <option value="image/webp">WebP（体积最小，画质好）</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="setting-group">
+                                <label class="setting-label"><span>输出尺寸</span></label>
+                                <div class="custom-select">
+                                    <select id="size-select">
+                                        <option value="0" selected>原尺寸（跟视频一样大）</option>
+                                        <option value="1920">宽 1920（1080P）</option>
+                                        <option value="1280">宽 1280（720P）</option>
+                                        <option value="854">宽 854（480P）</option>
+                                        <option value="640">宽 640</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="setting-group" id="quality-group" hidden>
+                                <label class="setting-label"><span>画质</span><span class="setting-value" id="quality-value">92%</span></label>
+                                <input type="range" id="quality-range" class="slider" min="40" max="100" value="92" step="1">
+                            </div>
+                        </div>
+                        <div class="setting-hint" id="format-hint">PNG 无损最清晰；发朋友圈 / 微信建议选 JPEG 或 WebP，体积小很多。</div>
+                    </div>
+
+                    <!-- 结果 -->
+                    <div class="result-head">
+                        <div class="result-stats" id="result-stats">还没有截图</div>
+                        <div class="result-actions">
+                            <button type="button" class="btn btn-soft btn-sm" id="download-all-btn" disabled>打包下载 ZIP</button>
+                            <button type="button" class="btn btn-ghost btn-sm" id="clear-btn" disabled>清空全部</button>
+                        </div>
+                    </div>
+
+                    <div class="shots-grid" id="shots-grid"></div>
+                    <div class="empty-state" id="empty-state">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                        <p>截图会出现在这里</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- ===== Footer ===== -->
+        <footer class="footer">
+            <p class="footer-note">全程在浏览器本地完成：视频不会上传到任何服务器，关掉网页数据即消失。</p>
+        </footer>
+    </div>
+
+    <!-- 大图预览 -->
+    <div class="lightbox" id="lightbox" hidden>
+        <button type="button" class="lightbox-close" id="lightbox-close" aria-label="关闭">×</button>
+        <img id="lightbox-img" alt="截图预览">
+        <div class="lightbox-bar">
+            <span id="lightbox-time">—</span>
+            <button type="button" class="btn btn-soft btn-sm" id="lightbox-download">下载这张</button>
+        </div>
+    </div>
+
+    <!-- 轻提示 -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
