@@ -1,9 +1,9 @@
 /* ============================================================
    AI 提示词工坊 · 实时社区图库
    提示词读取方式：
-   - 作品列表由公开社区实时提供（匿名，无需登录）
-   - 提示词直接读自作者导出时写进图片里的生成参数
-     （只取文件前 192KB，本地解析，不经任何第三方服务器）
+   - 作品列表与生成参数（提示词 / 反向提示词 / 采样参数）均由公开社区
+     实时提供，匿名访问，无需登录
+   - 图片作品若对方未公开生成参数，再退回解析原图内嵌的生成参数
    - 全程只读，不采集任何用户数据
    ============================================================ */
 (function () {
@@ -11,6 +11,7 @@
 
   var API = 'https://api2.liblib.art';
   var LIST_URL = API + '/api/www/img/group/search';
+  var GET_URL = API + '/api/www/img/group/get/';
   var COND_URL = API + '/api/www/public/search-cond2?type=2';
   var PAGE_SIZE = 24;
 
@@ -296,9 +297,7 @@ function cardHtml(it, idx) {
               var card = en.target;
               ioCard.unobserve(card);
               var it = S.items[parseInt(card.getAttribute('data-i'), 10)];
-              /* 只对图片自动预取（读内嵌参数，快且稳定）；
-                 视频留给悬停/点击 */
-              if (it && it.mediaType !== 2) prefetch(it);
+              if (it) prefetch(it);
             });
           }, { rootMargin: '320px 0px' });
         }
@@ -620,15 +619,103 @@ function cardHtml(it, idx) {
     }
   }
 
-  /* 读取详情：图片直接解析原图内嵌的生成参数（本地完成，无需任何外部服务） */
+  /* 把社区返回的生成参数整理成 {prompt, negative, cn, params}
+     - 图片：metainformation 是 A1111 风格的键值（prompt / Negative prompt / Steps / Sampler ...）
+     - 视频：metainformation 里是 geniusPayload（模型 / 分辨率 / 时长 / 生成方式） */
+  function parseCommunityMeta(gi, item, box) {
+    var prompt = (gi.prompt || '').trim();
+    var neg = (gi.negativePrompt || '').trim();
+    var cn = (gi.promptCn || '').trim();
+    var params = {};
+
+    if (gi.samplingMethod) params['Sampler'] = String(gi.samplingMethod);
+    if (gi.samplingStep) params['Steps'] = String(gi.samplingStep);
+    if (gi.cfgScale) params['CFG scale'] = String(gi.cfgScale);
+    if (gi.seed && Number(gi.seed) > 0) params['Seed'] = String(gi.seed);
+    if (gi.originalModelName) params['Model'] = String(gi.originalModelName);
+
+    var mi = gi.metainformation || '';
+    var j = null;
+    if (mi && mi.charAt(0) === '{') { try { j = JSON.parse(mi); } catch (e) { j = null; } }
+    if (j) {
+      if (!prompt && typeof j.prompt === 'string') prompt = j.prompt.trim();
+      if (!neg) {
+        var nk = (typeof j['Negative prompt'] === 'string') ? j['Negative prompt'] : j.negativePrompt;
+        if (typeof nk === 'string') neg = nk.trim();
+      }
+      ['Steps', 'Sampler', 'Scheduler', 'CFG scale', 'Seed', 'Model', 'Size',
+       'Clip skip', 'Denoise', 'Hires upscale', 'Hires upscaler'].forEach(function (k) {
+        if (j[k] != null && j[k] !== '' && !params[k]) params[k] = String(j[k]);
+      });
+      /* 视频：真实生成参数在这一层 JSON 字符串里 */
+      var p = null;
+      if (typeof j.geniusPayload === 'string' && j.geniusPayload.charAt(0) === '{') {
+        try { p = JSON.parse(j.geniusPayload); } catch (e) { p = null; }
+      }
+      if (!p && j.geniusPayload && typeof j.geniusPayload === 'object') p = j.geniusPayload;
+      if (p) {
+        if (!prompt && p.prompt) prompt = String(p.prompt).trim();
+        if (!params['Model'] && p.model) params['Model'] = String(p.model);
+        if (p.size && !params['Size']) params['Size'] = String(p.size);
+        if (p.resolution) params['分辨率'] = String(p.resolution);
+        if (p.duration) params['时长'] = String(p.duration) + ' 秒';
+      }
+      if (j.frontCustomerReq && j.frontCustomerReq.tabType) {
+        var tb = String(j.frontCustomerReq.tabType);
+        var MAP = { img2video: '图生视频', txt2video: '文生视频', img2img: '图生图',
+                    txt2img: '文生图', gen: '生成', video: '视频' };
+        params['生成方式'] = MAP[tb] || tb;
+      }
+    }
+
+    if (!params['Size'] && item && item.width && item.height) {
+      params['Size'] = item.width + 'x' + item.height;
+    }
+    if (!params['Model'] && item && item.modelName) params['Model'] = String(item.modelName);
+    if (!params['Model'] && box && box.modelId) params['Model'] = 'ID ' + box.modelId;
+
+    return { prompt: prompt, negative: neg, cn: cn, params: params };
+  }
+
+  /* 取该作品公开出来的生成参数（一次小请求，拿到提示词 + 反向提示词 + 采样参数） */
+  function fetchCommunity(uuid, item) {
+    return fetchJSON(GET_URL + uuid, 12000, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: '{}'
+    }).then(function (j) {
+      var d = (j && j.data) || {};
+      if (!d.uuid) throw new Error('作品不存在或已下架');
+      if (d.hideGenerateInfo) throw new Error('作者没有公开提示词');
+      var imgs = d.images || [];
+      var gi = (imgs[0] && imgs[0].generateInfo) || null;
+      if (!gi) throw new Error('作者没有公开提示词');
+      var m = parseCommunityMeta(gi, item, d);
+      if (!m.prompt && !m.negative) throw new Error('作者没有公开提示词');
+      return keep(uuid, {
+        src: 'pub', promptEn: m.prompt, promptCn: m.cn,
+        negativePrompt: m.negative, params: m.params
+      });
+    });
+  }
+
+  /* 读取详情：优先取作品公开的生成参数；图片取不到时再退回解析原图内嵌参数 */
   function fetchDetail(item) {
     var isObj = item && typeof item === 'object';
     var uuid = isObj ? item.uuid : item;
+    if (!uuid) return Promise.reject(new Error('作品不存在'));
     var hit = cacheGet(uuid);
     if (hit) return Promise.resolve(hit);
 
     var isVideo = isObj && item.mediaType === 2;
-    if (isObj && !isVideo && item.imageUrl) {
+    var pub = fetchCommunity(uuid, isObj ? item : null);
+
+    /* 视频：只能看对方公开的生成参数 */
+    if (isVideo || !isObj || !item.imageUrl) {
+      return pub.catch(function () { throw new Error('作者没有公开提示词'); });
+    }
+    /* 图片：先取公开参数（参数最全），失败再本地解析原图内嵌参数 */
+    return pub.catch(function () {
       return readImageMeta(item).then(function (m) {
         if (m && m.r && (m.r.prompt || m.r.negative)) {
           return keep(uuid, { src: 'meta', via: m.via, promptEn: m.r.prompt, promptCn: '',
@@ -636,8 +723,7 @@ function cardHtml(it, idx) {
         }
         throw new Error('作者没有公开提示词');
       });
-    }
-    return Promise.reject(new Error('作者没有公开提示词'));
+    });
   }
 
   function keep(uuid, d) {
@@ -666,10 +752,9 @@ function cardHtml(it, idx) {
     return p;
   }
 
-  /* 预取队列：图片走内嵌参数解析（很快，允许 3 个并发）；
-     视频单独串行、间隔放大 */
-  var PQ = [], qImgBusy = 0, qVidBusy = false;
-  var Q_IMG_MAX = 3, Q_GAP = 110, Q_VID_GAP = 600;
+  /* 预取队列：每个作品一次小请求，统一 3 并发 */
+  var PQ = [], qBusy = 0;
+  var Q_MAX = 3, Q_GAP = 120;
 
   function prefetch(item) {
     var uuid = (item && typeof item === 'object') ? item.uuid : item;
@@ -688,21 +773,12 @@ function cardHtml(it, idx) {
   }
 
   function runPQ() {
-    if (!PQ.length) return;
-    /* 挑一个能跑的：视频串行，图片最多 3 并发 */
-    var pick = -1;
-    for (var i = 0; i < PQ.length; i++) {
-      if (isVideoItem(PQ[i])) { if (!qVidBusy && qImgBusy === 0) { pick = i; break; } }
-      else if (qImgBusy < Q_IMG_MAX) { pick = i; break; }
-    }
-    if (pick < 0) return;
-    var it = PQ.splice(pick, 1)[0];
-    var isV = isVideoItem(it);
-    if (isV) qVidBusy = true; else qImgBusy++;
-
+    if (!PQ.length || qBusy >= Q_MAX) return;
+    var it = PQ.shift();
+    qBusy++;
     var finish = function () {
-      if (isV) qVidBusy = false; else qImgBusy--;
-      setTimeout(runPQ, isV ? Q_VID_GAP : Q_GAP);
+      qBusy--;
+      setTimeout(runPQ, Q_GAP);
     };
     getDetail(it, true).catch(function () { }).then(finish, finish);
     if (PQ.length) setTimeout(runPQ, 0);
@@ -761,9 +837,12 @@ function cardHtml(it, idx) {
       var P = d.params || {};
       var LBL = { 'Model': '模型', 'Sampler': '采样器', 'Scheduler': '调度器', 'Steps': '步数',
                   'CFG scale': 'CFG', 'Seed': '种子', 'Size': '尺寸', 'LoRA': 'LoRA',
-                  'Denoise': '重绘幅度', 'Clip skip': 'Clip skip' };
+                  'Denoise': '重绘幅度', 'Clip skip': 'Clip skip',
+                  '生成方式': '生成方式', '分辨率': '分辨率', '时长': '时长',
+                  'Hires upscale': '高清放大', 'Hires upscaler': '放大算法' };
       var tags = [], seen = {};
-      ['Model', 'Sampler', 'Scheduler', 'Steps', 'CFG scale', 'Seed', 'Size', 'LoRA', 'Denoise', 'Clip skip'].forEach(function (k) {
+      ['Model', '生成方式', '分辨率', '时长', 'Size', 'Sampler', 'Scheduler', 'Steps', 'CFG scale',
+       'Seed', 'LoRA', 'Denoise', 'Clip skip', 'Hires upscale', 'Hires upscaler'].forEach(function (k) {
         if (P[k] && !seen[k]) { seen[k] = 1; tags.push([LBL[k] || k, P[k]]); }
       });
       el.params.innerHTML = tags.map(function (t, i) {
@@ -779,8 +858,8 @@ function cardHtml(it, idx) {
       else {
         var isVid = S.mode === 'video' || (S.current && S.current.mediaType === 2);
         el.prompt.textContent = isVid
-          ? '这个视频的作者没有公开提示词（社区里视频作品普遍不公开生成信息，封面也不带参数）。想看提示词可以切到上方「🖼️ 图片」Tab —— 那里勾着「只看带生成参数」，作品基本都公开了提示词。'
-          : '这张图的作者没有公开提示词（社区里作者可以自己选择是否公开，也有的导出时没勾选写入参数）。勾选上方「只看带生成参数」后，这类作品的提示词几乎都会公开。';
+          ? '这个视频的作者没有公开提示词。保持勾选上方的「只看带生成参数」，列出来的视频基本都公开了生成参数；个别作品作者可以选择不公开。'
+          : '这张图的作者没有公开提示词（作者可以自己选择是否公开）。勾选上方「只看带生成参数」后，这类作品基本都会公开提示词。';
         el.prompt.classList.add('empty');
       }
       if (n) { el.neg.textContent = n; el.neg.classList.remove('empty'); el.negWrap.hidden = false; }
@@ -848,7 +927,8 @@ function cardHtml(it, idx) {
       if (d.promptEn) L.push(d.promptEn);
       if (d.promptCn && d.promptCn !== d.promptEn) L.push('', '【中文提示词】' + d.promptCn);
       if (d.negativePrompt) L.push('', 'Negative prompt: ' + d.negativePrompt);
-      var P = d.params || {}, ORDER = ['Steps', 'Sampler', 'Scheduler', 'CFG scale', 'Seed', 'Size', 'Model', 'LoRA', 'Denoise'];
+      var P = d.params || {}, ORDER = ['Model', '生成方式', '分辨率', '时长', 'Size', 'Steps', 'Sampler',
+                                       'Scheduler', 'CFG scale', 'Seed', 'LoRA', 'Denoise'];
       var meta = [];
       ORDER.forEach(function (k) { if (P[k]) meta.push(k + ': ' + P[k]); });
       if (!P['Size'] && it.width && it.height) meta.push('Size: ' + it.width + 'x' + it.height);
