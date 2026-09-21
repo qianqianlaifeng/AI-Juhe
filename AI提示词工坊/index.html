@@ -44,6 +44,19 @@
   </div>
 
   <div class="hd-filter">
+    <label class="fl">模型
+      <select id="f-model"><option value="">全部模型</option></select>
+    </label>
+    <label class="fl">来源
+      <select id="f-source">
+        <option value="">全部来源</option>
+        <option value="1">WebUI</option>
+        <option value="3">ComfyUI</option>
+        <option value="5">图片生成器</option>
+        <option value="6">视频生成器</option>
+        <option value="0">本地上传</option>
+      </select>
+    </label>
     <label class="fl">排序
       <select id="f-sort">
         <option value="0">推荐</option>
@@ -55,7 +68,7 @@
       <input id="f-prompt" type="checkbox" checked>
       <span>只看带生成参数</span>
     </label>
-    <span class="hint" id="hint">提示：勾上「只看带生成参数」可只看已附提示词的作品，更省心</span>
+    <span class="hint" id="hint">提示：勾上「只看带生成参数」后，作品的提示词直接从图片里读，命中率最高</span>
   </div>
 </header>
 
@@ -75,11 +88,6 @@
     <button id="morebtn" type="button">加载更多</button>
   </div>
 </main>
-
-<footer class="ft">
-  <p>数据来自公开 AI 创作社区，实时更新，版权归原作者所有；本工具仅用于浏览与提示词学习，请遵守原作者使用规范。</p>
-  <p class="ft-sub">社区里部分作者会选择不公开生成参数，遇到这种情况无法获取提示词，属正常现象。</p>
-</footer>
 
 <!-- 详情面板 -->
 <div class="modal" id="modal" hidden>
@@ -129,6 +137,6 @@
   </div>
 </div>
 
-<script src="js/app.js?v=12"></script>
+<script src="js/app.js?v=13"></script>
 </body>
 </html>
