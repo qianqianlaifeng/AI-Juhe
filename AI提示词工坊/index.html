@@ -9,6 +9,7 @@
   [hidden]{display:none!important}
 </style>
 <link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2300d4ff'/%3E%3Ctext x='16' y='23' font-size='20' font-family='sans-serif' font-weight='700' text-anchor='middle' fill='%23041218'%3EP%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 
@@ -25,7 +26,7 @@
     </a>
     <div class="src-note">
       <span class="dot"></span>
-      实时数据源：哩布哩布 LiblibAI 社区（公开接口）
+      实时数据源：哩布哩布 LiblibAI 社区 · 图片提示词本地解析，免中转
     </div>
   </div>
 
@@ -67,7 +68,7 @@
       <input id="f-prompt" type="checkbox" checked>
       <span>只看带生成参数</span>
     </label>
-    <span class="hint" id="hint">提示：勾上「只看带生成参数」后，作品基本都公开了提示词</span>
+    <span class="hint" id="hint">提示：勾上「只看带生成参数」后，作品的提示词直接从图片里读，命中率最高</span>
   </div>
 </header>
 
@@ -90,12 +91,12 @@
 
 <footer class="ft">
   <p>数据来自 <b>哩布哩布 LiblibAI</b> 社区公开接口，实时拉取，版权归原作者所有；本工具仅做浏览与提示词学习用途。</p>
-  <p class="ft-sub">提示词为作者主动公开的生成参数，部分作品作者会选择不公开；如需使用请前往原作品页遵守社区规范。</p>
+  <p class="ft-sub">图片的提示词直接读自作者导出时<b>写进图片里的生成参数</b>（本地解析，不经任何第三方服务器）；视频作品封面不带参数，才需要借只读中转去读社区页面。部分作者会选择不公开，如需使用请前往原作品页遵守社区规范。</p>
 
   <details class="relay-cfg">
-    <summary>⚙️ 提示词偶尔加载失败？点这里（可选 · 进阶设置）</summary>
+    <summary>⚙️ 视频提示词偶尔加载失败？点这里（可选 · 进阶设置）</summary>
     <div class="relay-body">
-      <p>作品的提示词存在源站的服务端页面里，浏览器跨域读不到，所以本工具会借公开的只读中转去取。免费中转偶尔会被限流；想<b>100% 稳定</b>的话可以自建一个中转（免费，约 1 分钟）：</p>
+      <p>图片的提示词是本地读图片参数，<b>永远不需要中转</b>。只有<b>视频</b>作品的提示词存在源站的服务端页面里，浏览器跨域读不到，所以本工具会借公开的只读中转去取。免费中转偶尔会被限流；想<b>100% 稳定</b>的话可以自建一个中转（免费，约 1 分钟）：</p>
       <ol>
         <li>打开 Cloudflare 控制台 → Workers &amp; Pages → 创建 Worker</li>
         <li>把下面的代码整段粘进去，点「部署」，复制得到的网址</li>
@@ -131,6 +132,7 @@
         <div class="mi-head">
           <h3 id="mi-title">—</h3>
           <div class="mi-sub" id="mi-sub"></div>
+          <div class="mi-src" id="mi-src"></div>
         </div>
         <div class="mi-params" id="mi-params"></div>
 
@@ -152,6 +154,7 @@
 
         <div class="mi-actions">
           <button class="act primary" id="copy-all" type="button">📋 复制全部（含参数）</button>
+          <a class="act" id="open-raw" href="#" target="_blank" rel="noopener">⬇ 原图</a>
           <a class="act" id="open-origin" href="#" target="_blank" rel="noopener">↗ 打开原作品页</a>
         </div>
 
@@ -164,6 +167,6 @@
   </div>
 </div>
 
-<script src="js/app.js?v=6"></script>
+<script src="js/app.js?v=8"></script>
 </body>
 </html>

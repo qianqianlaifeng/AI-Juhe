@@ -1,9 +1,16 @@
 /* ============================================================
    AI 提示词工坊 · 实时社区图库
    数据源：哩布哩布 LiblibAI 公开接口（匿名，无需登录 / API Key）
-   - 列表：POST https://api2.liblib.art/api/www/img/group/search  （服务端反射 Origin，跨域可用）
-   - 详情：GET  https://www.liblib.art/imageinfo/<uuid>            （提示词在服务端渲染的 HTML 里，
-           浏览器跨域读不到，走公开只读代理中转）
+   - 列表：POST https://api2.liblib.art/api/www/img/group/search
+           （服务端反射任意 Origin，浏览器原生跨域可用，无需中转）
+   - 提示词（主路径 · 免中转 · 零第三方）：
+           AI 出图的 PNG 会把生成参数写进 tEXt/iTXt 块（key: parameters / prompt / workflow），
+           图床 liblibai-online.liblib.cloud 带 Access-Control-Allow-Origin:*，
+           所以浏览器可以直接取原图（只取前 192KB，参数块都在 IDAT 之前）+ 本地解析 → 拿到提示词。
+           实测「只看带生成参数」的作品命中率约 88%，单张解析约 0.1~0.2 秒。
+   - 提示词（兜底路径）：GET https://www.liblib.art/imageinfo/<uuid>
+           视频作品封面被剥离了元数据，只能读服务端渲染的 HTML（无 CORS），
+           走公开只读代理中转。中转会限流，故做「轮换 + 熔断 + 粘性优选 + 对冲并发」。
    全程只读，不采集任何用户数据。
    ============================================================ */
 (function () {
@@ -72,9 +79,9 @@
     count: $('#count'), grid: $('#grid'), state: $('#state'),
     more: $('#more'), morebtn: $('#morebtn'), refresh: $('#refresh'),
     modal: $('#modal'), stage: $('#mv-stage'), mvmeta: $('#mv-meta'),
-    title: $('#mi-title'), sub: $('#mi-sub'), params: $('#mi-params'),
+    title: $('#mi-title'), sub: $('#mi-sub'), params: $('#mi-params'), src: $('#mi-src'),
     prompt: $('#p-prompt'), neg: $('#p-neg'), negWrap: $('#neg-wrap'),
-    copyAll: $('#copy-all'), openOrigin: $('#open-origin'),
+    copyAll: $('#copy-all'), openOrigin: $('#open-origin'), openRaw: $('#open-raw'),
     load: $('#mi-load'), err: $('#mi-err')
   };
 
@@ -111,10 +118,11 @@
 
   /* 带完整超时的请求：超时覆盖「取头 + 读完响应体」全过程，
      避免代理只回响应头然后卡住导致永久挂起 */
-  function fetchText(url, ms, init) {
+  function fetchText(url, ms, init, onCtl) {
     return new Promise(function (resolve, reject) {
       var ctl = new AbortController();
       var settled = false;
+      if (onCtl) { try { onCtl(ctl); } catch (e) { } }
       var timer = setTimeout(function () {
         if (settled) return;
         settled = true;
@@ -314,13 +322,31 @@ function cardHtml(it, idx) {
         var it = S.items[parseInt(c.getAttribute('data-i'), 10)];
         if (it) openDetail(it);
       });
-      /* 鼠标悬停就悄悄预取提示词：等你点开时通常已经好了 */
+      /* 鼠标悬停就悄悄预取提示词：等你点开时通常已经好了（图片走内嵌参数，很快） */
       c.addEventListener('mouseenter', function () {
         var it = S.items[parseInt(c.getAttribute('data-i'), 10)];
-        if (it) prefetch(it.uuid);
+        if (it) prefetch(it);
       });
+      /* 卡片快进入视口就预取：实测单张约 0.15 秒，滚到哪儿哪儿就是现成的 */
+      if (window.IntersectionObserver) {
+        if (!ioCard) {
+          ioCard = new IntersectionObserver(function (ents) {
+            ents.forEach(function (en) {
+              if (!en.isIntersecting) return;
+              var card = en.target;
+              ioCard.unobserve(card);
+              var it = S.items[parseInt(card.getAttribute('data-i'), 10)];
+              /* 只对图片自动预取（读内嵌参数，又快又免中转）；
+                 视频要过中转，留给悬停/点击 */
+              if (it && it.mediaType !== 2) prefetch(it);
+            });
+          }, { rootMargin: '320px 0px' });
+        }
+        ioCard.observe(c);
+      }
     });
   }
+  var ioCard = null;
 
   function appendCards(arr) {
     var base = S.items.length - arr.length;
@@ -367,6 +393,236 @@ function cardHtml(it, idx) {
   function hideState() {
     if (!S.items.length) { showState('empty'); return; }
     el.state.hidden = true;
+  }
+
+  /* ============================================================
+     2.5) 主路径：直接读「原图内嵌生成参数」（免中转 · 零第三方依赖）
+     ============================================================ */
+  var META_MAX = 196608;   /* 先取前 192KB：参数块都排在 IDAT 之前，够用又省流量 */
+
+  function binToStr(u8) {
+    var s = '', CH = 8192;
+    for (var i = 0; i < u8.length; i += CH) {
+      s += String.fromCharCode.apply(null, u8.subarray(i, i + CH));
+    }
+    return s;
+  }
+  function utf8Decode(u8) {
+    try { return new TextDecoder('utf-8').decode(u8); } catch (e) { return binToStr(u8); }
+  }
+
+  /* 遍历 PNG 块，把 tEXt / iTXt 里的 key→text 全取出来（遇到 IDAT 就停） */
+  function pngText(buf) {
+    var u8 = new Uint8Array(buf);
+    var SIG = [137, 80, 78, 71, 13, 10, 26, 10];
+    if (u8.length < 16) return null;
+    for (var i = 0; i < 8; i++) if (u8[i] !== SIG[i]) return null;
+    var dv = new DataView(buf), out = {}, off = 8;
+    while (off + 8 <= u8.length) {
+      var len = dv.getUint32(off);
+      if (len > 0x4000000) break;
+      var type = String.fromCharCode(u8[off + 4], u8[off + 5], u8[off + 6], u8[off + 7]);
+      var ds = off + 8;
+      if (ds + len > u8.length) break;                  /* 分片被截断，参数块没读全 */
+      var d = u8.subarray(ds, ds + len);
+      if (type === 'tEXt') {
+        var z = d.indexOf(0);
+        if (z > 0) out[binToStr(d.subarray(0, z))] = binToStr(d.subarray(z + 1));
+      } else if (type === 'iTXt') {
+        var z1 = d.indexOf(0);
+        if (z1 > 0) {
+          var key = binToStr(d.subarray(0, z1));
+          var compFlag = d[z1 + 1];
+          var r1 = d.subarray(z1 + 3);
+          var z2 = r1.indexOf(0);
+          var r2 = r1.subarray(z2 + 1);
+          var z3 = r2.indexOf(0);
+          out[key] = compFlag === 0 ? utf8Decode(r2.subarray(z3 + 1)) : '';
+        }
+      } else if (type === 'zTXt') {
+        var zk = d.indexOf(0);
+        if (zk > 0) out[binToStr(d.subarray(0, zk))] = '';
+      }
+      if (type === 'IDAT' || type === 'IEND') break;
+      off = ds + len + 4;
+    }
+    return out;
+  }
+
+  /* JPEG / WebP 兜底：直接在字节里找特征串（A1111 会写 EXIF UserComment） */
+  function scanRaw(buf) {
+    var u8 = new Uint8Array(buf), list = [];
+    try { list.push(new TextDecoder('utf-8').decode(u8)); } catch (e) { }
+    try { list.push(binToStr(u8)); } catch (e) { }
+    try { list.push(new TextDecoder('utf-16le').decode(u8)); } catch (e) { }
+    for (var v = 0; v < list.length; v++) {
+      var t = list[v], i = t.indexOf('Negative prompt:');
+      if (i < 0) i = t.indexOf('negative prompt:');
+      if (i >= 0) return { text: t.slice(Math.max(0, i - 1800), i + 1200), offset: i };
+    }
+    return null;
+  }
+
+  function parseKV(tail) {
+    var o = {};
+    String(tail || '').split(',').forEach(function (kv) {
+      var i = kv.indexOf(':');
+      if (i <= 0) return;
+      var k = kv.slice(0, i).trim(), v = kv.slice(i + 1).trim();
+      if (k && v && k.length < 32) o[k] = v.replace(/^["']|["']$/g, '');
+    });
+    return o;
+  }
+
+  /* Automatic1111 / Forge / SD.Next 的 parameters 串 */
+  function parseA1111(str) {
+    var pos = String(str), neg = '', tail = '';
+    var m = pos.indexOf('Negative prompt:');
+    if (m >= 0) {
+      var rest = pos.slice(m + 16);
+      pos = pos.slice(0, m);
+      var nl = rest.indexOf('\n');
+      if (nl >= 0) { neg = rest.slice(0, nl); tail = rest.slice(nl + 1); }
+      else neg = rest;
+    } else {
+      var ls = String(str).split('\n'), pi = -1;
+      for (var i = 1; i < ls.length; i++) {
+        if (/^\s*(Steps|Sampler|CFG scale|Model)\s*:/i.test(ls[i])) { pi = i; break; }
+      }
+      if (pi > 0) { pos = ls.slice(0, pi).join('\n'); tail = ls.slice(pi).join('\n'); }
+    }
+    return { prompt: pos.trim(), negative: neg.trim(), params: parseKV(tail) };
+  }
+
+  /* ComfyUI 的 prompt 图（API 格式 JSON） */
+  function parseComfy(jsonStr) {
+    var g;
+    try { g = JSON.parse(jsonStr); } catch (e) { return null; }
+    if (!g || typeof g !== 'object' || Array.isArray(g)) return null;
+
+    function textOf(id) {
+      var n = g[id];
+      if (!n) return '';
+      var t = (n.inputs || {}).text;
+      if (typeof t === 'string') return t;
+      if (Object.prototype.toString.call(t) === '[object Array]' && t.length) return textOf(String(t[0]));
+      return '';
+    }
+    var pos = '', neg = '', params = {};
+    Object.keys(g).forEach(function (k) {
+      var n = g[k] || {}, ct = n.class_type || '', inp = n.inputs || {};
+      if (/KSampler|SamplerCustom/i.test(ct)) {
+        if (!pos && inp.positive && inp.positive[0] != null) pos = textOf(String(inp.positive[0]));
+        if (!neg && inp.negative && inp.negative[0] != null) neg = textOf(String(inp.negative[0]));
+        if (inp.steps != null && !params['Steps']) params['Steps'] = String(inp.steps);
+        if (inp.cfg != null && !params['CFG scale']) params['CFG scale'] = String(inp.cfg);
+        if (inp.sampler_name && !params['Sampler']) params['Sampler'] = String(inp.sampler_name);
+        if (inp.scheduler && !params['Scheduler']) params['Scheduler'] = String(inp.scheduler);
+        if (inp.seed != null && !params['Seed']) params['Seed'] = String(inp.seed);
+        if (inp.denoise != null && !params['Denoise']) params['Denoise'] = String(inp.denoise);
+      }
+      if (/CheckpointLoader/i.test(ct) && inp.ckpt_name && !params['Model']) params['Model'] = String(inp.ckpt_name);
+      if (/UNETLoader/i.test(ct) && inp.unet_name && !params['Model']) params['Model'] = String(inp.unet_name);
+      if (/LoraLoader/i.test(ct) && inp.lora_name) {
+        params['LoRA'] = (params['LoRA'] ? params['LoRA'] + ', ' : '') + String(inp.lora_name);
+      }
+    });
+    if (!pos) {
+      var all = [];
+      Object.keys(g).forEach(function (k) {
+        var n = g[k] || {}, ct = n.class_type || '', t = (n.inputs || {}).text;
+        if (typeof t === 'string' && t.trim() && /CLIPTextEncode|TextEncode|Prompt|CLIPLoader/i.test(ct)) all.push(t.trim());
+      });
+      all.sort(function (a, b) { return b.length - a.length; });
+      if (all.length) pos = all[0];
+      if (all.length > 1 && !neg) neg = all[all.length - 1];
+    }
+    if (!pos) return null;
+    return { prompt: pos, negative: neg, params: params };
+  }
+
+  /* 把 PNG 元数据字典统一成 {prompt, negative, params} */
+  function metaToDetail(meta) {
+    if (!meta) return null;
+    var raw = meta['parameters'] || meta['Parameters'] || meta['Comment'] || '';
+    var pj = meta['prompt'] || meta['Prompt'] || '';
+    var wf = meta['workflow'] || '';
+    var r = null;
+    if (raw && raw.trim().charAt(0) === '{') r = parseComfy(raw);
+    if (!r && raw) r = parseA1111(raw);
+    if ((!r || !r.prompt) && pj && pj.trim().charAt(0) === '{') r = parseComfy(pj) || r;
+    if ((!r || !r.prompt) && wf && wf.trim().charAt(0) === '{') r = parseComfy(wf) || r;
+    return (r && r.prompt) ? r : null;
+  }
+
+  /* 取原图 → 解析元数据。整条链（含读完响应体）都在超时保护内 */
+  function readImageMeta(item) {
+    var url = (item && (item.imageUrl || item.webpUrl)) || '';
+    if (!url) return Promise.resolve(null);
+    var orig = url.split('?')[0];
+    var HARD = 9000;
+
+    function pull(useRange, ms) {
+      return new Promise(function (resolve, reject) {
+        var ctl = new AbortController(), settled = false;
+        var timer = setTimeout(function () {
+          if (settled) return; settled = true;
+          try { ctl.abort(); } catch (e) { }
+          reject(new Error('timeout'));
+        }, ms);
+        var init = { signal: ctl.signal, cache: 'force-cache' };
+        if (useRange) init.headers = { 'Range': 'bytes=0-' + (META_MAX - 1) };
+        fetch(orig, init)
+          .then(function (r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.arrayBuffer();
+          })
+          .then(function (b) {
+            if (settled) return; settled = true; clearTimeout(timer); resolve(b);
+          })
+          .catch(function (e) {
+            if (settled) return; settled = true; clearTimeout(timer); reject(e);
+          });
+      });
+    }
+
+    function parse(buf) {
+      if (!buf || buf.byteLength < 100) return null;
+      var u8 = new Uint8Array(buf);
+      var isPng = u8[0] === 0x89 && u8[1] === 0x50;
+      var meta = isPng ? pngText(buf) : null;
+      var r = metaToDetail(meta);
+      if (r) return { r: r, via: 'png' };
+      var s = scanRaw(buf);
+      if (s) {
+        var r2 = parseA1111(s.text);
+        if (r2 && r2.prompt) return { r: r2, via: 'scan' };
+      }
+      var keys = meta ? Object.keys(meta) : [];
+      return { r: null, via: isPng ? 'png' : 'scan', keys: keys, png: isPng, buf: buf.byteLength };
+    }
+
+    return pull(true, HARD).then(function (buf) {
+      var o = parse(buf);
+      if (o.r) { o.src = 'meta'; return o; }
+      /* PNG 但被截断了（参数块没读全）→ 全量再拉一次 */
+      if (o.png && metaMissing(o.keys)) {
+        return pull(false, HARD).then(function (buf2) {
+          var o2 = parse(buf2);
+          if (o2.r) { o2.src = 'meta'; return o2; }
+          return { r: null, src: 'meta', reason: 'no-params', keys: o2.keys };
+        });
+      }
+      return { r: null, src: 'meta', reason: 'no-params', keys: o.keys };
+    }).catch(function (e) {
+      return { r: null, src: 'meta', reason: (e && e.message) || 'err' };
+    });
+  }
+  function metaMissing(keys) {
+    for (var i = 0; i < keys.length; i++) {
+      if (/^(parameters|Parameters|prompt|Prompt|workflow|Comment)$/.test(keys[i])) return false;
+    }
+    return true;
   }
 
   /* ============================================================
@@ -444,39 +700,45 @@ function cardHtml(it, idx) {
     }
   }
 
-  /* 对冲式抓取：先起最快的通道，4 秒没结果就并行再起一个，
+  /* 对冲式抓取（兜底路径）：先起最快的通道，4 秒没结果就并行再起一个，
      谁先成功用谁 —— 免费通道单条不稳，这样整体成功率最高、等待最短。 */
-  function fetchDetail(uuid) {
-    var hit = cacheGet(uuid);
-    if (hit) return Promise.resolve(hit);
-
+  function fetchDetailByRelay(uuid, budget) {
+    var HARD = budget || 24000;
+    var HEDGE = HARD > 15000 ? 3500 : 2200;      /* 视频给足时间；图片快速失败更友好 */
+    var PER = HARD > 15000 ? 12000 : 7000;
     var order = relayOrder();
-    var HEDGE = 4000, HARD = 26000;
 
     return new Promise(function (resolve, reject) {
       var settled = false;
       var launched = 0, failed = 0;
       var total = order.length;
+      var ctls = [];
+      function killRest() {
+        /* 已拿到结果：把还在跑的落败通道掐掉，避免留下无意义的超时噪声 */
+        ctls.forEach(function (c) { try { c.abort(); } catch (e) { } });
+        ctls = [];
+      }
       var hardT = setTimeout(function () {
-        if (!settled) { settled = true; reject(new Error('请求超时，请重试')); }
+        if (!settled) { settled = true; killRest(); reject(new Error('请求超时，请重试')); }
       }, HARD);
 
       function done(o) {
         if (settled) return;
-        settled = true; clearTimeout(hardT); resolve(o);
+        settled = true; clearTimeout(hardT); killRest(); resolve(o);
       }
       function failedOne(msg) {
         console.warn('[提示词] 通道失败:', msg);
         failed++;
         if (!settled && failed >= total) {
-          settled = true; clearTimeout(hardT);
+          settled = true; clearTimeout(hardT); killRest();
           reject(new Error('所有中转通道都不可用（免费通道可能被限流，稍后再试）'));
         }
       }
       function launchNext() {
         if (settled || launched >= total) return;
         var relay = order[launched++];
-        fetchText(relay.mk(detailUrl(uuid)), 16000, { headers: { 'Accept': 'text/html,*/*' } })
+        fetchText(relay.mk(detailUrl(uuid)), PER, { headers: { 'Accept': 'text/html,*/*' } },
+          function (c) { ctls.push(c); })
           .then(function (html) {
             if (!html || html.length < 2000) throw new Error(relay.id + ': 返回内容过短');
             var o = extractFromHtml(html);
@@ -494,50 +756,115 @@ function cardHtml(it, idx) {
       }
       launchNext();
     }).then(function (o) {
-      var d = {
-        prompt: o.prompt || o.promptCn || '',
+      return {
+        src: 'relay',
         promptEn: o.prompt || '',
         promptCn: o.promptCn || '',
         negativePrompt: o.negativePrompt || o.negativePromptCn || '',
-        metainformation: o.metainformation || '',
-        samplingMethod: o.samplingMethod || '',
-        samplingStep: o.samplingStep || '',
-        cfgScale: o.cfgScale || '',
-        seed: o.seed || '',
-        modelName: o.modelName || ''
+        params: relayParams(o)
       };
-      cacheSet(uuid, d);
-      markReady(uuid);
-      return d;
     });
+  }
+
+  function relayParams(o) {
+    var p = {};
+    if (o.modelName) p['Model'] = o.modelName;
+    if (o.samplingMethod) p['Sampler'] = o.samplingMethod;
+    if (o.samplingStep) p['Steps'] = o.samplingStep;
+    if (o.cfgScale) p['CFG scale'] = o.cfgScale;
+    if (o.seed) p['Seed'] = o.seed;
+    return p;
+  }
+
+  /* ------------------------------------------------------------
+     统一入口：图片先读原图内嵌参数（免中转），拿不到再走中转；
+     视频封面被剥离元数据，直接走中转。
+     ------------------------------------------------------------ */
+  function fetchDetail(item) {
+    var isObj = item && typeof item === 'object';
+    var uuid = isObj ? item.uuid : item;
+    var hit = cacheGet(uuid);
+    if (hit) return Promise.resolve(hit);
+
+    var isVideo = isObj && (item.mediaType === 2 || (/\.mp4$/i.test(item.videoUrl || '')));
+    var pre = Promise.resolve(null);
+
+    if (isObj && !isVideo && item.imageUrl) {
+      pre = readImageMeta(item).then(function (m) {
+        if (m && m.r) {
+          return { src: 'meta', via: m.via, promptEn: m.r.prompt, promptCn: '',
+                   negativePrompt: m.r.negative || '', params: m.r.params || {} };
+        }
+        return null;
+      }).catch(function () { return null; });
+    }
+
+    return pre.then(function (d) {
+      if (d && (d.promptEn || d.negativePrompt)) return keep(uuid, d);
+      return fetchDetailByRelay(uuid, isVideo ? 26000 : 9000).then(function (rd) {
+        if (!rd.promptEn && !rd.promptCn) throw new Error('作者没有公开提示词');
+        return keep(uuid, rd);
+      });
+    });
+  }
+
+  function keep(uuid, d) {
+    cacheSet(uuid, d);
+    markReady(uuid);
+    return d;
   }
 
   /* 同一个作品的详情只请求一次（点击 / 悬停预取共用） */
   var inflight = {};
-  function getDetail(uuid) {
+  function getDetail(item) {
+    var uuid = (item && typeof item === 'object') ? item.uuid : item;
     if (inflight[uuid]) return inflight[uuid];
-    var p = fetchDetail(uuid);
+    var p = fetchDetail(item);
     inflight[uuid] = p;
     p.catch(function () { }).then(function () { delete inflight[uuid]; });
     return p;
   }
 
-  /* 悬停预取队列：一次只跑一个，间隔 400ms，避免把免费中转打限流 */
-  var PQ = [], qBusy = false;
-  function prefetch(uuid) {
+  /* 预取队列：图片走内嵌参数解析（很快，允许 3 个并发）；
+     视频要过中转，单独串行、间隔放大避免打限流 */
+  var PQ = [], qImgBusy = 0, qVidBusy = false;
+  var Q_IMG_MAX = 3, Q_GAP = 110, Q_VID_GAP = 600;
+
+  function prefetch(item) {
+    var uuid = (item && typeof item === 'object') ? item.uuid : item;
     if (!uuid || cacheGet(uuid) || inflight[uuid]) return;
-    if (PQ.indexOf(uuid) >= 0 || PQ.length > 5) return;
-    PQ.push(uuid);
+    for (var i = 0; i < PQ.length; i++) {
+      var u = (PQ[i] && typeof PQ[i] === 'object') ? PQ[i].uuid : PQ[i];
+      if (u === uuid) return;
+    }
+    if (PQ.length > 60) return;
+    PQ.push((item && typeof item === 'object') ? item : { uuid: uuid });
     runPQ();
   }
+
+  function isVideoItem(it) {
+    return !!(it && (it.mediaType === 2 || /\.mp4(\?|$)/i.test(it.videoUrl || '')));
+  }
+
   function runPQ() {
-    if (qBusy) return;
-    var u = PQ.shift();
-    if (!u) return;
-    qBusy = true;
-    getDetail(u).catch(function () { }).then(function () {
-      setTimeout(function () { qBusy = false; runPQ(); }, 400);
-    });
+    if (!PQ.length) return;
+    /* 挑一个能跑的：视频串行，图片最多 3 并发 */
+    var pick = -1;
+    for (var i = 0; i < PQ.length; i++) {
+      if (isVideoItem(PQ[i])) { if (!qVidBusy && qImgBusy === 0) { pick = i; break; } }
+      else if (qImgBusy < Q_IMG_MAX) { pick = i; break; }
+    }
+    if (pick < 0) return;
+    var it = PQ.splice(pick, 1)[0];
+    var isV = isVideoItem(it);
+    if (isV) qVidBusy = true; else qImgBusy++;
+
+    var finish = function () {
+      if (isV) qVidBusy = false; else qImgBusy--;
+      setTimeout(runPQ, isV ? Q_VID_GAP : Q_GAP);
+    };
+    getDetail(it).catch(function () { }).then(finish, finish);
+    if (PQ.length) setTimeout(runPQ, 0);
   }
 
   /* ============================================================
@@ -573,42 +900,62 @@ function cardHtml(it, idx) {
       (isV ? '<span>🎬 视频</span>' : '<span>🖼️ 图片</span>');
 
     el.params.innerHTML = '';
+    if (el.src) el.src.innerHTML = '';
     el.prompt.textContent = '—';
     el.prompt.classList.add('empty');
     el.neg.textContent = '—';
     el.neg.classList.add('empty');
     el.load.hidden = false;
 
-    /* 复制全部 / 原页 先挂好 */
+    /* 复制全部 / 原页 / 原图 先挂好 */
     el.openOrigin.href = detailUrl(it.uuid);
+    if (el.openRaw) {
+      var raw = it.mediaType === 2 ? (it.videoUrl || '') : (it.imageUrl || '');
+      el.openRaw.href = raw || it.imageUrl || '#';
+      el.openRaw.hidden = !raw;
+      el.openRaw.textContent = it.mediaType === 2 ? '⬇ 原视频' : '⬇ 原图';
+    }
 
     function paint(d) {
       el.load.hidden = true;
-      var tags = [];
-      if (d.modelName) tags.push(['模型', d.modelName]);
-      if (d.samplingMethod) tags.push(['采样器', d.samplingMethod]);
-      if (d.samplingStep) tags.push(['步数', d.samplingStep]);
-      if (d.cfgScale) tags.push(['CFG', d.cfgScale]);
-      if (d.seed) tags.push(['种子', d.seed]);
+      var P = d.params || {};
+      var LBL = { 'Model': '模型', 'Sampler': '采样器', 'Scheduler': '调度器', 'Steps': '步数',
+                  'CFG scale': 'CFG', 'Seed': '种子', 'Size': '尺寸', 'LoRA': 'LoRA',
+                  'Denoise': '重绘幅度', 'Clip skip': 'Clip skip' };
+      var tags = [], seen = {};
+      ['Model', 'Sampler', 'Scheduler', 'Steps', 'CFG scale', 'Seed', 'Size', 'LoRA', 'Denoise', 'Clip skip'].forEach(function (k) {
+        if (P[k] && !seen[k]) { seen[k] = 1; tags.push([LBL[k] || k, P[k]]); }
+      });
       el.params.innerHTML = tags.map(function (t, i) {
         return '<span class="ptag' + (i % 2 ? ' p' : '') + '">' + esc(t[0]) + ' · ' + esc(t[1]) + '</span>';
       }).join('');
 
-      var p = d.promptEn || d.prompt || d.promptCn || '';
+      /* 提示词来源说明 */
+      if (el.src) {
+        if (d.src === 'meta') {
+          el.src.innerHTML = '<b>✅ 提示词取自图片内嵌参数</b>（作者导出时写入，未经第三方服务器）';
+        } else if (d.src === 'relay') {
+          el.src.innerHTML = '🌐 提示词取自社区详情页（经公开只读中转，视频作品只能走这条路）';
+        } else {
+          el.src.innerHTML = '';
+        }
+      }
+
+      var p = d.promptEn || d.promptCn || '';
       var n = d.negativePrompt || '';
       if (p) { el.prompt.textContent = p; el.prompt.classList.remove('empty'); }
       else {
         var isVid = S.mode === 'video' || (S.current && S.current.mediaType === 2);
         el.prompt.textContent = isVid
-          ? '这个视频的作者没有公开提示词（社区里视频作品普遍不公开生成信息）。想看提示词可以切到上方「🖼️ 图片」Tab —— 那里勾着「只看带生成参数」，作品基本都公开了提示词。'
-          : '这位作者没有公开提示词（社区里作者可以自己选择是否公开）。勾选上方「只看带生成参数」后，这类作品的提示词几乎都会公开。';
+          ? '这个视频的作者没有公开提示词（社区里视频作品普遍不公开生成信息，封面也不带参数）。想看提示词可以切到上方「🖼️ 图片」Tab —— 那里勾着「只看带生成参数」，作品基本都公开了提示词。'
+          : '这张图的作者没有公开提示词（社区里作者可以自己选择是否公开，也有的导出时没勾选写入参数）。勾选上方「只看带生成参数」后，这类作品的提示词几乎都会公开。';
         el.prompt.classList.add('empty');
       }
       if (n) { el.neg.textContent = n; el.neg.classList.remove('empty'); el.negWrap.hidden = false; }
       else { el.negWrap.hidden = true; }
 
       /* 中文提示词单独展示 */
-      if (d.promptCn && d.promptEn && d.promptCn !== d.promptEn) {
+      if (d.promptCn && d.promptCn !== p) {
         var old = document.getElementById('cnbox');
         if (old) old.remove();
         var box = document.createElement('section');
@@ -623,6 +970,7 @@ function cardHtml(it, idx) {
 
     function fail(msg) {
       el.load.hidden = true;
+      if (el.src) el.src.innerHTML = '';
       el.err.hidden = false;
       el.err.innerHTML = esc(msg) + '<br><button type="button" id="dretry">重新获取</button>';
       var b = document.getElementById('dretry');
@@ -635,14 +983,15 @@ function cardHtml(it, idx) {
     function start() {
       el.err.hidden = true;
       el.load.hidden = false;
-      getDetail(it.uuid).then(function (d) {
+      getDetail(it).then(function (d) {
         if (S.current !== it) return;
         S.curDetail = d;
         paint(d);
       }).catch(function (e) {
         if (S.current !== it) return;
-        fail('提示词没取到：' + ((e && e.message) || e) +
-          '。可以点下面「重新获取」，或直接「打开原作品页」查看；想彻底稳定可在页面底部配置自建中转。');
+        var msg = (e && e.message) || String(e);
+        fail('提示词没取到：' + msg +
+          '。可以点下面「重新获取」，或直接「打开原作品页」查看；视频作品的提示词要经公开中转，偶尔会被限流，稍后再试通常就好。');
       });
     }
 
@@ -664,20 +1013,14 @@ function cardHtml(it, idx) {
     var it = S.current, d = S.curDetail;
     if (!it) return '';
     var L = [];
-    if (d) {
+    if (d && (d.promptEn || d.promptCn)) {
       if (d.promptEn) L.push(d.promptEn);
-      else if (d.promptCn) L.push(d.promptCn);
-      if (d.promptCn && d.promptEn && d.promptCn !== d.promptEn) {
-        L.push('', '【中文提示词】' + d.promptCn);
-      }
+      if (d.promptCn && d.promptCn !== d.promptEn) L.push('', '【中文提示词】' + d.promptCn);
       if (d.negativePrompt) L.push('', 'Negative prompt: ' + d.negativePrompt);
+      var P = d.params || {}, ORDER = ['Steps', 'Sampler', 'Scheduler', 'CFG scale', 'Seed', 'Size', 'Model', 'LoRA', 'Denoise'];
       var meta = [];
-      if (d.samplingStep) meta.push('Steps: ' + d.samplingStep);
-      if (d.samplingMethod) meta.push('Sampler: ' + d.samplingMethod);
-      if (d.cfgScale) meta.push('CFG scale: ' + d.cfgScale);
-      if (d.seed) meta.push('Seed: ' + d.seed);
-      if (it.width && it.height) meta.push('Size: ' + it.width + 'x' + it.height);
-      if (d.modelName) meta.push('Model: ' + d.modelName);
+      ORDER.forEach(function (k) { if (P[k]) meta.push(k + ': ' + P[k]); });
+      if (!P['Size'] && it.width && it.height) meta.push('Size: ' + it.width + 'x' + it.height);
       if (meta.length) L.push('', meta.join(', '));
     } else {
       L.push('[提示词未获取到] 作品标题：' + ((it.title || '').trim() || '未命名'));

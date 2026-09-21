@@ -245,6 +245,11 @@ a{color:inherit;text-decoration:none}
 .mi-head h3{margin:0 0 8px;font-size:18px;line-height:1.4;padding-right:44px}
 .mi-sub{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--t3)}
 .mi-sub img{width:22px;height:22px;border-radius:50%;object-fit:cover}
+.mi-src:empty{display:none}
+.mi-src{margin-top:9px;font-size:12px;line-height:1.6;color:var(--t3);
+  background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.16);
+  border-radius:9px;padding:7px 11px}
+.mi-src b{color:#7ee7ff;font-weight:600}
 
 .mi-params{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px}
 .ptag{
