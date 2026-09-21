@@ -174,10 +174,21 @@
     })
       .then(function (j) {
         if (mySeq !== S.seq) return;
-        if (!j || j.code !== 0 || !j.data || !j.data.data) {
+        if (!j || j.code !== 0 || !j.data) {
           throw new Error('返回内容异常');
         }
-        var arr = j.data.data;
+        /* 没有结果时这个字段是 null（不是空数组），必须当成空列表处理 */
+        var arr = j.data.data || [];
+        /* 选了模型却一个作品都没有：自动去掉模型筛选再试一次，避免停在空页面 */
+        if (!append && !arr.length && S.model !== '') {
+          S.model = '';
+          el.fModel.value = '';
+          S.autoNote = '这个模型下暂时没有作品，已为你换成「全部模型」';
+          S.loading = false;
+          S.seq++;                 /* 让本轮后续渲染失效 */
+          loadList(false);
+          return;
+        }
         S.hasMore = !!j.data.hasMore && arr.length > 0;
         S.items = S.items.concat(arr);
         if (S.sort === 'hot') {
@@ -186,7 +197,9 @@
         } else {
           appendCards(arr);
         }
-        el.count.innerHTML = '已加载 <b>' + S.items.length + '</b> 个作品' +
+        var _note = S.autoNote ? esc(S.autoNote) + ' · ' : '';
+        S.autoNote = '';
+        el.count.innerHTML = _note + '已加载 <b>' + S.items.length + '</b> 个作品' +
           (S.keyword ? ' · 关键词「<b>' + esc(S.keyword) + '</b>」' : '') +
           (S.hasMore ? '' : ' · 没有更多了');
         hideState();
@@ -350,7 +363,12 @@ function cardHtml(it, idx) {
     }
   }
   function hideState() {
-    if (!S.items.length) { showState('empty'); return; }
+    if (!S.items.length) {
+      showState('empty', (S.model || S.keyword)
+        ? '没有找到匹配的作品，可以把「模型」「关键词」清空，或取消「只看带生成参数」再试。'
+        : '没有找到匹配的作品，换个关键词试试～');
+      return;
+    }
     el.state.hidden = true;
   }
 
