@@ -50,102 +50,49 @@ function isAI(title) {
     'AI AGENT', 'AI应用', '生成式AI', '人工智', 'AI绘画', 'AI视频', 'AI音乐',
     'AIPPT', '数字人', '智能助手', 'AI搜索', 'AI编程', 'AI芯片', '英伟达',
     '月之暗面', '阶跃', '百川', '零一万物', '面壁', 'MINIMAX', 'MIDJOURNEY',
-    '数据要素', '算法', '语料', '国产大模型', '星火', 'AI大模型', '智能'];
+    '数据要素', '算法', '语料', '国产大模型', '星火', 'AI大模型', '模型', '百炼', '硅基', '智能'];
   return phrases.some(p => t.includes(p));
 }
 
 // 上游源（在 Netlify 服务器侧抓取，不受浏览器跨域限制）
-// 以「科技 / AI 垂类」板块为主，AI 浓度高，避免综合热榜过滤后为空。
+// 以「AI 垂类」板块为主，AI 浓度高，避免综合热榜过滤后为空。
 const SOURCES = [
   {
-    name: '36kr',
-    url: 'https://api.vvhan.com/api/hotlist?type=36k',
-    map: d => pickArray(d).map(x => ({
-      title: x.title,
-      url: x.url || x.link || '',
-      hot: String((x.hot != null) ? x.hot : (x.hotValue != null ? x.hotValue : ''))
-    }))
-  },
-  {
-    name: 'ithome',
-    url: 'https://api.vvhan.com/api/hotlist?type=ithome',
-    map: d => pickArray(d).map(x => ({
-      title: x.title,
-      url: x.url || x.link || '',
-      hot: String((x.hot != null) ? x.hot : (x.hotValue != null ? x.hotValue : ''))
-    }))
-  },
-  {
-    name: 'csdn',
-    url: 'https://api.vvhan.com/api/hotlist?type=csdn',
-    map: d => pickArray(d).map(x => ({
-      title: x.title,
-      url: x.url || x.link || '',
-      hot: String((x.hot != null) ? x.hot : (x.hotValue != null ? x.hotValue : ''))
-    }))
-  },
-  {
-    name: 'juejin',
-    url: 'https://api.vvhan.com/api/hotlist?type=juejin',
-    map: d => pickArray(d).map(x => ({
-      title: x.title,
-      url: x.url || x.link || '',
-      hot: String((x.hot != null) ? x.hot : (x.hotValue != null ? x.hotValue : ''))
-    }))
-  },
-  {
-    name: 'sspai',
-    url: 'https://api.vvhan.com/api/hotlist?type=sspai',
-    map: d => pickArray(d).map(x => ({
-      title: x.title,
-      url: x.url || x.link || '',
-      hot: String((x.hot != null) ? x.hot : (x.hotValue != null ? x.hotValue : ''))
-    }))
-  },
-  {
-    name: '51cto',
-    url: 'https://api.vvhan.com/api/hotlist?type=51cto',
-    map: d => pickArray(d).map(x => ({
-      title: x.title,
-      url: x.url || x.link || '',
-      hot: String((x.hot != null) ? x.hot : (x.hotValue != null ? x.hotValue : ''))
-    }))
-  },
-  {
-    name: 'coolapk',
-    url: 'https://api.vvhan.com/api/hotlist?type=coolapk',
-    map: d => pickArray(d).map(x => ({
-      title: x.title,
-      url: x.url || x.link || '',
-      hot: String((x.hot != null) ? x.hot : (x.hotValue != null ? x.hotValue : ''))
-    }))
-  },
-  {
-    name: 'freebuf',
-    url: 'https://api.vvhan.com/api/hotlist?type=freebuf',
-    map: d => pickArray(d).map(x => ({
-      title: x.title,
-      url: x.url || x.link || '',
-      hot: String((x.hot != null) ? x.hot : (x.hotValue != null ? x.hotValue : ''))
-    }))
-  },
-  {
-    name: 'baidu',
-    url: 'https://api.vvhan.com/api/hotlist?type=baidu',
-    map: d => pickArray(d).map(x => ({
-      title: x.title,
-      url: x.url || x.link || '',
-      hot: String((x.hot != null) ? x.hot : (x.hotValue != null ? x.hotValue : ''))
-    }))
+    name: 'ai-news',
+    url: 'https://60s.viki.moe/v2/ai-news',
+    map: d => {
+      const arr = (d && d.data && Array.isArray(d.data.news)) ? d.data.news
+        : (d && Array.isArray(d.data)) ? d.data : pickArray(d);
+      return arr.map(x => ({
+        title: x.title,
+        url: x.link || x.url || '',
+        hot: String((x.hot != null) ? x.hot : (x.hotValue != null ? x.hotValue : ''))
+      }));
+    }
   },
   {
     name: 'zhihu',
+    url: 'https://60s.viki.moe/v2/zhihu',
+    map: d => {
+      const arr = (d && Array.isArray(d.data)) ? d.data : pickArray(d);
+      return arr.map(x => ({
+        title: x.title,
+        url: x.link || x.url || '',
+        hot: String((x.hot != null) ? x.hot : (x.hotValue != null ? x.hotValue : ''))
+      }));
+    }
+  },
+  {
+    name: 'zhihu-codelife',
     url: 'https://api.codelife.cc/api/top/list?lang=cn&id=mproPpoq6O&size=50',
-    map: d => pickArray(d.data != null ? d.data : d).map(x => ({
-      title: x.title,
-      url: x.link || x.url || '',
-      hot: String((x.hotValue != null) ? x.hotValue : (x.hot != null ? x.hot : ''))
-    }))
+    map: d => {
+      const arr = d.data != null ? (Array.isArray(d.data) ? d.data : (d.data.list || [])) : pickArray(d);
+      return arr.map(x => ({
+        title: x.title,
+        url: x.link || x.url || '',
+        hot: String((x.hotValue != null) ? x.hotValue : (x.hot != null ? x.hot : ''))
+      }));
+    }
   }
 ];
 

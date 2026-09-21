@@ -1,6 +1,6 @@
 /* ============================================================
    AI 提示词工坊 · 实时社区图库
-   数据源：哩布哩布 LiblibAI 公开接口（匿名，无需登录 / API Key）
+   数据源：公开社区接口（匿名，无需登录 / API Key）
    - 列表：POST https://api2.liblib.art/api/www/img/group/search
            （服务端反射任意 Origin，浏览器原生跨域可用，无需中转）
    - 提示词（主路径 · 免中转 · 零第三方）：
@@ -22,7 +22,7 @@
   var PAGE_SIZE = 24;
 
   /* 详情中转通道。
-     实测：哩布哩布的提示词只存在于服务端渲染的 HTML 里，浏览器跨域读不到，
+     实测：社区提示词只存在于服务端渲染的 HTML 里，浏览器跨域读不到，
      必须借公开只读中转。免费中转会限流，所以这里做「轮换 + 熔断 + 粘性优选」：
      某个通道失败后冷却 90 秒，优先复用上次成功的通道。 */
   var RELAYS = [];
@@ -81,7 +81,7 @@
     modal: $('#modal'), stage: $('#mv-stage'), mvmeta: $('#mv-meta'),
     title: $('#mi-title'), sub: $('#mi-sub'), params: $('#mi-params'), src: $('#mi-src'),
     prompt: $('#p-prompt'), neg: $('#p-neg'), negWrap: $('#neg-wrap'),
-    copyAll: $('#copy-all'), openOrigin: $('#open-origin'), openRaw: $('#open-raw'),
+    copyAll: $('#copy-all'), openRaw: $('#open-raw'),
     load: $('#mi-load'), err: $('#mi-err')
   };
 
@@ -380,7 +380,7 @@ function cardHtml(it, idx) {
   function showState(kind, msg) {
     el.state.hidden = false;
     if (kind === 'loading') {
-      el.state.innerHTML = '<div class="spin" style="width:26px;height:26px;border-width:3px;margin:4px auto 14px"></div>正在连接哩布哩布社区…';
+      el.state.innerHTML = '<div class="spin" style="width:26px;height:26px;border-width:3px;margin:4px auto 14px"></div>正在连接社区…';
     } else if (kind === 'error') {
       el.state.innerHTML = '<div class="big">📡</div><div>' + esc(msg) + '</div>' +
         '<button type="button" id="retry">重试</button>';
@@ -916,8 +916,7 @@ function cardHtml(it, idx) {
     el.neg.classList.add('empty');
     el.load.hidden = false;
 
-    /* 复制全部 / 原页 / 原图 先挂好 */
-    el.openOrigin.href = detailUrl(it.uuid);
+    /* 复制全部 / 原图 先挂好 */
     if (el.openRaw) {
       var raw = it.mediaType === 2 ? (it.videoUrl || '') : (it.imageUrl || '');
       el.openRaw.href = raw || it.imageUrl || '#';
@@ -985,7 +984,7 @@ function cardHtml(it, idx) {
       var b = document.getElementById('dretry');
       if (b) b.addEventListener('click', function () { start(); });
       /* 详情失败也给一个可用的提示词（不阻塞浏览） */
-      el.prompt.textContent = '提示词获取失败，可直接点右下「打开原作品页」查看。';
+      el.prompt.textContent = '提示词获取失败，可稍后重试「重新获取」。';
       el.prompt.classList.add('empty');
     }
 
@@ -1000,7 +999,7 @@ function cardHtml(it, idx) {
         if (S.current !== it) return;
         var msg = (e && e.message) || String(e);
         fail('提示词没取到：' + msg +
-          '。可以点下面「重新获取」，或直接「打开原作品页」查看；视频作品的提示词要经公开中转，偶尔会被限流，稍后再试通常就好。');
+          '。可以点下面「重新获取」再试；视频作品的提示词要经公开中转，偶尔会被限流，稍后再试通常就好。');
       });
     }
 
@@ -1034,7 +1033,6 @@ function cardHtml(it, idx) {
     } else {
       L.push('[提示词未获取到] 作品标题：' + ((it.title || '').trim() || '未命名'));
     }
-    L.push('', '—— 来源：哩布哩布 LiblibAI · ' + detailUrl(it.uuid));
     return L.join('\n');
   }
 
