@@ -44,19 +44,6 @@
   </div>
 
   <div class="hd-filter">
-    <label class="fl">模型
-      <select id="f-model"><option value="">全部模型</option></select>
-    </label>
-    <label class="fl">来源
-      <select id="f-source">
-        <option value="">全部来源</option>
-        <option value="1">WebUI</option>
-        <option value="3">ComfyUI</option>
-        <option value="5">图片生成器</option>
-        <option value="6">视频生成器</option>
-        <option value="0">本地上传</option>
-      </select>
-    </label>
     <label class="fl">排序
       <select id="f-sort">
         <option value="0">推荐</option>
@@ -68,7 +55,7 @@
       <input id="f-prompt" type="checkbox" checked>
       <span>只看带生成参数</span>
     </label>
-    <span class="hint" id="hint">提示：勾上「只看带生成参数」后，作品的提示词直接从图片里读，命中率最高</span>
+    <span class="hint" id="hint">提示：勾上「只看带生成参数」可只看已附提示词的作品，更省心</span>
   </div>
 </header>
 
@@ -90,32 +77,8 @@
 </main>
 
 <footer class="ft">
-  <p>数据来自公开社区接口，实时拉取，版权归原作者所有；本工具仅做浏览与提示词学习用途。</p>
-  <p class="ft-sub">图片的提示词直接读自作者导出时<b>写进图片里的生成参数</b>（本地解析，不经任何第三方服务器）；视频作品封面不带参数，才需要借只读中转去读取。部分作者会选择不公开参数，请遵守原作者使用规范。</p>
-
-  <details class="relay-cfg">
-    <summary>⚙️ 视频提示词偶尔加载失败？点这里（可选 · 进阶设置）</summary>
-    <div class="relay-body">
-      <p>图片的提示词是本地读图片参数，<b>永远不需要中转</b>。只有<b>视频</b>作品的提示词存在源站的服务端页面里，浏览器跨域读不到，所以本工具会借公开的只读中转去取。免费中转偶尔会被限流；想<b>100% 稳定</b>的话可以自建一个中转（免费，约 1 分钟）：</p>
-      <ol>
-        <li>打开 Cloudflare 控制台 → Workers &amp; Pages → 创建 Worker</li>
-        <li>把下面的代码整段粘进去，点「部署」，复制得到的网址</li>
-        <li>把网址填到下面输入框（结尾带 <code>/?u=</code>），点保存，然后刷新页面</li>
-      </ol>
-      <div class="code-h">
-        <span>Worker 代码（复制即用）</span>
-        <button class="copy" id="copy-worker" type="button">复制</button>
-      </div>
-      <pre class="code" id="worker-code"></pre>
-      <div class="relay-form">
-        <input id="relay-in" type="text" placeholder="例如 https://你的worker.workers.dev/?u=" autocomplete="off">
-        <button id="relay-save" type="button">保存</button>
-        <button id="relay-clear" type="button" class="ghost">清空</button>
-        <span class="relay-msg" id="relay-msg"></span>
-      </div>
-      <p class="relay-note">留空则使用默认的公开中转。设置只存在你自己的浏览器里。</p>
-    </div>
-  </details>
+  <p>数据来自公开 AI 创作社区，实时更新，版权归原作者所有；本工具仅用于浏览与提示词学习，请遵守原作者使用规范。</p>
+  <p class="ft-sub">社区里部分作者会选择不公开生成参数，遇到这种情况无法获取提示词，属正常现象。</p>
 </footer>
 
 <!-- 详情面板 -->
@@ -166,6 +129,6 @@
   </div>
 </div>
 
-<script src="js/app.js?v=11"></script>
+<script src="js/app.js?v=12"></script>
 </body>
 </html>

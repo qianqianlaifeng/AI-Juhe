@@ -312,42 +312,6 @@ a{color:inherit;text-decoration:none}
 .ft b{color:var(--t2);font-weight:600}
 .ft-sub{opacity:.75}
 
-/* 进阶设置：自建中转 */
-.relay-cfg{margin-top:16px;border:1px solid var(--border);border-radius:14px;background:var(--card);overflow:hidden}
-.relay-cfg>summary{
-  cursor:pointer;padding:12px 16px;font-size:13px;color:var(--t2);
-  list-style:none;transition:color .3s,background .3s;user-select:none;
-}
-.relay-cfg>summary::-webkit-details-marker{display:none}
-.relay-cfg>summary:hover{color:var(--text);background:var(--card-hi)}
-.relay-cfg[open]>summary{border-bottom:1px solid var(--border);color:var(--text)}
-.relay-body{padding:16px;font-size:12.5px;line-height:1.85}
-.relay-body p{margin:0 0 10px}
-.relay-body ol{margin:0 0 12px;padding-left:20px}
-.relay-body li{margin:4px 0}
-.relay-body b{color:var(--primary);font-weight:600}
-.relay-body code{background:rgba(0,212,255,.1);color:#7ee7ff;padding:1px 6px;border-radius:5px;font-family:ui-monospace,Menlo,Consolas,monospace}
-.code-h{display:flex;align-items:center;justify-content:space-between;margin:12px 0 6px;font-size:12px;color:var(--t2)}
-pre.code{
-  margin:0 0 14px;padding:13px 14px;border-radius:10px;
-  background:rgba(0,0,0,.42);border:1px solid var(--border);
-  color:#a5f3fc;font:12px/1.7 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  overflow-x:auto;white-space:pre;
-}
-.relay-form{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
-.relay-form input{
-  flex:1;min-width:230px;background:rgba(0,0,0,.35);border:1px solid var(--border);
-  border-radius:9px;padding:9px 12px;font-size:12.5px;outline:0;transition:border-color .3s;
-}
-.relay-form input:focus{border-color:rgba(0,212,255,.5)}
-.relay-form button{
-  border:0;cursor:pointer;padding:9px 20px;border-radius:9px;font-size:12.5px;font-weight:600;
-  background:linear-gradient(135deg,var(--primary),#7dd3fc);color:#04121a;transition:filter .25s;
-}
-.relay-form button:hover{filter:brightness(1.1)}
-.relay-form button.ghost{background:var(--card);border:1px solid var(--border);color:var(--t2);font-weight:400}
-.relay-msg{font-size:12px;color:#4ade80}
-.relay-note{opacity:.7;margin:10px 0 0!important}
 
 @media(max-width:760px){
   .hd,.wrap,.ft{padding-left:16px;padding-right:16px}
