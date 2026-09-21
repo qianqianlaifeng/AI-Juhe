@@ -597,7 +597,13 @@ function cardHtml(it, idx) {
       var p = d.promptEn || d.prompt || d.promptCn || '';
       var n = d.negativePrompt || '';
       if (p) { el.prompt.textContent = p; el.prompt.classList.remove('empty'); }
-      else { el.prompt.textContent = '这位作者没有公开提示词（社区里作者可自行选择是否公开）。'; el.prompt.classList.add('empty'); }
+      else {
+        var isVid = S.mode === 'video' || (S.current && S.current.mediaType === 2);
+        el.prompt.textContent = isVid
+          ? '这个视频的作者没有公开提示词（社区里视频作品普遍不公开生成信息）。想看提示词可以切到上方「🖼️ 图片」Tab —— 那里勾着「只看带生成参数」，作品基本都公开了提示词。'
+          : '这位作者没有公开提示词（社区里作者可以自己选择是否公开）。勾选上方「只看带生成参数」后，这类作品的提示词几乎都会公开。';
+        el.prompt.classList.add('empty');
+      }
       if (n) { el.neg.textContent = n; el.neg.classList.remove('empty'); el.negWrap.hidden = false; }
       else { el.negWrap.hidden = true; }
 
