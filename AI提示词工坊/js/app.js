@@ -816,12 +816,21 @@ function cardHtml(it, idx) {
 
   /* 同一个作品的详情只请求一次（点击 / 悬停预取共用） */
   var inflight = {};
-  function getDetail(item) {
+  /* 取不到的记录（会话内）：避免鼠标划过就反复起一轮请求（视频那轮最长 26s）。
+     只拦住「自动预取」，用户手点仍然会重试。 */
+  var MISS = {}, MISS_TTL = 10 * 60 * 1000;
+  function markedMiss(uuid) {
+    return !!(MISS[uuid] && (Date.now() - MISS[uuid]) < MISS_TTL);
+  }
+
+  function getDetail(item, isAuto) {
     var uuid = (item && typeof item === 'object') ? item.uuid : item;
+    if (isAuto && markedMiss(uuid)) return Promise.reject(new Error('刚刚没取到，跳过重复预取'));
     if (inflight[uuid]) return inflight[uuid];
     var p = fetchDetail(item);
     inflight[uuid] = p;
-    p.catch(function () { }).then(function () { delete inflight[uuid]; });
+    p.then(function () { delete MISS[uuid]; }, function () { MISS[uuid] = Date.now(); })
+      .then(function () { delete inflight[uuid]; });
     return p;
   }
 
@@ -863,7 +872,7 @@ function cardHtml(it, idx) {
       if (isV) qVidBusy = false; else qImgBusy--;
       setTimeout(runPQ, isV ? Q_VID_GAP : Q_GAP);
     };
-    getDetail(it).catch(function () { }).then(finish, finish);
+    getDetail(it, true).catch(function () { }).then(finish, finish);
     if (PQ.length) setTimeout(runPQ, 0);
   }
 
