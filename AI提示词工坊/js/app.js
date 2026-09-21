@@ -997,7 +997,8 @@ function cardHtml(it, idx) {
     b.classList.add('on');
     S.mode = b.getAttribute('data-mode');
     el.params.innerHTML = '';
-    if (S.mode === 'video') { el.fModel.value = ''; S.model = ''; }
+    S.model = '';
+    fillModelOptions();          /* 图片 / 视频 的模型列表不一样，必须重填 */
     loadList(false);
   });
 
@@ -1044,14 +1045,22 @@ function cardHtml(it, idx) {
     el.fModel.value = S.model;
   }
 
+  var COND = null;
+  /* 图片与视频的模型完全不同，按当前类型刷新下拉 */
+  function fillModelOptions() {
+    if (COND) {
+      var src = (S.mode === 'video' ? COND.VIDEO_TYPE_LIST : COND.TYPE_LIST) || [];
+      if (src.length) {
+        fillModels(src.map(function (x) { return [String(x.id), x.name]; }));
+        return;
+      }
+    }
+    fillModels(null);
+  }
+
   fetchJSON(COND_URL, 10000, { headers: { 'Accept': 'application/json' } })
-    .then(function (j) {
-      var d = (j && j.data) || {};
-      window.__cond = d;
-      var src = (S.mode === 'video' ? d.VIDEO_TYPE_LIST : d.TYPE_LIST) || [];
-      fillModels(src.map(function (x) { return [String(x.id), x.name]; }));
-    })
-    .catch(function () { fillModels(null); });
+    .then(function (j) { COND = (j && j.data) || null; window.__cond = COND || {}; fillModelOptions(); })
+    .catch(function () { COND = null; fillModelOptions(); });
 
   /* 启动 */
   loadList(false);
