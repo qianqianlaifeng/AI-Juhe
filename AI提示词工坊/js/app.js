@@ -40,7 +40,8 @@
     RELAYS.push(
       { id: 'corseu', mk: function (u) { return 'https://cors.eu.org/' + u; }, dead: 0, lastOK: 0 },
       { id: 'allorigins', mk: function (u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); }, dead: 0, lastOK: 0 },
-      { id: 'codetabs', mk: function (u) { return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u); }, dead: 0, lastOK: 0 }
+      { id: 'codetabs', mk: function (u) { return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u); }, dead: 0, lastOK: 0 },
+      { id: 'bridged', mk: function (u) { return 'https://cors.bridged.cc/' + u; }, dead: 0, lastOK: 0 }
     );
   })();
   var COOLDOWN = 90000;
@@ -700,12 +701,11 @@ function cardHtml(it, idx) {
     }
   }
 
-  /* 对冲式抓取（兜底路径）：先起最快的通道，4 秒没结果就并行再起一个，
-     谁先成功用谁 —— 免费通道单条不稳，这样整体成功率最高、等待最短。 */
+  /* 兜底路径：所有中转通道「同时」并行发起，谁先成功用谁（竞速）。
+     免费通道单条不稳、常被限流，并行竞速把整体成功率拉满、等待最短。 */
   function fetchDetailByRelay(uuid, budget) {
     var HARD = budget || 24000;
-    var HEDGE = HARD > 15000 ? 3500 : 2200;      /* 视频给足时间；图片快速失败更友好 */
-    var PER = HARD > 15000 ? 12000 : 7000;
+    var PER = HARD > 15000 ? 14000 : 13000;      /* 每个通道单独超时；并行竞速下给足余量 */
     var order = relayOrder();
 
     return new Promise(function (resolve, reject) {
@@ -734,9 +734,7 @@ function cardHtml(it, idx) {
           reject(new Error('所有中转通道都不可用（免费通道可能被限流，稍后再试）'));
         }
       }
-      function launchNext() {
-        if (settled || launched >= total) return;
-        var relay = order[launched++];
+      order.forEach(function (relay) {
         fetchText(relay.mk(detailUrl(uuid)), PER, { headers: { 'Accept': 'text/html,*/*' } },
           function (c) { ctls.push(c); })
           .then(function (html) {
@@ -750,11 +748,8 @@ function cardHtml(it, idx) {
           .catch(function (e) {
             relay.dead = Date.now() + COOLDOWN;
             failedOne(relay.id + ' -> ' + ((e && e.message) || e));
-            launchNext();
           });
-        setTimeout(function () { if (!settled) launchNext(); }, HEDGE);
-      }
-      launchNext();
+      });
     }).then(function (o) {
       return {
         src: 'relay',
@@ -801,7 +796,7 @@ function cardHtml(it, idx) {
 
     return pre.then(function (d) {
       if (d && (d.promptEn || d.negativePrompt)) return keep(uuid, d);
-      return fetchDetailByRelay(uuid, isVideo ? 26000 : 9000).then(function (rd) {
+      return fetchDetailByRelay(uuid, isVideo ? 26000 : 18000).then(function (rd) {
         if (!rd.promptEn && !rd.promptCn) throw new Error('作者没有公开提示词');
         return keep(uuid, rd);
       });
@@ -999,7 +994,7 @@ function cardHtml(it, idx) {
         if (S.current !== it) return;
         var msg = (e && e.message) || String(e);
         fail('提示词没取到：' + msg +
-          '。可以点下面「重新获取」再试；视频作品的提示词要经公开中转，偶尔会被限流，稍后再试通常就好。');
+          '。可以点下面「重新获取」再试。');
       });
     }
 
