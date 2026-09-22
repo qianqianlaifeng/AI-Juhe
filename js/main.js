@@ -521,6 +521,18 @@
       indexLabel: 'Tool 21',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9900
+    },
+    {
+      id: 'tool_maque_video',
+      title: '麻雀AI视频修复器',
+      url: 'https://maquevideo.cn',
+      description: '在线 AI 视频修复工具：在浏览器里就能把模糊、有噪点、低码率的旧视频做高清修复，最高 2 倍画质增强，还带视频去水印。提供自动 / 动漫 / 真人 / 低码率几种增强模式和「普通 / 极致」两档效果，全部在本地处理不上传，免费、无需注册；建议用电脑版 Chrome 或 Edge 打开。',
+      tags: ['视频修复', '画质增强', '视频去水印', '在线工具'],
+      color: 'purple',
+      image: '',
+      indexLabel: 'Tool 22',
+      actionLabel: '打开工具',
+      createdAt: Date.now() - 10000
     }
   ];
 
