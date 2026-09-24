@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>AI 图层分离</title>
+  <link rel="stylesheet" href="css/style.css?v=2" />
+  <script defer src="vendor/ort.min.js"></script>
+  <script defer src="vendor/ort-wasm-b64.js"></script>
+  <script defer src="vendor/u2netp-b64.js"></script>
+  <script defer src="assets/demo-b64.js"></script>
+</head>
+<body>
+  <div class="bg-deco" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="app">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-mark">🧩</span>
+        <div class="brand-text">
+          <h1>AI 图层分离</h1>
+          <p>一张图一键拆成多个透明图层 · 支持导出 PSD 分层文件 · 还能免费高清放大 · 全程浏览器本地处理，图片不上传</p>
+        </div>
+      </div>
+      <a class="back-link" href="../index.html">← 返回聚合平台</a>
+    </header>
+
+    <main class="app-main">
+      <!-- 引擎状态 -->
+      <div id="modelBar" class="model-bar">
+        <div class="model-bar-row">
+          <span class="model-dot" aria-hidden="true"></span>
+          <span id="modelStatus" class="model-status">正在启动本地 AI 引擎…</span>
+          <span id="modelPct" class="model-pct">0%</span>
+        </div>
+        <div class="progress"><div id="modelProgress" class="progress-fill"></div></div>
+        <div id="modelDetail" class="model-detail"></div>
+      </div>
+
+      <!-- 功能切换 -->
+      <div class="tabs">
+        <button id="tabSplit" class="tab active" type="button">🧩 拆图层</button>
+        <button id="tabScale" class="tab" type="button">🔍 高清放大</button>
+      </div>
+
+      <!-- ============ 拆图层 ============ -->
+      <section id="panelSplit">
+        <section id="dropZone" class="drop-zone" tabindex="0" aria-label="上传图片">
+          <div class="drop-inner">
+            <div class="drop-icon">⤴</div>
+            <p class="drop-title">点击或拖拽图片到此处</p>
+            <p class="drop-sub">支持 JPG / PNG / WEBP · 也可以先试试下面的示例图片</p>
+            <div class="drop-btns">
+              <button id="pickBtn" class="btn btn-primary" type="button">选择图片</button>
+              <button id="demoBtn" class="btn btn-ghost" type="button">🎁 试一试示例图</button>
+            </div>
+            <input id="fileInput" type="file" accept="image/*" hidden />
+          </div>
+        </section>
+
+        <section id="workspace" class="workspace hidden">
+          <div class="split-grid">
+            <!-- 左：画布舞台 -->
+            <div class="stage-col">
+              <div class="stage-head">
+                <span class="stage-title">分层预览</span>
+                <span id="pickHint" class="pick-hint hidden">👉 在图上点一下，就把点中的元素拆成新图层</span>
+              </div>
+              <div id="stageWrap" class="stage-wrap">
+                <canvas id="stageCv" class="stage-cv"></canvas>
+              </div>
+              <div class="stage-foot">
+                <label class="pick-toggle"><input id="pickToggle" type="checkbox" /> 手动点选补充拆分</label>
+                <label class="tol-row">容差
+                  <input id="pickTol" type="range" min="8" max="90" value="40" />
+                  <span id="pickTolVal">40</span>
+                </label>
+                <button id="resetPickBtn" class="btn btn-ghost btn-mini" type="button">清空手动图层</button>
+              </div>
+            </div>
+
+            <!-- 右：图层面板 -->
+            <div class="layers-col">
+              <div class="layers-head">
+                <span class="stage-title">图层</span>
+                <span id="layerCount" class="layer-count">0</span>
+              </div>
+              <div id="layerList" class="layer-list"></div>
+              <div class="layers-ops">
+                <div class="op-row">
+                  <span class="op-label">拆分档位</span>
+                  <select id="passSel" class="sel">
+                    <option value="1">快速 · 主体＋背景</option>
+                    <option value="2" selected>标准 · 主体＋次要元素＋背景</option>
+                    <option value="3">精细 · 再多拆一层</option>
+                  </select>
+                </div>
+                <button id="splitBtn" class="btn btn-primary btn-block" type="button" disabled>⚡ 一键拆分图层</button>
+                <button id="psdBtn" class="btn btn-accent btn-block" type="button" disabled>⬇ 导出 PSD 分层文件</button>
+                <button id="resetBtn" class="btn btn-ghost btn-block" type="button">↺ 换一张图</button>
+              </div>
+            </div>
+          </div>
+          <div id="splitStatus" class="status-line"></div>
+          <p class="note">拆分原理：本地 AI 显著性模型找出画面里的主要元素，逐层分离并把被元素挡住的背景智能补全；拆出的每个图层都带透明通道，导出 PSD 后可在 Photoshop、Photopea 等软件中继续编辑。结构简单的插画、海报、产品图效果最好。</p>
+        </section>
+      </section>
+
+      <!-- ============ 高清放大 ============ -->
+      <section id="panelScale" class="hidden">
+        <section id="dropZone2" class="drop-zone" tabindex="0" aria-label="上传图片">
+          <div class="drop-inner">
+            <div class="drop-icon">⤴</div>
+            <p class="drop-title">点击或拖拽图片到此处</p>
+            <p class="drop-sub">支持 JPG / PNG / WEBP · 也可以先试试下面的示例图片</p>
+            <div class="drop-btns">
+              <button id="pickBtn2" class="btn btn-primary" type="button">选择图片</button>
+              <button id="demoBtn2" class="btn btn-ghost" type="button">🎁 试一试示例图</button>
+            </div>
+            <input id="fileInput2" type="file" accept="image/*" hidden />
+          </div>
+        </section>
+
+        <section id="workspace2" class="workspace hidden">
+          <div class="scale-grid">
+            <div class="stage-col">
+              <div class="stage-head">
+                <span class="stage-title">放大前后对比</span>
+                <span id="scaleInfo" class="pick-hint"></span>
+              </div>
+              <div id="cmpWrap" class="cmp-wrap">
+                <canvas id="cmpBefore" class="cmp-cv"></canvas>
+                <div id="cmpClip" class="cmp-clip"><canvas id="cmpAfter" class="cmp-cv"></canvas></div>
+                <div id="cmpHandle" class="cmp-handle"></div>
+              </div>
+            </div>
+            <div class="layers-col">
+              <div class="layers-head"><span class="stage-title">放大设置</span></div>
+              <div class="layers-ops">
+                <div class="op-row">
+                  <span class="op-label">放大倍数</span>
+                  <select id="scaleSel" class="sel">
+                    <option value="2" selected>2 倍</option>
+                    <option value="3">3 倍</option>
+                    <option value="4">4 倍</option>
+                  </select>
+                </div>
+                <div class="op-row">
+                  <span class="op-label">锐化强度</span>
+                  <input id="sharpRange" type="range" min="0" max="100" value="55" />
+                  <span id="sharpVal">55</span>
+                </div>
+                <button id="scaleBtn" class="btn btn-primary btn-block" type="button">🔍 开始放大</button>
+                <button id="dlBtn2" class="btn btn-accent btn-block" type="button" disabled>⬇ 下载放大后的图</button>
+                <button id="resetBtn2" class="btn btn-ghost btn-block" type="button">↺ 换一张图</button>
+              </div>
+            </div>
+          </div>
+          <div id="scaleStatus" class="status-line"></div>
+          <p class="note">放大原理：多步渐进式重采样，每一步都保持边缘干净，再按需锐化细节，比直接拉大清晰得多。放大在本地完成，大图会稍微等一会儿。</p>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/psd.js?v=8"></script>
+  <script src="js/app.js?v=8"></script>
+</body>
+</html>

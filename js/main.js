@@ -343,6 +343,20 @@
       createdAt: Date.now() + 480
     },
     {
+      id: 'tool_layer_split',
+      title: 'AI 图层分离',
+      url: 'AI图层分离/index.html',
+      description: '上传一张图，本地 AI 一键拆成多个透明图层，背景自动智能补全，可导出 PSD 分层文件到 Photoshop / Photopea 继续编辑；还带免费高清放大。全程浏览器本地处理、图片不上传。',
+      tags: ['图层分离', 'PSD导出', '高清放大', '本地'],
+      color: 'purple',
+      image: '',
+      badge: '🛠️ 自研',
+      badgeClass: 'badge-self',
+      indexLabel: 'Tool 07',
+      actionLabel: '打开工具',
+      createdAt: Date.now() + 490
+    },
+    {
       id: 'tool_modelcost',
       title: '看懂 AI 平台价格',
       url: 'http://creaibo.com/modelcost',
@@ -350,7 +364,7 @@
       tags: ['AI 价格', '成本对比', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 07',
+      indexLabel: 'Tool 08',
       actionLabel: '打开工具',
       createdAt: Date.now() + 20000
     },
@@ -362,7 +376,7 @@
       tags: ['AI 对话', 'ChatGPT', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 08',
+      indexLabel: 'Tool 09',
       actionLabel: '打开工具',
       createdAt: Date.now() - 1000
     },
@@ -374,7 +388,7 @@
       tags: ['图像处理', 'AI 编辑', '在线'],
       color: 'blue',
       image: '',
-      indexLabel: 'Tool 09',
+      indexLabel: 'Tool 10',
       actionLabel: '打开工具',
       createdAt: Date.now() - 2000
     },
@@ -386,7 +400,7 @@
       tags: ['无损音乐', 'FLAC', '在线'],
       color: 'purple',
       image: '',
-      indexLabel: 'Tool 10',
+      indexLabel: 'Tool 11',
       actionLabel: '打开工具',
       createdAt: Date.now() - 3000
     },
@@ -398,7 +412,7 @@
       tags: ['水印去除', '视频处理', '在线'],
       color: 'pink',
       image: '',
-      indexLabel: 'Tool 11',
+      indexLabel: 'Tool 12',
       actionLabel: '打开工具',
       createdAt: Date.now() - 4000
     },
@@ -410,7 +424,7 @@
       tags: ['提示词', 'AI 反推', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 12',
+      indexLabel: 'Tool 13',
       actionLabel: '打开工具',
       createdAt: Date.now() - 5000
     },
@@ -422,7 +436,7 @@
       tags: ['视频翻译', '语音转录', 'AI配音'],
       color: 'blue',
       image: '',
-      indexLabel: 'Tool 13',
+      indexLabel: 'Tool 14',
       actionLabel: '前往下载',
       createdAt: Date.now() - 6000
     },
@@ -434,7 +448,7 @@
       tags: ['提示词', 'Prompt', '高效'],
       color: 'purple',
       image: '',
-      indexLabel: 'Tool 14',
+      indexLabel: 'Tool 15',
       actionLabel: '打开工具',
       createdAt: Date.now() - 7000
     },
@@ -446,7 +460,7 @@
       tags: ['在线工具', '多媒体', '免费'],
       color: 'purple',
       image: '',
-      indexLabel: 'Tool 15',
+      indexLabel: 'Tool 16',
       actionLabel: '打开工具',
       createdAt: Date.now() - 8000
     },
@@ -458,7 +472,7 @@
       tags: ['付费墙', '阅读', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 16',
+      indexLabel: 'Tool 17',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9000
     },
@@ -470,7 +484,7 @@
       tags: ['AI编程', '智能助手', '在线'],
       color: 'blue',
       image: '',
-      indexLabel: 'Tool 17',
+      indexLabel: 'Tool 18',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9500
     },
@@ -482,7 +496,7 @@
       tags: ['音频分离', '人声提取', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 18',
+      indexLabel: 'Tool 19',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9600
     },
@@ -494,7 +508,7 @@
       tags: ['声音克隆', '语音合成', '在线'],
       color: 'purple',
       image: '',
-      indexLabel: 'Tool 19',
+      indexLabel: 'Tool 20',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9700
     },
@@ -506,7 +520,7 @@
       tags: ['视频去水印', '多媒体', '在线工具'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 20',
+      indexLabel: 'Tool 21',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9800
     },
@@ -518,7 +532,7 @@
       tags: ['临时邮箱', '隐私保护', '在线'],
       color: 'blue',
       image: '',
-      indexLabel: 'Tool 21',
+      indexLabel: 'Tool 22',
       actionLabel: '打开工具',
       createdAt: Date.now() - 9900
     },
@@ -530,7 +544,7 @@
       tags: ['视频修复', '画质增强', '视频去水印', '在线工具'],
       color: 'purple',
       image: '',
-      indexLabel: 'Tool 22',
+      indexLabel: 'Tool 23',
       actionLabel: '打开工具',
       createdAt: Date.now() - 10000
     }
