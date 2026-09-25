@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="css/style.css?v=2" />
   <script defer src="vendor/ort.min.js"></script>
   <script defer src="vendor/ort-wasm-b64.js"></script>
-  <script defer src="vendor/u2netp-b64.js"></script>
   <script defer src="assets/demo-b64.js"></script>
 </head>
 <body>
@@ -18,7 +17,7 @@
         <span class="brand-mark">🧩</span>
         <div class="brand-text">
           <h1>AI 图层分离</h1>
-          <p>一张图一键拆成多个透明图层 · 支持导出 PSD 分层文件 · 还能免费高清放大 · 全程浏览器本地处理，图片不上传</p>
+          <p>一张图一键拆成多个透明图层 · 支持导出 PSD 分层文件 · 还能免费高清放大 · 更能改图编辑 · 全程浏览器本地处理，图片不上传</p>
         </div>
       </div>
       <a class="back-link" href="../index.html">← 返回聚合平台</a>
@@ -40,6 +39,7 @@
       <div class="tabs">
         <button id="tabSplit" class="tab active" type="button">🧩 拆图层</button>
         <button id="tabScale" class="tab" type="button">🔍 高清放大</button>
+        <button id="tabEdit" class="tab" type="button">✏️ 改图编辑</button>
       </div>
 
       <!-- ============ 拆图层 ============ -->
@@ -69,12 +69,8 @@
                 <canvas id="stageCv" class="stage-cv"></canvas>
               </div>
               <div class="stage-foot">
-                <label class="pick-toggle"><input id="pickToggle" type="checkbox" /> 手动点选补充拆分</label>
-                <label class="tol-row">容差
-                  <input id="pickTol" type="range" min="8" max="90" value="40" />
-                  <span id="pickTolVal">40</span>
-                </label>
-                <button id="resetPickBtn" class="btn btn-ghost btn-mini" type="button">清空手动图层</button>
+                <label class="pick-toggle"><input id="pickToggle" type="checkbox" /> 点哪拆哪 · 在图上点一下拆一层</label>
+                <button id="resetPickBtn" class="btn btn-ghost btn-mini" type="button">清空已拆元素</button>
               </div>
             </div>
 
@@ -101,7 +97,7 @@
             </div>
           </div>
           <div id="splitStatus" class="status-line"></div>
-          <p class="note">拆分原理：本地 AI 显著性模型找出画面里的主要元素，逐层分离并把被元素挡住的背景智能补全；拆出的每个图层都带透明通道，导出 PSD 后可在 Photoshop、Photopea 等软件中继续编辑。结构简单的插画、海报、产品图效果最好。</p>
+          <p class="note">拆分原理：本地 AI 分离模型在图上自动撒点，把画面里每个独立元素各自抠成一层透明图层，背景保留真实剩余部分（不凭空补全）。也可以开启「点哪拆哪」，在图上点一下就把点中的元素单独拆出来。每个图层都带透明通道，导出 PSD 后可在 Photoshop、Photopea 等软件中继续编辑。结构清晰的插画、海报、产品图效果最好。</p>
         </section>
       </section>
 
@@ -159,10 +155,146 @@
           <p class="note">放大原理：多步渐进式重采样，每一步都保持边缘干净，再按需锐化细节，比直接拉大清晰得多。放大在本地完成，大图会稍微等一会儿。</p>
         </section>
       </section>
+      <!-- ============ 改图编辑 ============ -->
+      <section id="panelEdit" class="hidden">
+        <section id="dropZone3" class="drop-zone" tabindex="0" aria-label="上传图片开始编辑">
+          <div class="drop-inner">
+            <div class="drop-icon">✏️</div>
+            <p class="drop-title">上传一张图，开始改图</p>
+            <p class="drop-sub">也可以先在「拆图层」里把元素拆好，再来这里精修 · 支持 JPG / PNG / WEBP</p>
+            <div class="drop-btns">
+              <button id="pickBtn3" class="btn btn-primary" type="button">选择图片</button>
+              <button id="demoBtn3" class="btn btn-ghost" type="button">🎁 试一试示例图</button>
+            </div>
+            <input id="fileInput3" type="file" accept="image/*" hidden />
+          </div>
+        </section>
+
+        <section id="workspace3" class="workspace hidden">
+          <div class="edit-grid">
+            <!-- 左：编辑画布 -->
+            <div class="stage-col">
+              <div class="stage-head">
+                <span class="stage-title">编辑预览</span>
+                <span id="editHint" class="pick-hint">点击图层选中 · 直接拖动可移动</span>
+              </div>
+              <div id="editWrap" class="stage-wrap">
+                <canvas id="editCv" class="stage-cv"></canvas>
+              </div>
+              <div class="stage-foot">
+                <button id="cropBtn" class="btn btn-ghost btn-mini" type="button">✂ 裁剪</button>
+                <div id="cropPresets" class="crop-presets hidden">
+                  <button class="crop-preset chip" data-aspect="free" type="button">自由</button>
+                  <button class="crop-preset chip" data-aspect="1:1" type="button">1:1</button>
+                  <button class="crop-preset chip" data-aspect="4:3" type="button">4:3</button>
+                  <button class="crop-preset chip" data-aspect="3:4" type="button">3:4</button>
+                  <button class="crop-preset chip" data-aspect="16:9" type="button">16:9</button>
+                </div>
+                <button id="cropApply" class="btn btn-primary btn-mini hidden" type="button">应用裁剪</button>
+                <button id="cropCancel" class="btn btn-ghost btn-mini hidden" type="button">取消</button>
+              </div>
+            </div>
+
+            <!-- 右：编辑面板 -->
+            <div class="layers-col">
+              <div class="layers-head">
+                <span class="stage-title">图层</span>
+                <span id="editLayerCount" class="layer-count">0</span>
+              </div>
+              <div id="editLayerList" class="layer-list"></div>
+
+              <div class="edit-ops">
+                <!-- 背景 -->
+                <div class="op-group">
+                  <div class="op-title">背景</div>
+                  <div class="op-row">
+                    <span class="op-label">模式</span>
+                    <select id="bgMode" class="sel">
+                      <option value="keep" selected>保留原背景</option>
+                      <option value="color">纯色背景</option>
+                      <option value="image">图片背景</option>
+                      <option value="transparent">透明（去背景）</option>
+                    </select>
+                  </div>
+                  <div id="bgColorRow" class="op-row hidden">
+                    <span class="op-label">颜色</span>
+                    <input id="bgColor" type="color" value="#ffffff" />
+                  </div>
+                  <button id="bgImgBtn" class="btn btn-ghost btn-block btn-mini" type="button">⬆ 上传背景图</button>
+                  <input id="bgImgInput" type="file" accept="image/*" hidden />
+                </div>
+
+                <!-- 变换 -->
+                <div id="xfPanel" class="op-group disabled">
+                  <div class="op-title">变换（选中图层）</div>
+                  <div class="xf-grid">
+                    <label class="xf-cell">水平 <input id="xfX" type="range" min="-2000" max="2000" value="0" /><span id="xfXv">0</span></label>
+                    <label class="xf-cell">垂直 <input id="xfY" type="range" min="-2000" max="2000" value="0" /><span id="xfYv">0</span></label>
+                    <label class="xf-cell">缩放 <input id="xfScale" type="range" min="10" max="400" value="100" /><span id="xfScalev">100%</span></label>
+                    <label class="xf-cell">旋转 <input id="xfRot" type="range" min="-180" max="180" value="0" /><span id="xfRotv">0°</span></label>
+                    <label class="xf-cell xf-wide">不透明度 <input id="xfOpacity" type="range" min="0" max="100" value="100" /><span id="xfOpacityv">100%</span></label>
+                  </div>
+                </div>
+
+                <!-- 调色 -->
+                <div id="adjPanel" class="op-group disabled">
+                  <div class="op-title">调色（选中图层）</div>
+                  <div class="xf-grid">
+                    <label class="xf-cell">亮度 <input id="adjBright" type="range" min="-100" max="100" value="0" /><span id="adjBrightv">0</span></label>
+                    <label class="xf-cell">对比 <input id="adjContrast" type="range" min="-100" max="100" value="0" /><span id="adjContrastv">0</span></label>
+                    <label class="xf-cell">饱和 <input id="adjSat" type="range" min="-100" max="100" value="0" /><span id="adjSatv">0</span></label>
+                    <label class="xf-cell">模糊 <input id="adjBlur" type="range" min="0" max="20" value="0" /><span id="adjBlurv">0</span></label>
+                  </div>
+                  <div class="filter-chips">
+                    <button class="filter-chip active" data-filter="none" type="button">原图</button>
+                    <button class="filter-chip" data-filter="gray" type="button">灰度</button>
+                    <button class="filter-chip" data-filter="sepia" type="button">复古</button>
+                    <button class="filter-chip" data-filter="invert" type="button">反相</button>
+                    <button class="filter-chip" data-filter="cool" type="button">冷调</button>
+                    <button class="filter-chip" data-filter="warm" type="button">暖调</button>
+                  </div>
+                </div>
+
+                <!-- 加内容 -->
+                <div class="op-group">
+                  <div class="op-title">添加</div>
+                  <div class="text-form">
+                    <input id="txtText" class="txt-input" type="text" placeholder="输入文字…" value="点击这里改文字" />
+                    <div class="text-row">
+                      <label class="txt-cell">字号 <input id="txtSize" type="number" min="12" max="400" value="64" /></label>
+                      <label class="txt-cell">颜色 <input id="txtColor" type="color" value="#ffffff" /></label>
+                      <label class="txt-cell chk"><input id="txtBold" type="checkbox" checked /> 粗体</label>
+                    </div>
+                    <button id="addTextBtn" class="btn btn-primary btn-block btn-mini" type="button">＋ 添加文字图层</button>
+                    <div id="txtUpdateRow" class="hidden">
+                      <button id="updateTextBtn" class="btn btn-ghost btn-block btn-mini" type="button">↻ 更新选中的文字</button>
+                    </div>
+                  </div>
+                  <button id="addImgBtn" class="btn btn-ghost btn-block btn-mini" type="button">＋ 添加图片图层</button>
+                  <input id="addImgInput" type="file" accept="image/*" hidden />
+                </div>
+
+                <!-- 导出 -->
+                <div class="op-group">
+                  <div class="op-title">导出</div>
+                  <button id="expPngBtn" class="btn btn-primary btn-block" type="button" disabled>⬇ 合成 PNG（带透明）</button>
+                  <button id="expJpgBtn" class="btn btn-ghost btn-block" type="button" disabled>⬇ 合成 JPG</button>
+                  <button id="expPsdBtn" class="btn btn-accent btn-block" type="button" disabled>⬇ 导出分层 PSD</button>
+                </div>
+
+                <button id="resetEditBtn" class="btn btn-ghost btn-block btn-mini" type="button">↺ 上传新图（清空重来）</button>
+              </div>
+            </div>
+          </div>
+          <div id="editStatus" class="status-line"></div>
+          <p class="note">改图在本地完成，图片不上传。所有操作（移动 / 缩放 / 旋转 / 调色 / 换背景 / 加文字 / 裁剪）都会实时预览；导出的 PSD 每个元素仍然是独立图层，可在 Photoshop、Photopea 里继续精修。</p>
+        </section>
+      </section>
     </main>
   </div>
 
   <script src="js/psd.js?v=8"></script>
   <script src="js/app.js?v=8"></script>
+  <script src="js/editor.js?v=2"></script>
 </body>
 </html>
