@@ -1047,8 +1047,8 @@
 .miorning-toy {
   position: relative;
   z-index: 1;
-  width: min(1040px, calc(100% - 32px));
-  margin: 56px auto 0;
+  width: 100%;
+  margin: 56px 0 0;
   animation: miorningIn 0.85s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .miorning-toy-head {
@@ -1086,6 +1086,7 @@
   overflow: hidden;
   background: #08080f;
   aspect-ratio: 16 / 9;
+  max-height: 88vh;
   box-shadow:
     0 40px 110px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.05) inset;
@@ -1120,6 +1121,9 @@
 @media (max-width: 900px) {
   .miorning-toy { margin-top: 40px; }
   .miorning-toy-title { font-size: 1.3rem; }
+}
+@media (max-width: 700px) {
+  .miorning-toy-frame { aspect-ratio: 3 / 4; }
 }
 
 /* ============================================================
