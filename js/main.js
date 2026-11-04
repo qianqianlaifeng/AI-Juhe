@@ -77,13 +77,12 @@
     },
     {
       id: 'proj_4',
-      title: 'AI 数字人',
-      url: 'https://pan.quark.cn/s/57ec947d3be1',
-      description: 'AI 数字人生成与驱动工具，支持形象克隆、语音合成与视频生成，轻松打造专属虚拟主播与数字分身。',
-      tags: ['数字人', '虚拟形象', '视频生成'],
+      title: '手机Agent-小梦',
+      url: 'https://qianqianlaifeng.github.io/xiaomeng-pet/#control',
+      description: '住在 Android 手机和平板里的 AI 桌宠：看得见你的屏幕、点得动任何 App，会听话也会说话，自带离线语音包断网也能用。',
+      tags: ['手机 Agent', 'AI 桌宠', '自动化'],
       color: 'pink',
       image: '',
-      prompt: '提取码可联系QQ：2337835909',
       createdAt: Date.now() - 3000
     }
   ];
@@ -91,7 +90,7 @@
   const STORAGE_KEY = 'ai_platform_projects';
   const INITIALIZED_KEY = 'ai_platform_initialized';
   const VERSION_KEY = 'ai_platform_version';
-  const CURRENT_VERSION = '4';
+  const CURRENT_VERSION = '5';
 
   const COLOR_MAP = {
     cyan: 'rgba(0, 212, 255, 0.15)',
