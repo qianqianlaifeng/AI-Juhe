@@ -48,7 +48,7 @@
   const STORAGE_KEY = 'ai_platform_projects';
   const INITIALIZED_KEY = 'ai_platform_initialized';
   const VERSION_KEY = 'ai_platform_version';
-  const CURRENT_VERSION = '3';
+  const CURRENT_VERSION = '5';
   const SESSION_KEY = 'ai_platform_admin_session';
   const ANNOUNCEMENT_KEY = 'ai_platform_announcements';
 
@@ -85,6 +85,16 @@
       color: 'blue',
       image: 'assets/images/ai-agent.jpg',
       createdAt: Date.now() - 2000
+    },
+    {
+      id: 'proj_4',
+      title: '手机Agent-小梦',
+      url: 'https://qianqianlaifeng.github.io/xiaomeng-pet/#control',
+      description: '住在 Android 手机和平板里的 AI 桌宠：看得见你的屏幕、点得动任何 App，会听话也会说话，自带离线语音包断网也能用。',
+      tags: ['手机 Agent', 'AI 桌宠', '自动化'],
+      color: 'pink',
+      image: '',
+      createdAt: Date.now() - 3000
     }
   ];
 
