@@ -2,8 +2,8 @@ name: Sync GPT Image nav data
 
 on:
   schedule:
-    # 每 6 小时同步一次源站数据（UTC 时间）
-    - cron: "23 */6 * * *"
+    # 每小时同步一次源站数据（UTC 的每小时 23 分）
+    - cron: "23 * * * *"
   workflow_dispatch:
 
 permissions:
