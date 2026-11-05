@@ -1,0 +1,1182 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="免费 GPT Image 2 生图渠道的额度、积分、水印、中文支持和网络条件对比。">
+  <meta name="author" content="么么大">
+  <title>免费 GPT Image 2 生图渠道导航 V4.0</title>
+  <style>html.restoring-view body { visibility:hidden; }</style>
+  <script>
+    // 固定存储键，更新页面版本或文件名后仍可沿用同域名下的选择。
+    const viewModeStorageKey = "freegptimage2.viewMode";
+    let savedViewMode = "full";
+    try {
+      if (localStorage.getItem(viewModeStorageKey) === "compact") savedViewMode = "compact";
+    } catch (_) { /* 本地存储不可用时使用默认模式。 */ }
+    let viewRestoreTimer;
+    if (savedViewMode === "compact") {
+      document.documentElement.classList.add("restoring-view");
+      // 初始化异常时仍让页面可见。
+      viewRestoreTimer = setTimeout(() => document.documentElement.classList.remove("restoring-view"), 1500);
+    }
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink-950:#111827;
+      --ink-800:#273347;
+      --ink-600:#536078;
+      --ink-500:#6b778c;
+      --line:#dde3ec;
+      --line-soft:#edf0f5;
+      --paper:#ffffff;
+      --canvas:#f3f5f8;
+      --accent:#5746d9;
+      --accent-dark:#4233b7;
+      --mint:#dff7ea;
+      --mint-text:#176b45;
+      --amber:#fff1c9;
+      --amber-text:#8a5a00;
+      --rose:#ffe3e5;
+      --rose-text:#a12a36;
+      --sky:#e2f0ff;
+      --sky-text:#245f9f;
+      --shadow:0 18px 50px rgba(27,39,66,.08);
+    }
+
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0;
+      color:var(--ink-800);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(87,70,217,.08), transparent 26rem),
+        var(--canvas);
+      font-family:"Microsoft YaHei","PingFang SC","Segoe UI",system-ui,sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+    button, input, select { font:inherit; }
+    button, a, select { -webkit-tap-highlight-color:transparent; }
+    a { color:inherit; }
+    :focus-visible { outline:3px solid rgba(87,70,217,.28); outline-offset:2px; }
+
+    .shell { width:min(1520px, calc(100% - 40px)); margin:0 auto; }
+    body.compact-page .shell { width:min(1100px, calc(100% - 40px)); }
+    .hero-shell { padding-top:22px; }
+
+    .hero {
+      position:relative;
+      overflow:hidden;
+      padding:clamp(24px, 3.5vw, 38px);
+      border-radius:28px;
+      color:#fff;
+      background:
+        radial-gradient(circle at 85% 8%, rgba(146,131,255,.38), transparent 23rem),
+        linear-gradient(135deg, #151827 0%, #22203e 55%, #30256d 100%);
+      box-shadow:var(--shadow);
+    }
+    .hero::before,
+    .hero::after {
+      content:"";
+      position:absolute;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:50%;
+      pointer-events:none;
+    }
+    .hero::before { width:310px; height:310px; right:-105px; bottom:-160px; }
+    .hero::after { width:190px; height:190px; right:35px; bottom:-115px; }
+    .hero-copy { position:relative; z-index:1; max-width:780px; }
+    .eyebrow {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:16px;
+      color:#c9c3ff;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .eyebrow::before { content:""; width:22px; height:2px; background:#9187ff; border-radius:2px; }
+    h1 {
+      max-width:none;
+      margin:0;
+      font-size:clamp(28px, 3.7vw, 48px);
+      line-height:1.12;
+      letter-spacing:-.045em;
+      white-space:nowrap;
+    }
+    .title-version { display:inline-block; margin-left:.2em; color:#c9c3ff; font-size:.45em; font-weight:600; letter-spacing:0; vertical-align:baseline; }
+    .hero-lead {
+      flex:0 0 auto;
+      max-width:none;
+      margin:0;
+      color:#c8cedb;
+      font-size:clamp(11px, 1.1vw, 13px);
+      line-height:1.6;
+      white-space:nowrap;
+    }
+    .hero-meta {
+      display:flex;
+      align-items:center;
+      flex-wrap:nowrap;
+      gap:6px;
+      margin-top:10px;
+    }
+    .date-chip {
+      flex:0 0 auto;
+      padding:4px 7px;
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:999px;
+      background:rgba(255,255,255,.07);
+      color:#c9c3ff;
+      font-size:9.5px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+    .author-chip {
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      flex:0 0 auto;
+      padding:4px 7px;
+      border:1px solid rgba(255,255,255,.2);
+      border-radius:999px;
+      background:rgba(255,255,255,.1);
+      color:#fff;
+      font-size:9.5px;
+      font-weight:800;
+      text-decoration:none;
+      white-space:nowrap;
+      transition:background .15s ease, border-color .15s ease;
+    }
+    .author-chip:hover {
+      border-color:rgba(255,255,255,.38);
+      background:rgba(255,255,255,.16);
+    }
+    .author-chip .external-link-icon { width:13px; height:13px; color:rgba(255,255,255,.82); }
+    .stats {
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:repeat(4, minmax(180px,288px));
+      gap:10px;
+      margin-top:22px;
+    }
+    .stat {
+      min-height:76px;
+      padding:12px 16px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:17px;
+      background:rgba(255,255,255,.065);
+      backdrop-filter:blur(8px);
+    }
+    .stat-value { font-size:23px; font-weight:850; letter-spacing:-.04em; }
+    .stat-value em { color:#aaa0ff; font-style:normal; }
+    .stat-label { margin-top:5px; color:#aeb7ca; font-size:12px; }
+
+    main { padding:26px 0 48px; }
+    .section-heading { display:flex; align-items:end; justify-content:space-between; gap:16px; margin-bottom:13px; }
+    .section-heading h2 { margin:0; color:var(--ink-950); font-size:18px; letter-spacing:-.02em; }
+    .section-heading p { margin:4px 0 0; color:var(--ink-500); font-size:12px; }
+    .section-heading .quality-note { color:#758096; }
+    .heading-tools { display:flex; flex:0 0 auto; flex-direction:column; align-items:flex-end; gap:8px; }
+    .view-mode-switch {
+      display:inline-flex;
+      padding:3px;
+      border:1px solid var(--line);
+      border-radius:11px;
+      background:#fff;
+      box-shadow:0 4px 12px rgba(31,43,70,.06);
+    }
+    .view-mode-btn {
+      min-width:72px;
+      height:28px;
+      padding:0 11px;
+      border:0;
+      border-radius:8px;
+      background:transparent;
+      color:var(--ink-500);
+      font-size:11px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .view-mode-btn[aria-pressed="true"] { background:var(--accent); color:#fff; box-shadow:0 3px 9px rgba(87,70,217,.24); }
+    .usage-jump { color:var(--accent); font-weight:800; text-decoration:none; white-space:nowrap; }
+    .usage-jump:hover { text-decoration:underline; }
+    .back-to-top {
+      position:fixed;
+      right:22px;
+      bottom:22px;
+      z-index:20;
+      width:38px;
+      height:38px;
+      border:1px solid var(--line);
+      border-radius:50%;
+      background:rgba(255,255,255,.94);
+      box-shadow:0 8px 24px rgba(32,43,69,.16);
+      color:var(--accent);
+      font-size:17px;
+      font-weight:900;
+      cursor:pointer;
+      opacity:0;
+      pointer-events:none;
+      transform:translateY(8px);
+      transition:opacity .18s ease, transform .18s ease, background .18s ease;
+    }
+    .back-to-top.is-visible { opacity:1; pointer-events:auto; transform:translateY(0); }
+    .back-to-top:hover { background:#f3f1ff; }
+    .result-count { color:var(--ink-500); font-size:12px; font-weight:700; }
+    .count-mobile { display:none; }
+
+    .toolbar-wrap { padding:8px 0 12px; }
+    .toolbar {
+      display:grid;
+      grid-template-columns:repeat(5,minmax(140px,1fr)) auto;
+      gap:10px;
+      padding:12px;
+      border:1px solid rgba(205,213,225,.95);
+      border-radius:18px;
+      background:rgba(255,255,255,.94);
+      box-shadow:0 10px 30px rgba(28,38,62,.07);
+      backdrop-filter:blur(12px);
+    }
+    .more-filter-toggle { display:none; }
+    .field { min-width:0; }
+    .field label { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+    .control {
+      width:100%;
+      height:42px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      color:var(--ink-800);
+      padding:0 12px;
+      font-size:12px;
+      transition:border-color .15s ease, box-shadow .15s ease;
+    }
+    .control:hover { border-color:#c3bcff; }
+    .control:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(87,70,217,.1); outline:none; }
+    .reset-btn {
+      height:42px;
+      padding:0 16px;
+      border:0;
+      border-radius:12px;
+      background:var(--ink-950);
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .reset-btn:hover { background:#253047; }
+
+    .table-card {
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:20px;
+      background:var(--paper);
+      box-shadow:var(--shadow);
+    }
+    .table-shell {
+      overflow-x:auto;
+      overflow-y:hidden;
+      scrollbar-width:thin;
+      scrollbar-color:#b9c1cf transparent;
+    }
+    .table-shell::-webkit-scrollbar { height:8px; }
+    .table-shell::-webkit-scrollbar-track { background:transparent; }
+    .table-shell::-webkit-scrollbar-thumb {
+      border:2px solid #fff;
+      border-radius:999px;
+      background:#b9c1cf;
+    }
+    .table-shell::-webkit-scrollbar-thumb:hover { background:#929daf; }
+    .frozen-table-head {
+      position:fixed;
+      top:0;
+      z-index:40;
+      display:none;
+      overflow:hidden;
+      box-shadow:0 8px 18px rgba(15,23,42,.14);
+      pointer-events:none;
+    }
+    .frozen-table-head table { width:auto; }
+    .frozen-table-head th { position:static; }
+    table { width:100%; min-width:1377px; border-collapse:separate; border-spacing:0; table-layout:fixed; }
+    .compact-only { display:none; }
+    .toolbar-wrap.compact-view,
+    .desktop-table.compact-view { width:min(100%, 1100px); margin-inline:auto; }
+    table.compact-mode { width:100%; min-width:1100px; }
+    table.compact-mode col:nth-child(1) { width:190px !important; }
+    table.compact-mode col:nth-child(2) { width:145px !important; }
+    table.compact-mode col:nth-child(4) { width:190px !important; }
+    table.compact-mode col:nth-child(6) { width:210px !important; }
+    table.compact-mode col:nth-child(9) { width:115px !important; }
+    table.compact-mode col:nth-child(10) { width:115px !important; }
+    table.compact-mode col:nth-child(11) { width:135px !important; }
+    table.compact-mode .site-link {
+      display:inline-flex;
+      align-items:center;
+      width:auto;
+      max-width:100%;
+      gap:5px;
+    }
+    table.compact-mode .site-name-stack { display:inline-flex; align-items:center; gap:5px; }
+    table.compact-mode .site-name-text { white-space:nowrap; }
+    table.compact-mode .site-link .site-status-badges {
+      display:inline-flex;
+      width:auto;
+      margin-top:0;
+    }
+    .desktop-table:not(.compact-view) .site-name-stack { display:inline-flex; align-items:center; gap:5px; }
+    .desktop-table:not(.compact-view) .site-name-text { white-space:nowrap; }
+    .desktop-table:not(.compact-view) .site-link .site-status-badges {
+      display:inline-flex;
+      width:auto;
+      margin-top:0;
+    }
+    table.compact-mode col:nth-child(3),
+    table.compact-mode col:nth-child(5),
+    table.compact-mode col:nth-child(7),
+    table.compact-mode col:nth-child(8),
+    table.compact-mode th:nth-child(3),
+    table.compact-mode th:nth-child(5),
+    table.compact-mode th:nth-child(7),
+    table.compact-mode th:nth-child(8),
+    table.compact-mode td:nth-child(3),
+    table.compact-mode td:nth-child(5),
+    table.compact-mode td:nth-child(7),
+    table.compact-mode td:nth-child(8) { display:none; }
+    table.compact-mode .full-only { display:none; }
+    table.compact-mode .compact-only { display:inline-flex; }
+    .image25-compact-detail { display:flex; flex-direction:column; align-items:flex-start; gap:3px; }
+    .image25-compact-note { display:block; color:#d11f2f; font-weight:850; }
+    .image25-compact-note.is-dark { color:var(--ink-950); }
+    .image25-compact-status { display:inline-flex; align-items:center; gap:5px; font-weight:850; white-space:nowrap; }
+    .image25-compact-status.is-updated { color:#12a150; }
+    .image25-compact-status.is-not-updated { color:#e83d4d; }
+    caption.sr-only,
+    .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+    th {
+      position:sticky;
+      top:0;
+      z-index:4;
+      height:50px;
+      padding:0 13px;
+      border-bottom:1px solid #33394a;
+      background:var(--ink-950);
+      color:#f8fafc;
+      text-align:left;
+      font-size:11px;
+      font-weight:750;
+      letter-spacing:.03em;
+      white-space:nowrap;
+    }
+    th:not(:last-child) { border-right:1px solid rgba(255,255,255,.08); }
+    th.center, td.center { text-align:center; }
+    td {
+      padding:13px;
+      border-bottom:1px solid var(--line-soft);
+      background:#fff;
+      color:var(--ink-600);
+      font-size:12px;
+      line-height:1.62;
+      vertical-align:middle;
+      overflow-wrap:anywhere;
+    }
+    td:not(:last-child) { border-right:1px solid rgba(221,227,236,.55); }
+    tbody tr:nth-child(even) td { background:#fafbfc; }
+    tbody tr:hover td { background:#f5f3ff; }
+    th:first-child { left:0; z-index:6; }
+    td:first-child {
+      position:sticky;
+      left:0;
+      z-index:2;
+    }
+    .site-link {
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      width:auto;
+      max-width:100%;
+      color:var(--ink-950);
+      font-size:13px;
+      font-weight:850;
+      text-decoration:none;
+    }
+    .site-name-stack { display:inline-flex; align-items:center; gap:5px; min-width:0; }
+    .site-name-text { overflow-wrap:normal; word-break:normal; }
+    .external-link-icon {
+      display:block;
+      width:14px;
+      height:14px;
+      flex:0 0 14px;
+      color:#9a8c82;
+      transition:color .15s ease, transform .15s ease;
+    }
+    .site-link:hover { color:var(--accent-dark); text-decoration:underline; text-underline-offset:3px; }
+    .site-link:hover .external-link-icon,
+    .pros-link:hover .external-link-icon,
+    .mobile-title a:hover .external-link-icon {
+      color:#5f5148;
+      transform:translate(1px,-1px);
+    }
+    .trend-arrow {
+      position:relative;
+      display:inline-block;
+      width:18px;
+      height:18px;
+      margin:0;
+      border:0;
+      border-radius:50%;
+      box-sizing:border-box;
+      line-height:1;
+      vertical-align:middle;
+      box-shadow:0 2px 5px rgba(31,43,70,.16);
+    }
+    .trend-arrow svg {
+      position:absolute;
+      top:50%;
+      left:50%;
+      display:block;
+      width:14px;
+      height:14px;
+      color:#fff;
+      transform:translate(-50%,-50%);
+    }
+    .trend-arrow svg path { stroke-width:2.15; }
+    .trend-up { background:#12a150; }
+    .trend-down { background:#e83d4d; }
+    .pros-link { display:inline-flex; align-items:center; gap:4px; color:var(--ink-950); font-weight:800; text-decoration:none; }
+    .pros-link:hover { color:var(--accent-dark); text-decoration:underline; text-underline-offset:3px; }
+    .new-badge {
+      display:inline-flex;
+      align-items:center;
+      margin-left:5px;
+      padding:2px 4px;
+      border-radius:999px;
+      background:#e83d4d;
+      color:#fff;
+      font-size:8px;
+      font-weight:900;
+      letter-spacing:.05em;
+      line-height:1;
+      vertical-align:middle;
+      box-shadow:0 2px 5px rgba(232,61,77,.28);
+    }
+    .site-link .site-status-badges {
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      width:auto;
+      margin-top:0;
+    }
+    .site-link .new-badge {
+      display:inline-flex;
+      width:auto;
+      margin:0;
+    }
+    .out-badge {
+      display:inline-flex;
+      align-items:center;
+      margin-left:5px;
+      padding:2px 4px;
+      border-radius:999px;
+      background:#8892a4;
+      color:#fff;
+      font-size:8px;
+      font-weight:900;
+      letter-spacing:.05em;
+      line-height:1;
+      vertical-align:middle;
+      box-shadow:0 2px 5px rgba(34,43,61,.2);
+    }
+    .site-link .out-badge {
+      display:inline-flex;
+      width:auto;
+      margin:0;
+    }
+    .out-name {
+      color:#8892a4;
+      text-decoration:line-through;
+      text-decoration-color:#9aa5b5;
+      text-decoration-thickness:1.5px;
+    }
+    .daily { display:inline-flex; align-items:center; justify-content:center; gap:4px; color:var(--ink-950); font-size:15px; font-weight:850; font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .daily small { color:var(--ink-500); font-size:10px; font-weight:600; }
+    .daily .daily-prefix { margin-right:3px; color:var(--ink-500); font-size:10px; font-weight:700; }
+    .quota-unit { color:inherit; font-size:inherit; font-weight:inherit; }
+    .muted-dash { color:#c7ced9; }
+    .multi { white-space:pre-line; }
+    tbody td:nth-child(n+3):nth-child(-n+7) .multi { white-space:pre; }
+    tbody td:nth-child(5) .multi, tbody td:nth-child(6) .multi { white-space:pre-wrap; overflow-wrap:anywhere; }
+    .image25-red { color:#d11f2f; font-weight:800; }
+    .text-strong-dark { color:var(--ink-950); font-weight:850; }
+    .long-validity { color:#12a150; font-weight:850; }
+    .validity-long-days { color:#2f80ed; font-weight:850; }
+    .validity-warn { color:var(--amber-text); font-weight:800; }
+    .pros-green-note { color:#12a150; font-weight:900; }
+    .pros-highlight {
+      display:inline-block;
+      color:#12a150;
+      font-size:16px;
+      font-weight:900;
+      line-height:1.45;
+    }
+    .pros-red-note { color:#d11f2f; font-weight:850; }
+    .pros-red-strike {
+      text-decoration:line-through;
+      text-decoration-thickness:1.5px;
+      text-decoration-color:#d11f2f;
+    }
+    .pill {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:48px;
+      padding:4px 9px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+    .pill-good { background:var(--mint); color:var(--mint-text); }
+    .pill-warn { background:var(--amber); color:var(--amber-text); }
+    .pill-bad { background:var(--rose); color:var(--rose-text); }
+    .cons-red-note { color:#d11f2f; font-weight:800; }
+    .cons-strike-note { color:inherit; font-weight:inherit; text-decoration:line-through; text-decoration-thickness:1.5px; }
+    .value-strike-note { color:inherit; font-weight:inherit; text-decoration:line-through; text-decoration-thickness:1.5px; }
+    .value-underline-note { color:inherit; font-weight:inherit; text-decoration:underline; text-underline-offset:2px; }
+    .pill-info { background:var(--sky); color:var(--sky-text); }
+    .empty { display:none; padding:48px 20px; text-align:center; color:var(--ink-500); }
+    .empty strong { display:block; margin-bottom:6px; color:var(--ink-950); font-size:17px; }
+
+    .mobile-list { display:none; gap:12px; }
+    .mobile-card {
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#fff;
+      box-shadow:0 8px 25px rgba(31,43,70,.05);
+      overflow:hidden;
+    }
+    .mobile-main { padding:17px; }
+    .mobile-top { display:flex; align-items:start; justify-content:space-between; gap:16px; }
+    .mobile-title { flex:1 1 auto; min-width:0; margin:0; font-size:17px; color:var(--ink-950); }
+    .mobile-title a { text-decoration:none; }
+    .mobile-title .site-link {
+      display:inline-flex;
+      align-items:center;
+      width:auto;
+      max-width:100%;
+      gap:5px;
+      font-size:17px;
+    }
+    .mobile-daily { display:flex; align-items:baseline; gap:4px; flex:0 0 auto; color:var(--ink-950); font-size:18px; font-weight:850; }
+    .mobile-daily small { color:var(--ink-500); font-size:10px; font-weight:600; }
+    .mobile-daily .daily-prefix { display:inline; margin:0 3px 0 0; color:var(--ink-500); font-size:10px; font-weight:700; text-align:initial; }
+    .mobile-daily .trend-arrow { align-self:center; }
+    .tag-row { display:flex; flex-wrap:wrap; gap:6px; margin-top:11px; }
+    .mobile-summary { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px; }
+    .mobile-summary div { padding:10px; border-radius:12px; background:#f6f7fa; }
+    .mobile-summary dt { color:var(--ink-500); font-size:10px; }
+    .mobile-summary dd { margin:5px 0 0; color:var(--ink-800); font-size:12px; line-height:1.55; white-space:pre-line; }
+    details { border-top:1px solid var(--line-soft); }
+    summary { padding:13px 17px; color:var(--accent-dark); font-size:12px; font-weight:800; cursor:pointer; list-style:none; }
+    summary::-webkit-details-marker { display:none; }
+    summary::after { content:"＋"; float:right; }
+    details[open] summary::after { content:"－"; }
+    .detail-grid { display:grid; gap:13px; padding:0 17px 17px; }
+    .detail-block h4 { margin:0 0 5px; color:var(--ink-950); font-size:11px; }
+    .detail-block p { margin:0; color:var(--ink-600); font-size:12px; line-height:1.65; white-space:pre-line; }
+
+    .notes {
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:18px;
+      margin-top:18px;
+      padding:18px 20px;
+      border:1px solid var(--line);
+      border-radius:17px;
+      background:rgba(255,255,255,.72);
+      color:var(--ink-500);
+      font-size:11px;
+      line-height:1.75;
+    }
+    .legend { display:flex; flex-wrap:wrap; gap:12px; justify-content:flex-end; }
+    .legend-item { display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+    .legend-dot { width:9px; height:9px; border-radius:50%; }
+    .usage-notes {
+      margin-top:12px;
+      padding:8px 20px;
+      border:1px solid var(--line);
+      border-radius:17px;
+      background:rgba(255,255,255,.72);
+      color:var(--ink-500);
+      font-size:11px;
+      line-height:1.75;
+    }
+    .usage-notes summary {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0;
+      color:var(--ink-950);
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      list-style:none;
+    }
+    .usage-notes summary::-webkit-details-marker { display:none; }
+    .usage-notes summary::after { content:"展开"; color:var(--accent); font-size:11px; font-weight:800; }
+    .usage-notes[open] summary::after { content:"收起"; }
+    .usage-notes ol { margin:10px 0 0; padding-left:18px; }
+    .usage-notes li + li { margin-top:6px; }
+    .usage-notes strong { color:var(--ink-800); }
+    .usage-notes .legend-item { display:inline; white-space:normal; }
+    .usage-notes .legend-dot { display:inline-block; margin-right:5px; vertical-align:-1px; }
+
+    @media (max-width:1180px) {
+      .toolbar { grid-template-columns:1fr 1fr; }
+      .reset-btn { width:100%; }
+    }
+    @media (max-width:820px) {
+      .shell { width:min(100% - 24px, 720px); }
+      body.compact-page .shell { width:min(100% - 24px, 720px); }
+      .hero { padding:22px 14px; border-radius:22px; }
+      h1 { font-size:21px; }
+      .hero-meta { flex-wrap:wrap; }
+      .hero-lead { flex:0 1 auto; overflow:visible; text-overflow:clip; font-size:10px; }
+      .stats { grid-template-columns:1fr 1fr; margin-top:18px; }
+      .stat { min-height:70px; padding:11px 13px; }
+      .stat-value { font-size:22px; }
+      main { padding-top:20px; }
+      .section-heading {
+        display:grid;
+        grid-template-columns:minmax(0,1fr) auto;
+        align-items:center;
+        gap:4px 12px;
+      }
+      .section-heading > div:first-child { display:contents; }
+      .section-heading h2 { grid-column:1/-1; grid-row:1; }
+      .section-heading p {
+        grid-column:1/-1;
+        grid-row:auto;
+        margin-top:0;
+        font-size:11px;
+        white-space:normal;
+        overflow-wrap:anywhere;
+      }
+      .heading-tools { display:contents; }
+      .view-mode-switch { display:none; }
+      .result-count {
+        grid-column:1/-1;
+        grid-row:2;
+        min-width:0;
+        white-space:normal;
+        text-align:left;
+        line-height:1.4;
+      }
+      .count-desktop { display:none; }
+      .count-mobile { display:inline; }
+      .toolbar-wrap { position:relative; padding-top:0; }
+      .toolbar { grid-template-columns:1fr 1fr; }
+      .advanced-field { display:none; }
+      .toolbar.more-open .advanced-field { display:block; }
+      .more-filter-toggle {
+        display:flex;
+        grid-column:1/-1;
+        align-items:center;
+        justify-content:space-between;
+        height:38px;
+        padding:0 12px;
+        border:1px solid var(--line);
+        border-radius:11px;
+        background:#fff;
+        color:var(--ink-800);
+        font-size:12px;
+        font-weight:700;
+        list-style:none;
+        cursor:pointer;
+      }
+      .more-filter-toggle::after { content:"⌄"; color:var(--ink-500); font-size:15px; }
+      .toolbar.more-open .more-filter-toggle { margin-bottom:0; border-color:#c3bcff; }
+      .toolbar.more-open .more-filter-toggle::after { transform:rotate(180deg); }
+      .desktop-table { display:none; }
+      .mobile-list { display:grid; }
+      .notes { grid-template-columns:1fr; }
+      .legend { justify-content:flex-start; }
+    }
+    @media (max-width:520px) {
+      h1 { font-size:19px; letter-spacing:-.055em; }
+      .date-chip { font-size:10px; padding:6px 9px; }
+      .stats { grid-template-columns:1fr 1fr; gap:8px; }
+      .toolbar { grid-template-columns:1fr; }
+      .toolbar { gap:8px; padding:10px; }
+      .control, .reset-btn { height:38px; font-size:12px; }
+      .section-heading { align-items:center; }
+      .mobile-summary { grid-template-columns:1fr; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      *, *::before, *::after { scroll-behavior:auto !important; transition:none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell hero-shell">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <div class="eyebrow">Free Image Access</div>
+        <h1 id="page-title">免费GPT Image生图渠道收集 <span class="title-version">V4.0</span></h1>
+        <div class="hero-meta">
+          <p class="hero-lead">免费额度、积分规则、水印、中文与网络限制，一页快速对比。</p>
+          <a class="author-chip" href="https://space.bilibili.com/208941/lists/8845451?type=season" target="_blank" rel="noopener noreferrer">整理制作：么么大 · 最新视频<svg class="external-link-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M6.5 3.5H4.25A1.75 1.75 0 0 0 2.5 5.25v6.5a1.75 1.75 0 0 0 1.75 1.75h6.5a1.75 1.75 0 0 0 1.75-1.75V9.5M8.5 2.5h5v5M13.25 2.75 7.5 8.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <div class="date-chip">2026.09.22 更新 ： Coldesen、NoteGPT等网站数据更新</div>
+        </div>
+      </div>
+      <div class="stats" aria-label="渠道统计">
+        <div class="stat"><div class="stat-value"><em id="stat-sites">—</em> 个</div><div class="stat-label">收录渠道</div></div>
+        <div class="stat"><div class="stat-value"><em id="stat-image25">—</em> 个</div><div class="stat-label">收录 Image2.5 渠道</div></div>
+        <div class="stat"><div class="stat-value"><em id="stat-new">—</em> 个</div><div class="stat-label">新增站点</div></div>
+        <div class="stat"><div class="stat-value">约 <em id="stat-daily">—</em> 张</div><div class="stat-label">每日总生图数</div></div>
+      </div>
+    </section>
+  </div>
+
+  <main class="shell">
+    <section aria-labelledby="compare-title">
+      <div class="section-heading">
+        <div><h2 id="compare-title">渠道对比</h2><p class="quality-note">免费规则会随平台调整，实际使用前请以平台官网为准。</p><p class="quality-note">Image 2.5 提供两种模式：Flare 速度更快，Sunburst 画质更好。&nbsp;&nbsp;|&nbsp;&nbsp;<a class="usage-jump" id="usage-jump" href="#usage-notes">其他使用说明</a></p></div>
+        <div class="heading-tools">
+          <div class="view-mode-switch" role="group" aria-label="表格显示模式">
+            <button class="view-mode-btn" type="button" data-view-mode="full" aria-pressed="true">完整模式</button>
+            <button class="view-mode-btn" type="button" data-view-mode="compact" aria-pressed="false">精简模式</button>
+          </div>
+          <div class="result-count" id="result-count" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="toolbar-wrap">
+        <div class="toolbar" aria-label="筛选生图渠道">
+          <div class="field">
+            <label for="site-status">站点筛选</label>
+            <select class="control" id="site-status"><option value="all">显示全部站点</option><option value="new-only">只显示新增站点</option><option value="min-five">排除 5 张/日以下</option><option value="min-three">排除 3 张/日以下</option></select>
+          </div>
+          <button class="more-filter-toggle" id="more-filter-toggle" type="button" aria-expanded="false">更多筛选</button>
+          <div class="field advanced-field">
+            <label for="validity">积分有效期</label>
+            <select class="control" id="validity"><option value="all">全部积分有效期</option><option value="long">长期（≥30天）</option><option value="short">短期（≤7天）</option><option value="refresh-midnight">00:00 刷新</option><option value="refresh-other">非 00:00 刷新</option></select>
+          </div>
+          <div class="field advanced-field">
+            <label for="image25">Image2.5筛选</label>
+            <select class="control" id="image25"><option value="all">全部 Image2.5 情况</option><option value="confirmed">已更新Image2.5</option><option value="none">未更新Image2.5</option></select>
+          </div>
+          <div class="field advanced-field">
+            <label for="watermark">水印情况</label>
+            <select class="control" id="watermark"><option value="all">全部水印情况</option><option value="clean">无水印（含可绕过）</option><option value="marked">有水印（含小水印）</option></select>
+          </div>
+          <div class="field advanced-field">
+            <label for="network">网络条件</label>
+            <select class="control" id="network"><option value="all">全部网络条件</option><option value="可直连">可直连</option><option value="需工具">需翻墙</option></select>
+          </div>
+          <button class="reset-btn" id="reset" type="button">重置</button>
+        </div>
+      </div>
+
+      <div class="table-card desktop-table">
+        <div class="table-shell">
+          <table id="channel-table">
+            <caption class="sr-only">免费 GPT Image 2 生图渠道对比</caption>
+            <colgroup>
+              <col style="width:140px"><col style="width:132px"><col style="width:115px"><col style="width:115px"><col style="width:110px"><col style="width:130px"><col style="width:192px"><col style="width:192px"><col style="width:72px"><col style="width:72px"><col style="width:72px">
+            </colgroup>
+            <thead><tr><th scope="col">网站</th><th scope="col" class="center">每日约可生图</th><th scope="col">免费额度</th><th scope="col">有效期</th><th scope="col">Image2.0消耗</th><th scope="col"><span class="full-only">Image2.5消耗</span><span class="compact-only">Image2.5</span></th><th scope="col">优点</th><th scope="col">缺点</th><th scope="col" class="center">水印</th><th scope="col" class="center">字符</th><th scope="col" class="center">网络</th></tr></thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="desktop-empty"><strong>没有找到匹配渠道</strong>可以尝试减少筛选条件。</div>
+      </div>
+
+      <div class="mobile-list" id="mobile-list"></div>
+
+      <details class="usage-notes" id="usage-notes" aria-label="使用说明">
+        <summary>使用说明</summary>
+        <ol>
+          <li><strong>数据口径：</strong>每日约可生图数根据免费次数或每日积分除以最低单张消耗折算；月度额度按 30 天平均。“平均”指在完成签到、任务等要求并获得完整周期积分后，按周期计算出的日均可生图数量；“折合”指不需要额外签到或完成任务，仅按自然发放的免费额度计算出的日均可生图数量。</li>
+          <li><strong>链接说明：</strong>网站名链接均直达对应生图页面，不含邀请返利代码；部分网站的邀请注册链接可为新用户增加额外积分，含邀请返利代码，介意者请勿点击。</li>
+          <li><strong>有效期说明：</strong>“24小时有效”从领取起算，满 24 小时失效；“当天有效”在平台当天结算时失效，通常当天 24:00 清零，实际有效时长可能不足 24 小时；“长期有效”不保证永久有效，但均经实测，实际有效期不少于 30 天。各平台结算时区与规则可能不同，请以页面说明为准。</li>
+          <li><strong>标记说明：</strong>删除线表示已失效的旧数值或旧规则；↑／↓表示每日约可生图数增加／减少；NEW 表示近期新增收录，OUT 表示已失效，二者可同时出现。</li>
+          <li><strong>水印与字符：</strong>“半绕过”表示仅部分生成条件下可以绕过水印，例如 Pollo 的 1K 可绕过、2K 不可绕过，具体以该网站说明为准。“字符”指提示词输入字符数上限，“无限制”表示未发现明确上限。</li>
+          <li><strong>表内颜色：</strong><span class="legend-item"><i class="legend-dot" style="background:#75d8a4"></i></span>表示限制较少；<span class="legend-item"><i class="legend-dot" style="background:#7db7ef"></i></span>表示存在可行的规避方式；<span class="legend-item"><i class="legend-dot" style="background:#f0c55e"></i></span>表示有一定限制；<span class="legend-item"><i class="legend-dot" style="background:#ee8f99"></i></span>表示限制较多。</li>
+        </ol>
+      </details>
+
+      <details class="usage-notes" id="disclaimer-notes" aria-label="免责声明">
+        <summary>免责声明</summary>
+        <ol>
+          <li>本表格由个人整理，并非各平台官方资料。内容可能存在遗漏、误差或理解偏差，不能替代各平台的官方说明。</li>
+          <li>本表格未接受任何平台赞助或商业推广；部分邀请注册链接可能为邀请者和新用户带来平台奖励，均已在表内说明。其余评价均基于个人实际使用体验。</li>
+          <li>本表格不提供网络访问、账号注册或平台风控问题的解决方案，相关情况请自行判断和处理。</li>
+          <li>本表格无法保证各网站的生成速度、画质稳定性与成功率。实际体验可能因使用时间、所在地区、账号状态及平台负载而有所不同。</li>
+          <li>各网站的免费次数、积分规则、签到奖励、单张消耗、额度有效期及水印规则均可能随时调整。本表格以制作时的实测结果为准，不保证后续保持一致。</li>
+          <li>表内网站可能需要登录或注册第三方账号，请自行评估账号、隐私与安全风险，避免在不可信平台重复使用重要密码。</li>
+          <li>部分网站可能公开展示用户生成的图片或提示词。请勿上传含有个人隐私、敏感信息、未授权人物肖像或其他不宜公开的内容，并在生成前检查平台的默认公开设置。</li>
+          <li>使用第三方网站生成的图片，其版权归属及商业使用权限请以各平台的服务条款为准，建议在商用前自行核实。</li>
+          <li>以上内容仅供参考，不构成任何承诺或保证；使用前请自行判断与核实。</li>
+        </ol>
+      </details>
+    </section>
+  </main>
+  <button class="back-to-top" id="back-to-top" type="button" aria-label="回到顶部" title="回到顶部">↑</button>
+
+  <script src="data/sites.js?v=61f733f2"></script>
+  <script>
+    // 渠道数据已拆分到 data/sites.js，由自动同步任务维护。
+    const state = { image25:"all", network:"all", watermark:"all", validity:"all", siteStatus:"all", viewMode:"full" };
+    const $ = selector => document.querySelector(selector);
+    let syncFrozenHeader = () => {};
+    const escapeHtml = value => String(value).replace(/[&<>"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[char]));
+    const externalLinkIcon = '<svg class="external-link-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M6.5 3.5H4.25A1.75 1.75 0 0 0 2.5 5.25v6.5a1.75 1.75 0 0 0 1.75 1.75h6.5a1.75 1.75 0 0 0 1.75-1.75V9.5M8.5 2.5h5v5M13.25 2.75 7.5 8.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const highlightLongValidity = value => escapeHtml(value)
+      .replace(/积分长期有效|长期有效/g, '<strong class="long-validity">$&</strong>')
+      .replace(/((?:月积分|日积分|签到积分|积分)?(\d+)天有效)/g, (text, phrase, days) => Number(days) >= 30 ? `<strong class="validity-long-days">${phrase}</strong>` : text);
+    const textBlock = value => value === "—" ? '<span class="muted-dash">—</span>' : `<span class="multi">${highlightLongValidity(value)}</span>`;
+    const quotaText = value => String(value).split("\n").map(line => {
+      let normalized = line.replace(/积分\/天/g, "积分/日");
+      if (!/\/[日月]/.test(normalized) && !normalized.includes("每月") && (/积分$/.test(normalized) || /次.*生图$/.test(normalized))) normalized += "/日";
+      return normalized;
+    }).join("\n");
+    const quotaBlock = (value, strikeTexts = [], underlineTexts = []) => {
+      let content = textBlock(quotaText(value));
+      strikeTexts.forEach(text => {
+        content = content.split(escapeHtml(text)).join(`<span class="value-strike-note">${escapeHtml(text)}</span>`);
+      });
+      underlineTexts.forEach(text => {
+        content = content.split(escapeHtml(text)).join(`<span class="value-underline-note">${escapeHtml(text)}</span>`);
+      });
+      return content.replace(/\/([日月])/g, '<small class="quota-unit">/$1</small>');
+    };
+    const applyProsLinks = (content, site) => {
+      const linksByLine = new Map();
+      (site.prosLinks || []).forEach(link => {
+        if (!link.line || !link.label || !link.url || !link.line.includes(link.label)) return;
+        if (!linksByLine.has(link.line)) linksByLine.set(link.line, []);
+        linksByLine.get(link.line).push(link);
+      });
+      linksByLine.forEach((links, line) => {
+        let linkedLine = escapeHtml(line);
+        links.forEach(link => {
+          linkedLine = linkedLine.replace(escapeHtml(link.label), `<a class="pros-link" href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.label)}${externalLinkIcon}</a>`);
+        });
+        content = content.replace(escapeHtml(line), linkedLine);
+      });
+      return content;
+    };
+    const renderPros = (site, mobile = false) => {
+      let content = mobile ? escapeHtml(site.pros) : textBlock(site.pros);
+      content = applyProsLinks(content, site);
+      if (site.prosHighlight) content = content.replace(escapeHtml(site.prosHighlight), `<strong class="pros-highlight">${escapeHtml(site.prosHighlight)}</strong>`);
+      if (site.prosBoldText) content = content.replace(escapeHtml(site.prosBoldText), `<strong class="long-validity">${escapeHtml(site.prosBoldText)}</strong>`);
+      if (site.prosDarkText) content = content.replace(escapeHtml(site.prosDarkText), `<strong class="text-strong-dark">${escapeHtml(site.prosDarkText)}</strong>`);
+      if (site.prosGreenText) content = content.replace(escapeHtml(site.prosGreenText), `<strong class="pros-green-note">${escapeHtml(site.prosGreenText)}</strong>`);
+      if (site.prosRedText) content = content.replace(escapeHtml(site.prosRedText), `<span class="pros-red-note">${escapeHtml(site.prosRedText)}</span>`);
+      if (site.prosStrikeText) content = content.replace(escapeHtml(site.prosStrikeText), `<s>${escapeHtml(site.prosStrikeText)}</s>`);
+      if (site.prosRedStrike) content = content.replace(escapeHtml(site.prosRedStrike), `<span class="pros-red-strike">${escapeHtml(site.prosRedStrike)}</span>`);
+      return content;
+    };
+    const prosBlock = site => renderPros(site);
+    const validityBlock = site => {
+      let content = textBlock(site.validity);
+      if (site.validityWarnText) content = content.replace(escapeHtml(site.validityWarnText), `<span class="validity-warn">${escapeHtml(site.validityWarnText)}</span>`);
+      return content;
+    };
+    const compactValidityBlock = site => {
+      const value = site.validity.split("\n").filter(line => !/^(?:\d{2}:\d{2} 刷新(?:积分|次数)|动态刷新)$/.test(line)).join("\n") || "—";
+      return textBlock(value);
+    };
+    const mobileProsBlock = site => renderPros(site, true);
+    const renderCons = (site, mobile = false) => {
+      const lines = site.cons.split("\n");
+      const redNotes = [...new Set(site.consRedNotes || (site.consRedNote ? [site.consRedNote] : []))];
+      const priorityLines = site.name === "摄图网" ? ["与低劣假模型混用"].filter(line => lines.includes(line)) : [];
+      const orderedLines = [
+        ...priorityLines,
+        ...redNotes.filter(note => lines.includes(note) && !priorityLines.includes(note)),
+        ...lines.filter(line => !redNotes.includes(line) && !priorityLines.includes(line))
+      ];
+      let content = mobile ? escapeHtml(orderedLines.join("\n")) : textBlock(orderedLines.join("\n"));
+      redNotes.forEach(note => {
+        content = content.replace(escapeHtml(note), `<span class="cons-red-note">${escapeHtml(note)}</span>`);
+      });
+      if (site.consResolvedText) content = content.replace(escapeHtml(site.consResolvedText + "（已修复）"), `<span style="color:var(--ink-950);font-weight:400"><s>${escapeHtml(site.consResolvedText)}</s>（已修复）</span>`);
+      if (site.consStrikeText) content = content.replace(escapeHtml(site.consStrikeText), `<span class="cons-strike-note">${escapeHtml(site.consStrikeText)}</span>`);
+      return content;
+    };
+    const consBlock = site => renderCons(site);
+    const mobileConsBlock = site => renderCons(site, true);
+    const dailyText = value => String(value);
+    const dailyDisplay = site => {
+      const prefix = site.dailyPrefix || (!Number.isInteger(site.daily) ? "平均" : "");
+      return `${prefix ? `<small class="daily-prefix">${escapeHtml(prefix)}</small>` : ""}${dailyText(site.daily)}`;
+    };
+    const pillClass = (kind, value) => {
+      if (kind === "watermark") return value === "无" ? "pill-good" : value === "可绕过" ? "pill-info" : ["小","半绕过"].includes(value) ? "pill-warn" : "pill-bad";
+      if (kind === "network") return value === "可直连" ? "pill-good" : "pill-warn";
+      const amount = value === "无限制" ? Infinity : Number(String(value).replace(/,/g,""));
+      return amount >= 8000 ? "pill-good" : amount >= 3000 ? "pill-warn" : "pill-bad";
+    };
+    const pillLabel = (kind, value, compact = true) => {
+      if (kind === "network" && value === "需工具") return "需翻墙";
+      if (compact) return value;
+      if (kind === "watermark") return ({ "无":"无水印", "有":"有水印", "小":"水印小", "可绕过":"水印可绕过", "半绕过":"水印半绕过" })[value] || value;
+      return value;
+    };
+    const pill = (kind, value, label = pillLabel(kind,value)) => `<span class="pill ${pillClass(kind,value)}">${escapeHtml(label)}</span>`;
+    const mobilePill = (kind, value) => pill(kind, value, pillLabel(kind,value,false));
+    const trendArrow = site => site.dailyTrend === "up"
+        ? '<span class="trend-arrow trend-up" title="每日约可生图数增加" aria-label="每日约可生图数增加"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M8 12V4M4.75 7.25 8 4l3.25 3.25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'
+        : site.dailyTrend === "down"
+          ? '<span class="trend-arrow trend-down" title="每日约可生图数减少" aria-label="每日约可生图数减少"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M8 4v8M4.75 8.75 8 12l3.25-3.25" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'
+          : '';
+    const siteName = site => {
+      const name = escapeHtml(site.name);
+      const statusBadges = `${site.isNew ? '<span class="new-badge">NEW</span>' : ''}${site.isOut ? '<span class="out-badge">OUT</span>' : ''}`;
+      return `<span class="site-name-stack"><span class="site-name-text${site.isOut ? ' out-name' : ''}">${name}</span>${statusBadges ? `<span class="site-status-badges">${statusBadges}</span>` : ''}</span>`;
+    };
+
+    const image25Status = site => {
+      if (site.image25Status) return site.image25Status;
+      const value = site.cost25 || "";
+      if (!value.trim() || /未更新Image2\.5|假模型/.test(value)) return "none";
+      return "confirmed";
+    };
+    const compactImage25Status = site => {
+      const updated = image25Status(site) === "confirmed";
+      const label = !updated && /假模型/.test(site.cost25 || "") ? "假模型冒充Image2.5" : updated ? "已更新Image2.5" : "未更新Image2.5";
+      const darkNote = updated && ["绿叶AI", "Firefly", "幻境Forge", "豆绘AI"].includes(site.name);
+      const note = updated && site.image25CompactNote ? site.image25CompactNote : updated && site.name === "DeepSider" ? "画质表现差" : updated && site.name === "Coldesen" ? "本站2.5实测质量差" : updated && site.name === "摄图网" ? "像素/画质不稳定" : darkNote ? ({ "豆绘AI":"质量略不稳定", "绿叶AI":"质量不稳定，版本存疑", "Firefly":"只可免费使用Flare", "幻境Forge":"仅 Flare，无 Sunburst" }[site.name]) : updated && /只更新Flare/.test(site.cost25 || "") ? "仅 Flare，无 Sunburst"
+        : updated && /Sunburst生图测试失败/.test(site.cons || "") ? "但 Sunburst 测试失败" : "";
+      return '<span class="image25-compact-detail"><span class="image25-compact-status ' + (updated ? 'is-updated' : 'is-not-updated') + '">' + escapeHtml(label) + '</span>'
+        + (note ? ('<strong class="image25-compact-note' + (darkNote ? ' is-dark' : '') + '">' + escapeHtml(note) + '</strong>') : '') + '</span>';
+    };
+    const emphasize = (content, site) => {
+      const styles = [["未更新Image2.5", "image25-red"]];
+      if (site.name === "Leonardo") styles.push(["没必要用本站的Image2了", "text-strong-dark"], ["Image2.5质量明显更好", "text-strong-dark"]);
+
+      if (site.name === "Pollo") styles.push(["9.12起不再提供额外5积分/日", "image25-red"]);
+      styles.forEach(([text, cls]) => { content = content.split(escapeHtml(text)).join(`<strong class="${cls}">${escapeHtml(text)}</strong>`); });
+      return content;
+    };
+    const costBlock = (site, key) => {
+      let content = textBlock(site[key] || "");
+      if (site.name === "DeepSider" && key === "cost25") content = content.replace("画质表现差", '<strong class="image25-red">画质表现差</strong>');
+      if (site.name === "摄图网" && key === "cost25") content = content.replace("像素/画质不稳定", '<strong class="image25-red">像素/画质不稳定</strong>');
+      (site[`${key}StrikeTexts`] || []).forEach(text => {
+        content = content.split(escapeHtml(text)).join(`<span class="value-strike-note">${escapeHtml(text)}</span>`);
+      });
+      (site[`${key}BoldTexts`] || []).forEach(text => {
+        content = content.split(escapeHtml(text)).join(`<strong>${escapeHtml(text)}</strong>`);
+      });
+      (site[`${key}RedTexts`] || []).forEach(text => {
+        content = content.split(escapeHtml(text)).join(`<strong class="image25-red">${escapeHtml(text)}</strong>`);
+      });
+      if (site.name === "Pollo") ["1K中：1积分", "2K低：1积分"].forEach(text => { content = content.split(text).join(`<strong>${text}</strong>`); });
+      return content;
+    };
+
+    function matches(site) {
+      if (state.image25 === "confirmed" && image25Status(site) !== "confirmed") return false;
+      if (state.image25 === "none" && image25Status(site) !== "none") return false;
+      if (state.network !== "all" && site.network !== state.network) return false;
+      if (state.watermark === "clean" && !["无","可绕过","半绕过"].includes(site.watermark)) return false;
+      if (state.watermark === "marked" && !["有","小","半绕过"].includes(site.watermark)) return false;
+      if (state.siteStatus === "new-only" && !site.isNew) return false;
+      if (state.siteStatus === "min-five" && site.daily < 5) return false;
+      if (state.siteStatus === "min-three" && site.daily < 3) return false;
+      const validityLines = site.validity.split("\n");
+      const validityOnlyLines = validityLines.filter(line => !/^(?:\d{2}:\d{2} 刷新(?:积分|次数)|动态刷新)$/.test(line));
+      const creditValidity = validityOnlyLines.filter(line => line.includes("积分"));
+      const relevantValidity = (creditValidity.length ? creditValidity : validityOnlyLines).join("\n");
+      const validityDays = [...relevantValidity.matchAll(/(\d+)天有效/g)].map(match => Number(match[1]));
+      const isShortTerm = /当天有效|当日有效|24小时有效/.test(relevantValidity) || validityDays.some(days => days <= 7);
+      const isLongTerm = !isShortTerm && (relevantValidity.includes("长期有效") || relevantValidity.includes("当月有效") || validityDays.some(days => days >= 30));
+      if (state.validity === "long" && !isLongTerm) return false;
+      if (state.validity === "short" && !isShortTerm) return false;
+      const refreshLine = validityLines.find(line => /^(?:\d{2}:\d{2} 刷新(?:积分|次数)|动态刷新)$/.test(line)) || "";
+      if (state.validity === "refresh-midnight" && (site.isOut || !/^00:00 刷新(?:积分|次数)$/.test(refreshLine))) return false;
+      if (state.validity === "refresh-other" && (site.isOut || /^00:00 刷新(?:积分|次数)$/.test(refreshLine))) return false;
+      return true;
+    }
+
+    function filteredSites() {
+      const result = sites.filter(matches);
+      return result.sort((a,b) => b.daily-a.daily || (b.sortPriority || 0)-(a.sortPriority || 0));
+    }
+
+    function tableRow(site) {
+      return `<tr>
+        <td><a class="site-link" href="${escapeHtml(site.url)}" target="_blank" rel="noopener noreferrer">${siteName(site)}${externalLinkIcon}</a></td>
+        <td class="center"><span class="daily">${dailyDisplay(site)}${trendArrow(site)} <small>张/日</small></span></td>
+        <td>${quotaBlock(site.quota, site.quotaStrikeTexts, site.quotaUnderlineTexts)}</td><td><span class="full-only">${validityBlock(site)}</span><span class="compact-only">${compactValidityBlock(site)}</span></td><td>${costBlock(site, "cost")}</td><td><span class="full-only">${costBlock(site, "cost25")}</span><span class="compact-only">${compactImage25Status(site)}</span></td>
+        <td>${prosBlock(site)}</td><td>${consBlock(site)}</td>
+        <td class="center">${pill("watermark",site.watermark)}</td>
+        <td class="center">${pill("chars",site.chars)}</td><td class="center">${pill("network",site.network)}</td>
+      </tr>`;
+    }
+
+    function mobileCard(site) {
+      return `<article class="mobile-card">
+        <div class="mobile-main">
+          <div class="mobile-top"><h3 class="mobile-title"><a class="site-link" href="${escapeHtml(site.url)}" target="_blank" rel="noopener noreferrer">${siteName(site)}${externalLinkIcon}</a></h3><div class="mobile-daily">${dailyDisplay(site)}${trendArrow(site)}<small>张/日</small></div></div>
+          <div class="tag-row">${mobilePill("watermark",site.watermark)}${mobilePill("network",site.network)}</div>
+          <dl class="mobile-summary"><div><dt>免费额度</dt><dd>${quotaBlock(site.quota, site.quotaStrikeTexts, site.quotaUnderlineTexts)}</dd></div><div><dt>Image2.0消耗</dt><dd>${costBlock(site, "cost")}</dd></div><div><dt>Image2.5消耗</dt><dd>${costBlock(site, "cost25")}</dd></div></dl>
+        </div>
+        <details><summary>查看完整限制与说明</summary><div class="detail-grid">
+          <div class="detail-block"><h4>有效期</h4><p>${validityBlock(site)}</p></div>
+          <div class="detail-block"><h4>优点</h4><p>${mobileProsBlock(site)}</p></div>
+          <div class="detail-block"><h4>缺点</h4><p>${mobileConsBlock(site)}</p></div>
+          <div class="detail-block"><h4>字符限制</h4><p>${escapeHtml(site.chars)}</p></div>
+        </div></details>
+      </article>`;
+    }
+
+    const filterStorageKey = "freegptimage2.filters";
+    const filterControls = { image25:"#image25", network:"#network", watermark:"#watermark", validity:"#validity", siteStatus:"#site-status" };
+    function restoreFilters() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(filterStorageKey));
+        if (!saved || typeof saved !== "object" || Array.isArray(saved)) return;
+        Object.entries(filterControls).forEach(([key, selector]) => {
+          const control = $(selector);
+          if (typeof saved[key] === "string" && Array.from(control.options).some(option => option.value === saved[key])) {
+            state[key] = saved[key];
+            control.value = saved[key];
+          }
+        });
+      } catch (_) { /* 无记录、记录损坏或存储不可用时保留默认筛选。 */ }
+    }
+    function saveFilters() {
+      try {
+        const filters = Object.fromEntries(Object.keys(filterControls).map(key => [key, state[key]]));
+        if (Object.values(filters).every(value => value === "all")) localStorage.removeItem(filterStorageKey);
+        else localStorage.setItem(filterStorageKey, JSON.stringify(filters));
+      } catch (_) { /* 保存失败不影响筛选。 */ }
+    }
+
+    function render() {
+      saveFilters();
+      const result = filteredSites();
+      $("#table-body").innerHTML = result.map(site => emphasize(tableRow(site), site)).join("");
+      $("#mobile-list").innerHTML = result.length
+        ? result.map(site => emphasize(mobileCard(site), site)).join("")
+        : '<div class="empty" style="display:block"><strong>没有找到匹配渠道</strong>可以尝试减少筛选条件。</div>';
+      const visibleDaily = Math.round(result.reduce((sum, site) => sum + site.daily, 0));
+      const totalDaily = Math.round(sites.reduce((sum, site) => sum + site.daily, 0));
+      $("#result-count").innerHTML = `<span class="count-desktop">显示 ${result.length} / ${sites.length} 个渠道 · 可生图约 ${visibleDaily} / ${totalDaily} 张/日</span><span class="count-mobile">显示 ${result.length} / ${sites.length} 个渠道 · ${visibleDaily} / ${totalDaily} 张/日</span>`;
+      $("#desktop-empty").style.display = result.length ? "none" : "block";
+      requestAnimationFrame(syncFrozenHeader);
+    }
+
+    function setupFrozenHeader() {
+      const tableShell = document.querySelector(".table-shell");
+      const sourceTable = tableShell.querySelector("table");
+      const sourceHead = sourceTable.querySelector("thead");
+      const frozenHead = document.createElement("div");
+      const frozenTable = document.createElement("table");
+      frozenHead.className = "frozen-table-head";
+      frozenHead.setAttribute("aria-hidden", "true");
+      frozenTable.append(
+        sourceTable.querySelector("colgroup").cloneNode(true),
+        sourceHead.cloneNode(true)
+      );
+      frozenHead.append(frozenTable);
+      document.body.append(frozenHead);
+
+      const sync = () => {
+        const shellRect = tableShell.getBoundingClientRect();
+        const headRect = sourceHead.getBoundingClientRect();
+        const tableRect = sourceTable.getBoundingClientRect();
+        const headHeight = sourceHead.offsetHeight;
+        const visible = shellRect.width > 0 && headRect.bottom <= 0 && tableRect.bottom > headHeight;
+        frozenHead.style.display = visible ? "block" : "none";
+        if (!visible) return;
+        frozenHead.style.left = `${shellRect.left}px`;
+        frozenHead.style.width = `${shellRect.width}px`;
+        frozenHead.style.height = `${headHeight}px`;
+        frozenTable.style.width = `${sourceTable.offsetWidth}px`;
+        frozenTable.style.transform = `translateX(${-tableShell.scrollLeft}px)`;
+      };
+
+      tableShell.addEventListener("scroll", sync, { passive:true });
+      window.addEventListener("scroll", sync, { passive:true });
+      window.addEventListener("resize", sync, { passive:true });
+      if ("ResizeObserver" in window) new ResizeObserver(sync).observe(tableShell);
+      return sync;
+    }
+
+    function setViewMode(mode) {
+      const compact = mode === "compact";
+      state.viewMode = compact ? "compact" : "full";
+      try { localStorage.setItem(viewModeStorageKey, state.viewMode); } catch (_) { /* 不影响当前切换。 */ }
+      document.body.classList.toggle("compact-page", compact);
+      $("#channel-table").classList.toggle("compact-mode", compact);
+      document.querySelector(".toolbar-wrap").classList.toggle("compact-view", compact);
+      document.querySelector(".desktop-table").classList.toggle("compact-view", compact);
+      const frozenTable = document.querySelector(".frozen-table-head table");
+      if (frozenTable) frozenTable.classList.toggle("compact-mode", compact);
+      document.querySelectorAll("#validity option[value^='refresh-']").forEach(option => {
+        option.hidden = compact;
+        option.disabled = compact;
+      });
+      if (compact && state.validity.startsWith("refresh-")) {
+        state.validity = "all";
+        $("#validity").value = "all";
+      }
+      document.querySelectorAll("[data-view-mode]").forEach(button => {
+        button.setAttribute("aria-pressed", String(button.dataset.viewMode === state.viewMode));
+      });
+      render();
+    }
+
+    function reset() {
+      state.image25="all"; state.network="all"; state.watermark="all"; state.validity="all"; state.siteStatus="all";
+      $("#image25").value="all"; $("#network").value="all"; $("#watermark").value="all"; $("#validity").value="all"; $("#site-status").value="all";
+    }
+
+    $("#image25").addEventListener("change", event => { state.image25=event.target.value; render(); });
+    $("#network").addEventListener("change", event => { state.network=event.target.value; render(); });
+    $("#watermark").addEventListener("change", event => { state.watermark=event.target.value; render(); });
+    $("#validity").addEventListener("change", event => { state.validity=event.target.value; render(); });
+    $("#site-status").addEventListener("change", event => { state.siteStatus=event.target.value; render(); });
+    document.querySelectorAll("[data-view-mode]").forEach(button => button.addEventListener("click", () => setViewMode(button.dataset.viewMode)));
+    $("#reset").addEventListener("click", () => { reset(); render(); $("#network").focus(); });
+    document.querySelectorAll(".usage-jump").forEach(link => link.addEventListener("click", event => {
+      event.preventDefault();
+      const usageNotes = $("#usage-notes");
+      usageNotes.open = true;
+      usageNotes.scrollIntoView({ behavior:"smooth", block:"start" });
+    }));
+    const moreFilterToggle = $("#more-filter-toggle");
+    moreFilterToggle.addEventListener("click", () => {
+      const isOpen = $(".toolbar").classList.toggle("more-open");
+      moreFilterToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+    const backToTop = $("#back-to-top");
+    const updateBackToTop = () => backToTop.classList.toggle("is-visible", window.scrollY > 420);
+    window.addEventListener("scroll", updateBackToTop, { passive:true });
+    backToTop.addEventListener("click", () => window.scrollTo({ top:0, behavior:"smooth" }));
+    updateBackToTop();
+
+    const activeSites = sites.filter(site => !site.isOut);
+    $("#stat-sites").textContent = sites.length;
+    $("#stat-image25").textContent = activeSites.filter(site => image25Status(site) === "confirmed").length;
+    $("#stat-new").textContent = sites.filter(site=>site.isNew).length;
+    $("#stat-daily").textContent = Math.round(activeSites.reduce((sum,site)=>sum+site.daily,0));
+    syncFrozenHeader = setupFrozenHeader();
+    restoreFilters();
+    setViewMode(savedViewMode);
+    clearTimeout(viewRestoreTimer);
+    document.documentElement.classList.remove("restoring-view");
+  </script>
+</body>
+</html>
