@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Duck.ai",
+    "url": "https://duck.ai/",
+    "daily": 50,
+    "dailyPrefix": "约",
+    "quota": "每日免费生图\n官方未公布上限",
+    "validity": "当日有效\n动态刷新",
+    "cost": "免费\n0 积分",
+    "pros": "无需注册、不用登录\n国内可直连\n会话记录只存本地\n支持 Image2.0 与 Image2.6",
+    "cons": "只出 1K 图\n免费额度未公开，偶有限流\n高峰期可能排队\n50 张/日为社区反馈，非官方数据",
+    "watermark": "—",
+    "chars": "—",
+    "network": "可直连",
+    "cost25": "",
+    "cost26": "2.6：免费\n1K 输出\n暂无可调参数",
+    "image25Status": "none",
+    "isNew": true,
+    "extra": true,
+    "verifiedAt": "2026-11-05"
+  },
+  {
+    "name": "MONA",
+    "url": "https://monastudiopro.com/",
+    "daily": 0,
+    "dailyText": "待实测",
+    "quota": "新用户/邀请积分\n每日额度以站内为准",
+    "validity": "积分有效期\n以站内为准",
+    "cost": "2.0：免费积分抵扣",
+    "pros": "国内可直连\n画布式工作台，可连续改图\n支持 Image2.0 与 Image2.6\n邀请好友双方得积分",
+    "cons": "免费额度需登录后查看\n积分用尽需充值\n暂无公开的每日免费张数",
+    "watermark": "—",
+    "chars": "—",
+    "network": "可直连",
+    "cost25": "",
+    "cost26": "2.6：免费积分抵扣\n以站内价格为准",
+    "image25Status": "none",
+    "isNew": true,
+    "extra": true,
+    "verifiedAt": "2026-11-05"
+  }
+]

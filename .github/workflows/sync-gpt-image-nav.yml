@@ -39,6 +39,6 @@ jobs:
             echo "数据无变化，跳过提交"
             exit 0
           fi
-          git add gpt-image-nav/data/sites.js gpt-image-nav/index.html
+          git add gpt-image-nav/data gpt-image-nav/index.html
           git commit -m "chore(gpt-image-nav): sync channel data"
           git push
