@@ -550,6 +550,11 @@
     .value-underline-note { color:inherit; font-weight:inherit; text-decoration:underline; text-underline-offset:2px; }
     .pill-info { background:var(--sky); color:var(--sky-text); }
     .cost26-block { margin-top:5px; padding-top:5px; border-top:1px dashed var(--line-soft); }
+    .verify-badge { padding:2px 6px; border:1px solid var(--line); border-radius:999px; background:#fff; color:var(--ink-500); font-size:9.5px; font-weight:700; white-space:nowrap; }
+    .site-name-stack { flex-wrap:wrap; row-gap:3px; }
+    table.compact-mode .site-name-stack,
+    .desktop-table:not(.compact-view) .site-name-stack { flex-wrap:wrap; row-gap:3px; }
+    .site-link .new-badge, .site-link .out-badge, .site-link .verify-badge { flex:0 0 auto; white-space:nowrap; }
     .empty { display:none; padding:48px 20px; text-align:center; color:var(--ink-500); }
     .empty strong { display:block; margin-bottom:6px; color:var(--ink-950); font-size:17px; }
 
@@ -747,7 +752,7 @@
   <main class="shell">
     <section aria-labelledby="compare-title">
       <div class="section-heading">
-        <div><h2 id="compare-title">渠道对比</h2><p class="quality-note">免费规则会随平台调整，实际使用前请以平台官网为准。</p><p class="quality-note">Image 2.5 / 2.6 均提供 Flare 与 Sunburst 两种模型：Flare 速度更快，Sunburst 画质更好。&nbsp;&nbsp;|&nbsp;&nbsp;<a class="usage-jump" id="usage-jump" href="#usage-notes">其他使用说明</a></p><p class="quality-note">本站补充：咔作画布、MONA、Duck.ai（可免费使用 Image2.6 的渠道），最近核验 <span id="extra-verified">2026.11.06</span>。</p></div>
+        <div><h2 id="compare-title">渠道对比</h2><p class="quality-note">免费规则会随平台调整，实际使用前请以平台官网为准。</p><p class="quality-note">Image 2.5 / 2.6 均提供 Flare 与 Sunburst 两种模型：Flare 速度更快，Sunburst 画质更好。&nbsp;&nbsp;|&nbsp;&nbsp;<a class="usage-jump" id="usage-jump" href="#usage-notes">其他使用说明</a></p><p class="quality-note">本站补充：咔作画布、MONA、Duck.ai（可免费使用 Image2.6 的渠道，核验日期见行内标签）。</p></div>
         <div class="heading-tools">
           <div class="view-mode-switch" role="group" aria-label="表格显示模式">
             <button class="view-mode-btn" type="button" data-view-mode="full" aria-pressed="true">完整模式</button>
@@ -830,7 +835,7 @@
   </main>
   <button class="back-to-top" id="back-to-top" type="button" aria-label="回到顶部" title="回到顶部">↑</button>
 
-  <script src="data/sites.js?v=1789b530"></script>
+  <script src="data/sites.js?v=f8e7d7c3"></script>
   <script>
     // 渠道数据已拆分到 data/sites.js，由自动同步任务维护。
     const state = { image25:"all", network:"all", watermark:"all", validity:"all", siteStatus:"all", viewMode:"full" };
@@ -950,7 +955,8 @@
     const siteName = site => {
       const name = escapeHtml(site.name);
       const statusBadges = `${site.isNew ? '<span class="new-badge">NEW</span>' : ''}${site.isOut ? '<span class="out-badge">OUT</span>' : ''}`;
-      return `<span class="site-name-stack"><span class="site-name-text${site.isOut ? ' out-name' : ''}">${name}</span>${statusBadges ? `<span class="site-status-badges">${statusBadges}</span>` : ''}</span>`;
+      const verifyBadge = site.extra && site.verifiedAt ? `<span class="verify-badge" title="本站补充渠道最近可访问核验">核验 ${escapeHtml(site.verifiedAt.slice(5).replace("-", "."))}</span>` : '';
+      return `<span class="site-name-stack"><span class="site-name-text${site.isOut ? ' out-name' : ''}">${name}</span>${statusBadges ? `<span class="site-status-badges">${statusBadges}${verifyBadge}</span>` : ''}</span>`;
     };
 
     const image25Status = site => {
