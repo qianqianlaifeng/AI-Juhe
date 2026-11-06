@@ -887,6 +887,27 @@ const sites = [
     ]
   },
   {
+    "name": "咔作画布",
+    "url": "https://www.kaworkai.com/",
+    "daily": 400,
+    "dailyPrefix": "上限",
+    "sortRank": 3,
+    "quota": "0 积分免费版\n2.5 每日 300 张\n2.6 每日 100 张",
+    "validity": "免费次数按日重置\n赠送算力 30 天有效",
+    "cost": "1K：2积分\n2K：3积分\n4K：4积分",
+    "pros": "国内可直连\n2.5 与 2.6 各有 0 积分免费版\n新用户绑定手机送 50 算力\n支持透明底导出\n电商详情页与多图工作流齐全",
+    "cons": "免费版仅 1K、每次 1 张\n免费版有每日次数上限\n需注册并绑定手机号\n仅会员标注无水印导出",
+    "watermark": "—",
+    "chars": "—",
+    "network": "可直连",
+    "cost25": "2.5 免费版：0积分\n1K，每日 300 张\n2.5 高质量：1K 2积分\n2K 3积分\n4K 4积分",
+    "cost26": "2.6 免费版：0积分\n1K，每日 100 张\n2.6 高质量：1K 2积分\n2K 3积分\n4K 4积分",
+    "image25Status": "confirmed",
+    "isNew": true,
+    "extra": true,
+    "verifiedAt": "2026-11-05"
+  },
+  {
     "name": "MONA",
     "url": "https://monastudiopro.com/",
     "daily": 0,
@@ -906,7 +927,7 @@ const sites = [
     "image25Status": "none",
     "isNew": true,
     "extra": true,
-    "verifiedAt": "2026-11-06"
+    "verifiedAt": "2026-11-05"
   },
   {
     "name": "Duck.ai",
@@ -927,6 +948,6 @@ const sites = [
     "image25Status": "none",
     "isNew": true,
     "extra": true,
-    "verifiedAt": "2026-11-06"
+    "verifiedAt": "2026-11-05"
   }
 ];
