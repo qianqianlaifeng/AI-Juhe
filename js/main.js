@@ -206,6 +206,20 @@
   // 工具箱：本地即开即用的小工具
   const DEFAULT_TOOLS = [
     {
+      id: 'tool_videomusic',
+      title: '视频音乐解析',
+      url: 'https://qianqianlaifeng.github.io/short-videos-demo/',
+      description: '视频 + 音乐双通道解析：视频侧粘贴分享链接即可获取无水印直链、图集原图、实况与背景音乐，支持抖音、快手、小红书、B 站等 20+ 平台；音乐侧输入歌曲链接 / ID / 歌名，返回音频直链、封面、音质档位与同步歌词，覆盖网易云、QQ 音乐、酷我、汽水音乐。免登录，在线即用。',
+      tags: ['视频解析', '音乐解析', '无水印', '在线'],
+      color: 'purple',
+      image: '',
+      badge: '🛠️ 自研',
+      badgeClass: 'badge-self',
+      indexLabel: 'Tool 01',
+      actionLabel: '打开工具',
+      createdAt: Date.now() + 21000
+    },
+    {
       id: 'tool_aibot',
       title: 'AI 工具集',
       url: 'https://ai-bot.cn/',
@@ -267,7 +281,7 @@
       image: '',
       badge: '🛠️ 自研',
       badgeClass: 'badge-self',
-      indexLabel: 'Tool 01',
+      indexLabel: 'Tool 02',
       actionLabel: '打开工具',
       createdAt: Date.now()
     },
@@ -281,7 +295,7 @@
       image: '',
       badge: '🛠️ 自研',
       badgeClass: 'badge-self',
-      indexLabel: 'Tool 02',
+      indexLabel: 'Tool 03',
       actionLabel: '打开工具',
       createdAt: Date.now() + 50
     },
@@ -295,7 +309,7 @@
       image: '',
       badge: '🛠️ 自研',
       badgeClass: 'badge-self',
-      indexLabel: 'Tool 03',
+      indexLabel: 'Tool 04',
       actionLabel: '打开工具',
       createdAt: Date.now() + 100
     },
@@ -309,7 +323,7 @@
       image: '',
       badge: '🛠️ 自研',
       badgeClass: 'badge-self',
-      indexLabel: 'Tool 04',
+      indexLabel: 'Tool 05',
       actionLabel: '打开工具',
       createdAt: Date.now() + 500
     },
@@ -323,7 +337,7 @@
       image: '',
       badge: '🛠️ 自研',
       badgeClass: 'badge-self',
-      indexLabel: 'Tool 05',
+      indexLabel: 'Tool 06',
       actionLabel: '打开工具',
       createdAt: Date.now() + 150
     },
@@ -337,7 +351,7 @@
       image: '',
       badge: '🛠️ 自研',
       badgeClass: 'badge-self',
-      indexLabel: 'Tool 06',
+      indexLabel: 'Tool 07',
       actionLabel: '打开工具',
       createdAt: Date.now() + 480
     },
@@ -351,7 +365,7 @@
       image: '',
       badge: '🛠️ 自研',
       badgeClass: 'badge-self',
-      indexLabel: 'Tool 07',
+      indexLabel: 'Tool 08',
       actionLabel: '打开工具',
       createdAt: Date.now() + 490
     },
@@ -365,7 +379,7 @@
       image: '',
       badge: '🛠️ 自研',
       badgeClass: 'badge-self',
-      indexLabel: 'Tool 08',
+      indexLabel: 'Tool 09',
       actionLabel: '打开工具',
       createdAt: Date.now() + 500
     },
@@ -377,7 +391,7 @@
       tags: ['AI 价格', '成本对比', '在线'],
       color: 'cyan',
       image: '',
-      indexLabel: 'Tool 09',
+      indexLabel: 'Tool 10',
       actionLabel: '打开工具',
       createdAt: Date.now() + 20000
     },
@@ -389,23 +403,9 @@
       tags: ['图像处理', 'AI 编辑', '在线'],
       color: 'blue',
       image: '',
-      indexLabel: 'Tool 10',
-      actionLabel: '打开工具',
-      createdAt: Date.now() - 2000
-    },
-    {
-      id: 'tool_videomusic',
-      title: '视频音乐解析',
-      url: 'https://qianqianlaifeng.github.io/short-videos-demo/',
-      description: '视频 + 音乐双通道解析：视频侧粘贴分享链接即可获取无水印直链、图集原图、实况与背景音乐，支持抖音、快手、小红书、B 站等 20+ 平台；音乐侧输入歌曲链接 / ID / 歌名，返回音频直链、封面、音质档位与同步歌词，覆盖网易云、QQ 音乐、酷我、汽水音乐。免登录，在线即用。',
-      tags: ['视频解析', '音乐解析', '无水印', '在线'],
-      color: 'purple',
-      image: '',
-      badge: '🛠️ 自研',
-      badgeClass: 'badge-self',
       indexLabel: 'Tool 11',
       actionLabel: '打开工具',
-      createdAt: Date.now() - 3000
+      createdAt: Date.now() - 2000
     },
     {
       id: 'tool_watermark',
