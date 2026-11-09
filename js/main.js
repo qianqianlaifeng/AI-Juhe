@@ -394,13 +394,15 @@
       createdAt: Date.now() - 2000
     },
     {
-      id: 'tool_flac',
-      title: '无损音乐',
-      url: 'https://flac.music.hi.cn',
-      description: '高品质无损音乐在线试听与下载，FLAC 级别音质，畅享纯净细腻的听觉体验。',
-      tags: ['无损音乐', 'FLAC', '在线'],
+      id: 'tool_videomusic',
+      title: '视频音乐解析',
+      url: 'https://qianqianlaifeng.github.io/short-videos-demo/',
+      description: '粘贴短视频分享链接，一键解析无水印视频直链、图集原图与实况，同步提取背景音乐和完整元数据；支持抖音、快手、小红书、B 站等 20+ 平台，免登录、在线即用。',
+      tags: ['视频解析', '无水印', '背景音乐', '在线'],
       color: 'purple',
       image: '',
+      badge: '🛠️ 自研',
+      badgeClass: 'badge-self',
       indexLabel: 'Tool 11',
       actionLabel: '打开工具',
       createdAt: Date.now() - 3000
