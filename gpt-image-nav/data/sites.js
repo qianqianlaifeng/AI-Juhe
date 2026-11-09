@@ -905,7 +905,7 @@ const sites = [
     "image25Status": "confirmed",
     "isNew": true,
     "extra": true,
-    "verifiedAt": "2026-11-09"
+    "verifiedAt": "2026-11-10"
   },
   {
     "name": "MONA",
@@ -927,7 +927,7 @@ const sites = [
     "image25Status": "none",
     "isNew": true,
     "extra": true,
-    "verifiedAt": "2026-11-09"
+    "verifiedAt": "2026-11-10"
   },
   {
     "name": "Duck.ai",
@@ -948,6 +948,6 @@ const sites = [
     "image25Status": "none",
     "isNew": true,
     "extra": true,
-    "verifiedAt": "2026-11-09"
+    "verifiedAt": "2026-11-10"
   }
 ];

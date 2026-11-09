@@ -18,7 +18,7 @@
     "image25Status": "confirmed",
     "isNew": true,
     "extra": true,
-    "verifiedAt": "2026-11-09"
+    "verifiedAt": "2026-11-10"
   },
   {
     "name": "MONA",
@@ -40,7 +40,7 @@
     "image25Status": "none",
     "isNew": true,
     "extra": true,
-    "verifiedAt": "2026-11-09"
+    "verifiedAt": "2026-11-10"
   },
   {
     "name": "Duck.ai",
@@ -61,6 +61,6 @@
     "image25Status": "none",
     "isNew": true,
     "extra": true,
-    "verifiedAt": "2026-11-09"
+    "verifiedAt": "2026-11-10"
   }
 ]
