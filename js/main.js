@@ -206,20 +206,6 @@
   // 工具箱：本地即开即用的小工具
   const DEFAULT_TOOLS = [
     {
-      id: 'tool_videomusic',
-      title: '视频音乐解析',
-      url: 'https://qianqianlaifeng.github.io/short-videos-demo/',
-      description: '视频 + 音乐双通道解析：视频侧粘贴分享链接即可获取无水印直链、图集原图、实况与背景音乐，支持抖音、快手、小红书、B 站等 20+ 平台；音乐侧输入歌曲链接 / ID / 歌名，返回音频直链、封面、音质档位与同步歌词，覆盖网易云、QQ 音乐、酷我、汽水音乐。免登录，在线即用。',
-      tags: ['视频解析', '音乐解析', '无水印', '在线'],
-      color: 'purple',
-      image: '',
-      badge: '🛠️ 自研',
-      badgeClass: 'badge-self',
-      indexLabel: 'Tool 01',
-      actionLabel: '打开工具',
-      createdAt: Date.now() + 21000
-    },
-    {
       id: 'tool_aibot',
       title: 'AI 工具集',
       url: 'https://ai-bot.cn/',
@@ -270,6 +256,20 @@
       badge: '⏰ 限时',
       actionLabel: '前往使用',
       createdAt: Date.now() + 15000
+    },
+    {
+      id: 'tool_videomusic',
+      title: '视频音乐解析',
+      url: 'https://qianqianlaifeng.github.io/short-videos-demo/',
+      description: '视频 + 音乐双通道解析：视频侧粘贴分享链接即可获取无水印直链、图集原图、实况与背景音乐，支持抖音、快手、小红书、B 站等 20+ 平台；音乐侧输入歌曲链接 / ID / 歌名，返回音频直链、封面、音质档位与同步歌词，覆盖网易云、QQ 音乐、酷我、汽水音乐。免登录，在线即用。',
+      tags: ['视频解析', '音乐解析', '无水印', '在线'],
+      color: 'purple',
+      image: '',
+      badge: '🛠️ 自研',
+      badgeClass: 'badge-self',
+      indexLabel: 'Tool 01',
+      actionLabel: '打开工具',
+      createdAt: Date.now() + 21000
     },
     {
       id: 'tool_face',
