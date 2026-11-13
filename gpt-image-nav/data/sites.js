@@ -905,7 +905,7 @@ const sites = [
     "image25Status": "confirmed",
     "isNew": true,
     "extra": true,
-    "verifiedAt": "2026-11-12"
+    "verifiedAt": "2026-11-13"
   },
   {
     "name": "MONA",
